@@ -1,0 +1,77 @@
+{
+  "Version": 1,
+  "Hash": "RhNZCqiaO0pA7OWkP5KbDn8cny/wUCmGzO+P0XT+OFQ=",
+  "Source": "InfertilityApp",
+  "BasePath": "_content/InfertilityApp",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "InfertilityApp\\wwwroot",
+      "Source": "InfertilityApp",
+      "ContentRoot": "E:\\PRU\\PRN222\\wwwroot\\",
+      "BasePath": "_content/InfertilityApp",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "E:\\PRU\\PRN222\\wwwroot\\css\\site.css",
+      "SourceId": "InfertilityApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\PRU\\PRN222\\wwwroot\\",
+      "BasePath": "_content/InfertilityApp",
+      "RelativePath": "css/site.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\site.css"
+    },
+    {
+      "Identity": "E:\\PRU\\PRN222\\wwwroot\\css\\styles.css",
+      "SourceId": "InfertilityApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\PRU\\PRN222\\wwwroot\\",
+      "BasePath": "_content/InfertilityApp",
+      "RelativePath": "css/styles.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\styles.css"
+    },
+    {
+      "Identity": "E:\\PRU\\PRN222\\wwwroot\\js\\site.js",
+      "SourceId": "InfertilityApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\PRU\\PRN222\\wwwroot\\",
+      "BasePath": "_content/InfertilityApp",
+      "RelativePath": "js/site.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\site.js"
+    }
+  ]
+}

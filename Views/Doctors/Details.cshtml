@@ -1,0 +1,55 @@
+@model InfertilityApp.Models.Doctor
+
+@{
+    ViewData["Title"] = "Chi tiết bác sĩ";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Chi tiết bác sĩ</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>@Model.FullName</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Họ và tên:</dt>
+                        <dd class="col-sm-8">@Model.FullName</dd>
+                        
+                        <dt class="col-sm-4">Chuyên môn:</dt>
+                        <dd class="col-sm-8">@Model.Specialization</dd>
+                        
+                        <dt class="col-sm-4">Số điện thoại:</dt>
+                        <dd class="col-sm-8">@Model.PhoneNumber</dd>
+                        
+                        <dt class="col-sm-4">Email:</dt>
+                        <dd class="col-sm-8">@Model.Email</dd>
+                        
+                        <dt class="col-sm-4">Số giấy phép:</dt>
+                        <dd class="col-sm-8">@Model.LicenseNumber</dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Thông tin thêm</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Số bệnh nhân đang điều trị:</strong> @Model.Treatments?.Count(t => t.Status == "Active")</p>
+                            <p><strong>Số cuộc hẹn sắp tới:</strong> @Model.Appointments?.Count(a => a.AppointmentDate >= DateTime.Today && a.Status == "Scheduled")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Sửa</a>
+                <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+                <a asp-action="Schedule" asp-route-id="@Model.Id" class="btn btn-primary">Xem lịch làm việc</a>
+                <a asp-action="PatientStatistics" asp-route-id="@Model.Id" class="btn btn-success">Thống kê bệnh nhân</a>
+            </div>
+        </div>
+    </div>
+</div> 

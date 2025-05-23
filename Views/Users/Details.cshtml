@@ -1,0 +1,46 @@
+@model InfertilityApp.Models.User
+
+@{
+    ViewData["Title"] = "Chi tiết người dùng";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Chi tiết người dùng</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>@Model.FullName</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Tên đăng nhập:</dt>
+                <dd class="col-sm-9">@Model.Username</dd>
+                
+                <dt class="col-sm-3">Họ và tên:</dt>
+                <dd class="col-sm-9">@Model.FullName</dd>
+                
+                <dt class="col-sm-3">Email:</dt>
+                <dd class="col-sm-9">@Model.Email</dd>
+                
+                <dt class="col-sm-3">Vai trò:</dt>
+                <dd class="col-sm-9">@Model.Role</dd>
+                
+                @if (Model.Role == "Doctor" && Model.DoctorId.HasValue)
+                {
+                    <dt class="col-sm-3">Bác sĩ liên kết:</dt>
+                    <dd class="col-sm-9">
+                        <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId">
+                            @(Model.Doctor?.FullName ?? "Không có thông tin")
+                        </a>
+                    </dd>
+                }
+            </dl>
+            
+            <div class="mt-4">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Sửa</a>
+                <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+                <a asp-action="ResetPassword" asp-route-id="@Model.Id" class="btn btn-primary">Đặt lại mật khẩu</a>
+            </div>
+        </div>
+    </div>
+</div> 

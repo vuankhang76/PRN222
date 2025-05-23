@@ -1,43 +1,170 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - InfertilityApp</title>
-    <link rel="stylesheet" href="~/css/styles.css" />
+    <title>@ViewData["Title"] - Phần mềm quản lý điều trị hiếm muộn</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/InfertilityApp.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="bg-white border-b shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex">
-                        <a class="flex items-center text-xl font-bold" asp-controller="Home" asp-action="Index">
-                            InfertilityApp
-                        </a>
-                    </div>
-                    <div class="flex items-center">
-                        <a class="px-3 py-2 text-gray-600 hover:text-gray-900" asp-controller="Home" asp-action="Index">Home</a>
-                        <a class="px-3 py-2 text-gray-600 hover:text-gray-900" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>Quản lý điều trị hiếm muộn</h3>
+            </div>
+            <ul class="list-unstyled">
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                    <a asp-controller="Home" asp-action="Index"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Patients" ? "active" : "")">
+                    <a asp-controller="Patients" asp-action="Index"><i class="bi bi-people"></i> Bệnh nhân</a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Doctors" ? "active" : "")">
+                    <a asp-controller="Doctors" asp-action="Index"><i class="bi bi-hospital"></i> Bác sĩ</a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Appointments" ? "active" : "")">
+                    <a asp-controller="Appointments" asp-action="Index"><i class="bi bi-calendar-check"></i> Lịch hẹn</a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Treatments" ? "active" : "")">
+                    <a asp-controller="Treatments" asp-action="Index"><i class="bi bi-clipboard2-pulse"></i> Điều trị</a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "MedicalRecords" ? "active" : "")">
+                    <a asp-controller="MedicalRecords" asp-action="Index"><i class="bi bi-file-earmark-medical"></i> Hồ sơ y tế</a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                    <a asp-controller="Users" asp-action="Index"><i class="bi bi-person-gear"></i> Người dùng</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-sm btn-primary">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="ms-auto d-flex align-items-center">
+                        @if (Context.Session.GetString("UserFullName") != null)
+                        {
+                            <div class="dropdown">
+                                <button class="btn btn-link dropdown-toggle text-decoration-none" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-circle me-1"></i> @Context.Session.GetString("UserFullName")
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Hồ sơ</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Cài đặt</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="Users" asp-action="Logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <a asp-controller="Users" asp-action="Login" class="btn btn-primary">Đăng nhập</a>
+                        }
                     </div>
                 </div>
+            </nav>
+
+            <!-- Page Content -->
+            <div class="container-fluid p-4">
+                @RenderBody()
             </div>
-        </nav>
-    </header>
+        </div>
+    </div>
 
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        @RenderBody()
-    </main>
-
-    <footer class="border-t mt-8">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <p class="text-center text-gray-500">
-                &copy; 2025 - InfertilityApp - <a class="text-gray-600 hover:text-gray-900" asp-controller="Home" asp-action="Privacy">Privacy</a>
-            </p>
+    <footer class="footer text-center py-3">
+        <div class="container">
+            &copy; @DateTime.Now.Year - Phần mềm quản lý điều trị hiếm muộn
         </div>
     </footer>
 
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('.sidebar').toggleClass('active');
+                $('.content-wrapper').toggleClass('active');
+            });
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+@@<style>
+    body {
+        min-height: 100vh;
+        background-color: #f8f9fa;
+    }
+
+    .sidebar {
+        min-width: 250px;
+        max-width: 250px;
+        background: #343a40;
+        color: #fff;
+        transition: all 0.3s;
+        height: 100vh;
+        position: fixed;
+        z-index: 999;
+    }
+
+    .sidebar.active {
+        margin-left: -250px;
+    }
+
+    .sidebar .sidebar-header {
+        padding: 20px;
+        background: #212529;
+    }
+
+    .sidebar ul li a {
+        padding: 15px;
+        display: block;
+        color: #fff;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .sidebar ul li a:hover {
+        background: #495057;
+    }
+
+    .sidebar ul li.active a {
+        background: #0d6efd;
+        color: #fff;
+    }
+
+    .content-wrapper {
+        width: 100%;
+        margin-left: 250px;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .content-wrapper.active {
+        margin-left: 0;
+    }
+
+    .navbar {
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .footer {
+        margin-top: auto;
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+    }
+
+</style>

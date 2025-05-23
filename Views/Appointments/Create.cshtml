@@ -1,0 +1,117 @@
+@model InfertilityApp.Models.Appointment
+
+@{
+    ViewData["Title"] = "Tạo lịch hẹn mới";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Tạo lịch hẹn mới</h1>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="PatientId" class="control-label">Bệnh nhân</label>
+                            <select asp-for="PatientId" class="form-control" asp-items="ViewBag.PatientId"></select>
+                            <span asp-validation-for="PatientId" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="DoctorId" class="control-label">Bác sĩ</label>
+                            <select asp-for="DoctorId" class="form-control" asp-items="ViewBag.DoctorId"></select>
+                            <span asp-validation-for="DoctorId" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="TreatmentId" class="control-label">Điều trị liên quan</label>
+                            <select asp-for="TreatmentId" class="form-control" asp-items="ViewBag.TreatmentId">
+                                <option value="">-- Không có --</option>
+                            </select>
+                            <span asp-validation-for="TreatmentId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="AppointmentDate" class="control-label">Ngày hẹn</label>
+                            <input asp-for="AppointmentDate" class="form-control" type="date" />
+                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="AppointmentTime" class="control-label">Giờ hẹn</label>
+                            <input asp-for="AppointmentTime" class="form-control" type="time" />
+                            <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="Duration" class="control-label">Thời lượng (phút)</label>
+                            <input asp-for="Duration" class="form-control" type="number" min="15" step="15" value="30" />
+                            <span asp-validation-for="Duration" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="Purpose" class="control-label">Mục đích cuộc hẹn</label>
+                    <textarea asp-for="Purpose" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Purpose" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="Status" class="control-label">Trạng thái</label>
+                    <select asp-for="Status" class="form-control">
+                        <option value="Scheduled">Đã lên lịch</option>
+                        <option value="Completed">Đã hoàn thành</option>
+                        <option value="Cancelled">Đã hủy</option>
+                        <option value="No-show">Không đến</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="Notes" class="control-label">Ghi chú</label>
+                    <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mt-3">
+                    <input type="submit" value="Tạo lịch hẹn" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Cập nhật danh sách điều trị khi chọn bệnh nhân
+        $(document).ready(function() {
+            $('#PatientId').change(function() {
+                var patientId = $(this).val();
+                if (patientId) {
+                    $.ajax({
+                        url: '/Treatments/GetTreatmentsByPatient',
+                        type: 'GET',
+                        data: { patientId: patientId },
+                        success: function(data) {
+                            var treatmentDropdown = $('#TreatmentId');
+                            treatmentDropdown.empty();
+                            treatmentDropdown.append($('<option></option>').val('').text('-- Không có --'));
+                            $.each(data, function(i, item) {
+                                treatmentDropdown.append($('<option></option>').val(item.id).text(item.treatmentName));
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+} 

@@ -1,0 +1,329 @@
+@model InfertilityApp.Models.Treatment
+
+@{
+    ViewData["Title"] = "Chi tiết điều trị";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Chi tiết điều trị</h2>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+            <i class="bi bi-pencil"></i> Chỉnh sửa
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Quay lại danh sách
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Thông tin điều trị</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="fw-bold">Tên điều trị:</label>
+                    <p>@Model.TreatmentName</p>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">Bệnh nhân:</label>
+                    <p>
+                        <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.PatientId">
+                            @Model.Patient.FullName
+                        </a>
+                    </p>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">Bác sĩ phụ trách:</label>
+                    <p>
+                        <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId">
+                            @Model.Doctor.FullName
+                        </a>
+                    </p>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">Loại điều trị:</label>
+                    <p>@Model.TreatmentType</p>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">Ngày bắt đầu:</label>
+                    <p>@Model.StartDate.ToString("dd/MM/yyyy")</p>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">Ngày kết thúc:</label>
+                    <p>@(Model.EndDate.HasValue ? Model.EndDate.Value.ToString("dd/MM/yyyy") : "Chưa kết thúc")</p>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">Trạng thái:</label>
+                    <p>
+                        @switch (Model.Status)
+                        {
+                            case "In Progress":
+                                <span class="badge bg-primary">Đang tiến hành</span>
+                                break;
+                            case "Completed":
+                                <span class="badge bg-success">Hoàn thành</span>
+                                break;
+                            case "Cancelled":
+                                <span class="badge bg-danger">Đã hủy</span>
+                                break;
+                            default:
+                                <span class="badge bg-secondary">@Model.Status</span>
+                                break;
+                        }
+                    </p>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">Mô tả:</label>
+                    <p>@(string.IsNullOrEmpty(Model.Description) ? "Không có" : Model.Description)</p>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">Ghi chú:</label>
+                    <p>@(string.IsNullOrEmpty(Model.Notes) ? "Không có" : Model.Notes)</p>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">Kết quả:</label>
+                    <p>@(string.IsNullOrEmpty(Model.Notes) ? "Chưa có kết quả" : Model.Notes)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Các giai đoạn điều trị</h5>
+                <div>
+                    <a asp-controller="TreatmentStages" asp-action="TreatmentStages" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary me-2">
+                        <i class="bi bi-list-check"></i> Xem tất cả
+                    </a>
+                    <a asp-controller="TreatmentStages" asp-action="Create" asp-route-treatmentId="@Model.Id" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-circle"></i> Thêm giai đoạn
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                @if (Model.TreatmentStages != null && Model.TreatmentStages.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Thứ tự</th>
+                                    <th>Tên giai đoạn</th>
+                                    <th>Ngày bắt đầu</th>
+                                    <th>Ngày kết thúc</th>
+                                    <th>Trạng thái</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var stage in Model.TreatmentStages.OrderBy(s => s.StageOrder))
+                                {
+                                    <tr>
+                                        <td>@stage.StageOrder</td>
+                                        <td>@stage.StageName</td>
+                                        <td>@stage.StartDate.ToString("dd/MM/yyyy")</td>
+                                        <td>@(stage.EndDate.HasValue ? stage.EndDate.Value.ToString("dd/MM/yyyy") : "-")</td>
+                                        <td>
+                                            @switch (stage.Status)
+                                            {
+                                                case "Not Started":
+                                                    <span class="badge bg-secondary">Chưa bắt đầu</span>
+                                                    break;
+                                                case "In Progress":
+                                                    <span class="badge bg-primary">Đang tiến hành</span>
+                                                    break;
+                                                case "Completed":
+                                                    <span class="badge bg-success">Hoàn thành</span>
+                                                    break;
+                                                case "Cancelled":
+                                                    <span class="badge bg-danger">Đã hủy</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-secondary">@stage.Status</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-controller="TreatmentStages" asp-action="Details" asp-route-id="@stage.Id" class="btn btn-sm btn-outline-primary">
+                                                Chi tiết
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="bi bi-list-check display-4"></i>
+                        <p class="mt-3">Chưa có giai đoạn điều trị nào</p>
+                    </div>
+                }
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Thuốc điều trị</h5>
+                <div>
+                    <a asp-controller="Medications" asp-action="TreatmentMedications" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary me-2">
+                        <i class="bi bi-capsule"></i> Xem tất cả
+                    </a>
+                    <a asp-controller="Medications" asp-action="Create" asp-route-treatmentId="@Model.Id" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-circle"></i> Thêm thuốc
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                @if (Model.Medications != null && Model.Medications.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tên thuốc</th>
+                                    <th>Liều lượng</th>
+                                    <th>Ngày bắt đầu</th>
+                                    <th>Ngày kết thúc</th>
+                                    <th>Trạng thái</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var medication in Model.Medications.OrderBy(m => m.StartDate))
+                                {
+                                    <tr>
+                                        <td>@medication.MedicationName</td>
+                                        <td>@medication.Dosage</td>
+                                        <td>@medication.StartDate.ToString("dd/MM/yyyy")</td>
+                                        <td>@(medication.EndDate.HasValue ? medication.EndDate.Value.ToString("dd/MM/yyyy") : "-")</td>
+                                        <td>
+                                            @switch (medication.Status)
+                                            {
+                                                case "Active":
+                                                    <span class="badge bg-primary">Đang sử dụng</span>
+                                                    break;
+                                                case "Completed":
+                                                    <span class="badge bg-success">Hoàn thành</span>
+                                                    break;
+                                                case "Discontinued":
+                                                    <span class="badge bg-danger">Đã ngừng</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-secondary">@medication.Status</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-controller="Medications" asp-action="Details" asp-route-id="@medication.Id" class="btn btn-sm btn-outline-primary">
+                                                Chi tiết
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="bi bi-capsule display-4"></i>
+                        <p class="mt-3">Chưa có thuốc điều trị nào</p>
+                    </div>
+                }
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Lịch hẹn</h5>
+                <div>
+                    <a asp-controller="Appointments" asp-action="Index" asp-route-treatmentId="@Model.Id" class="btn btn-sm btn-outline-primary me-2">
+                        <i class="bi bi-calendar-check"></i> Xem tất cả
+                    </a>
+                    <a asp-controller="Appointments" asp-action="Create" asp-route-treatmentId="@Model.Id" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-circle"></i> Thêm lịch hẹn
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                @if (Model.Appointments != null && Model.Appointments.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Ngày</th>
+                                    <th>Giờ</th>
+                                    <th>Bác sĩ</th>
+                                    <th>Loại</th>
+                                    <th>Trạng thái</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var appointment in Model.Appointments.OrderByDescending(a => a.AppointmentDate).ThenBy(a => a.AppointmentTime))
+                                {
+                                    <tr>
+                                        <td>@appointment.AppointmentDate.ToString("dd/MM/yyyy")</td>
+                                        <td>@appointment.AppointmentTime.ToString(@"hh\:mm")</td>
+                                        <td>@appointment.Doctor.FullName</td>
+                                        <td>@appointment.AppointmentType</td>
+                                        <td>
+                                            @switch (appointment.Status)
+                                            {
+                                                case "Scheduled":
+                                                    <span class="badge bg-primary">Đã lên lịch</span>
+                                                    break;
+                                                case "Completed":
+                                                    <span class="badge bg-success">Hoàn thành</span>
+                                                    break;
+                                                case "Cancelled":
+                                                    <span class="badge bg-danger">Đã hủy</span>
+                                                    break;
+                                                case "Rescheduled":
+                                                    <span class="badge bg-warning">Đổi lịch</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-secondary">@appointment.Status</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-controller="Appointments" asp-action="Details" asp-route-id="@appointment.Id" class="btn btn-sm btn-outline-primary">
+                                                Chi tiết
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="bi bi-calendar-x display-4"></i>
+                        <p class="mt-3">Chưa có lịch hẹn nào</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div> 

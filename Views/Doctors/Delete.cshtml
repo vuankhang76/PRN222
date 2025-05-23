@@ -1,0 +1,43 @@
+@model InfertilityApp.Models.Doctor
+
+@{
+    ViewData["Title"] = "Xóa bác sĩ";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Xóa bác sĩ</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-danger text-white">
+            <h4>Bạn có chắc chắn muốn xóa bác sĩ này?</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Họ và tên:</dt>
+                <dd class="col-sm-9">@Model.FullName</dd>
+                
+                <dt class="col-sm-3">Chuyên môn:</dt>
+                <dd class="col-sm-9">@Model.Specialization</dd>
+                
+                <dt class="col-sm-3">Số điện thoại:</dt>
+                <dd class="col-sm-9">@Model.PhoneNumber</dd>
+                
+                <dt class="col-sm-3">Email:</dt>
+                <dd class="col-sm-9">@Model.Email</dd>
+                
+                <dt class="col-sm-3">Số giấy phép:</dt>
+                <dd class="col-sm-9">@Model.LicenseNumber</dd>
+            </dl>
+            
+            <div class="alert alert-warning">
+                <strong>Cảnh báo:</strong> Việc xóa bác sĩ có thể ảnh hưởng đến dữ liệu liên quan như lịch hẹn, điều trị và hồ sơ y tế.
+            </div>
+            
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <input type="submit" value="Xóa" class="btn btn-danger" />
+                <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+            </form>
+        </div>
+    </div>
+</div> 
