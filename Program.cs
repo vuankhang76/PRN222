@@ -1,7 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+using InfertilityApp.Data;
+using InfertilityApp.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Add Entity Framework
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+    "Data Source=infertility.db"));
+
+// Add custom services
+builder.Services.AddScoped<IDiagnosisService, DiagnosisService>();
 
 // Configure HTTPS redirection
 builder.Services.AddHttpsRedirection(options =>
@@ -11,6 +23,13 @@ builder.Services.AddHttpsRedirection(options =>
 });
 
 var app = builder.Build();
+
+// Create database and apply migrations
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    context.Database.EnsureCreated();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
