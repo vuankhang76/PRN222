@@ -6,51 +6,32 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InfertilityApp.Models;
+using InfertilityApp.BusinessLogicLayer.Interfaces;
 
 namespace InfertilityApp.Controllers
 {
     public class AppointmentsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IAppointmentService _appointmentService;
+        private readonly IPatientService _patientService;
+        private readonly IDoctorService _doctorService;
 
-        public AppointmentsController(ApplicationDbContext context)
+        public AppointmentsController(IAppointmentService appointmentService, IPatientService patientService, IDoctorService doctorService)
         {
-            _context = context;
+            _appointmentService = appointmentService;
+            _patientService = patientService;
+            _doctorService = doctorService;
         }
 
         // GET: Appointments
-        public async Task<IActionResult> Index(string searchString, string status, DateTime? fromDate, DateTime? toDate, int? doctorId)
+        public async Task<IActionResult> Index(DateTime? date, int? doctorId, int? patientId, string status)
         {
-            var appointments = _context.Appointments
-                .Include(a => a.Doctor)
-                .Include(a => a.Patient)
-                .Include(a => a.Treatment)
-                .AsQueryable();
-
-            // Lọc theo tìm kiếm
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                appointments = appointments.Where(a => 
-                    a.Patient.FullName.Contains(searchString) || 
-                    a.Doctor.FullName.Contains(searchString) ||
-                    a.Notes.Contains(searchString));
-            }
-
-            // Lọc theo trạng thái
-            if (!string.IsNullOrEmpty(status))
-            {
-                appointments = appointments.Where(a => a.Status == status);
-            }
+            var appointments = await _appointmentService.GetAllAppointmentsAsync();
 
             // Lọc theo ngày
-            if (fromDate.HasValue)
+            if (date.HasValue)
             {
-                appointments = appointments.Where(a => a.AppointmentDate >= fromDate.Value);
-            }
-
-            if (toDate.HasValue)
-            {
-                appointments = appointments.Where(a => a.AppointmentDate <= toDate.Value);
+                appointments = appointments.Where(a => a.AppointmentDate.Date == date.Value.Date);
             }
 
             // Lọc theo bác sĩ
@@ -59,18 +40,27 @@ namespace InfertilityApp.Controllers
                 appointments = appointments.Where(a => a.DoctorId == doctorId.Value);
             }
 
-            // Chuẩn bị dữ liệu cho dropdown
-            ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "FullName");
-            ViewData["StatusList"] = new List<string> { "Scheduled", "Completed", "Cancelled", "No-show" };
+            // Lọc theo bệnh nhân
+            if (patientId.HasValue)
+            {
+                appointments = appointments.Where(a => a.PatientId == patientId.Value);
+            }
 
-            // Lưu các tham số lọc để hiển thị lại khi refresh trang
-            ViewData["CurrentSearch"] = searchString;
-            ViewData["CurrentStatus"] = status;
-            ViewData["CurrentFromDate"] = fromDate?.ToString("yyyy-MM-dd");
-            ViewData["CurrentToDate"] = toDate?.ToString("yyyy-MM-dd");
-            ViewData["CurrentDoctorId"] = doctorId;
+            // Lọc theo trạng thái
+            if (!string.IsNullOrEmpty(status))
+            {
+                appointments = appointments.Where(a => a.Status == status);
+            }
 
-            return View(await appointments.OrderBy(a => a.AppointmentDate).ThenBy(a => a.AppointmentTime).ToListAsync());
+            var patients = await _patientService.GetAllPatientsAsync();
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+
+            ViewData["Patients"] = new SelectList(patients, "Id", "FullName", patientId);
+            ViewData["Doctors"] = new SelectList(doctors, "Id", "FullName", doctorId);
+            ViewData["Statuses"] = new SelectList(new[] { "Đã đặt", "Đã xác nhận", "Hoàn thành", "Đã hủy", "Không đến" }, status);
+            ViewData["SelectedDate"] = date?.ToString("yyyy-MM-dd");
+
+            return View(appointments.OrderBy(a => a.AppointmentDate).ThenBy(a => a.AppointmentTime));
         }
 
         // GET: Appointments/Details/5
@@ -81,11 +71,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var appointment = await _context.Appointments
-                .Include(a => a.Doctor)
-                .Include(a => a.Patient)
-                .Include(a => a.Treatment)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var appointment = await _appointmentService.GetAppointmentWithDetailsAsync(id.Value);
             if (appointment == null)
             {
                 return NotFound();
@@ -95,88 +81,61 @@ namespace InfertilityApp.Controllers
         }
 
         // GET: Appointments/Create
-        public IActionResult Create(int? patientId, int? treatmentId)
+        public async Task<IActionResult> Create(int? patientId, int? doctorId, DateTime? date)
         {
-            ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "FullName");
-            
-            // Nếu có patientId, lọc bác sĩ theo bác sĩ đang điều trị cho bệnh nhân
-            if (patientId.HasValue)
-            {
-                var doctorIds = _context.Treatments
-                    .Where(t => t.PatientId == patientId && t.Status == "Active")
-                    .Select(t => t.DoctorId)
-                    .Distinct()
-                    .ToList();
-                
-                if (doctorIds.Any())
-                {
-                    ViewData["DoctorId"] = new SelectList(_context.Doctors.Where(d => doctorIds.Contains(d.Id)), "Id", "FullName");
-                }
-            }
-            
-            // Nếu có patientId, tự động chọn bệnh nhân
-            if (patientId.HasValue)
-            {
-                ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FullName", patientId);
-            }
-            else
-            {
-                ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FullName");
-            }
-            
-            // Nếu có treatmentId, tự động chọn điều trị
-            if (treatmentId.HasValue)
-            {
-                ViewData["TreatmentId"] = new SelectList(_context.Treatments, "Id", "TreatmentName", treatmentId);
-            }
-            else
-            {
-                ViewData["TreatmentId"] = new SelectList(_context.Treatments, "Id", "TreatmentName");
-            }
-            
-            // Thiết lập giá trị mặc định cho ngày và giờ
+            var patients = await _patientService.GetAllPatientsAsync();
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName", doctorId);
+            ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", patientId);
+
             var appointment = new Appointment
             {
-                AppointmentDate = DateTime.Today.AddDays(1),
-                AppointmentTime = new TimeSpan(9, 0, 0), // 9:00 AM
-                Status = "Scheduled",
-                PatientId = patientId.HasValue ? patientId.Value : 0,
-                TreatmentId = treatmentId
+                AppointmentDate = date ?? DateTime.Today.AddDays(1),
+                AppointmentTime = new TimeSpan(9, 0, 0),
+                Status = "Đã đặt",
+                PatientId = patientId ?? 0,
+                DoctorId = doctorId ?? 0
             };
-            
+
             return View(appointment);
         }
 
         // POST: Appointments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PatientId,DoctorId,TreatmentId,AppointmentDate,AppointmentTime,Duration,Purpose,Status,Notes")] Appointment appointment)
+        public async Task<IActionResult> Create([Bind("Id,PatientId,DoctorId,AppointmentDate,AppointmentTime,Purpose,Status,Notes")] Appointment appointment)
         {
-            // Kiểm tra xem bác sĩ có lịch trùng không
-            var conflictingAppointments = await _context.Appointments
-                .Where(a => a.DoctorId == appointment.DoctorId && 
-                           a.AppointmentDate == appointment.AppointmentDate &&
-                           a.Status != "Cancelled" &&
-                           ((a.AppointmentTime <= appointment.AppointmentTime && 
-                             a.AppointmentTime.Add(TimeSpan.FromMinutes(a.Duration)) > appointment.AppointmentTime) ||
-                            (a.AppointmentTime >= appointment.AppointmentTime && 
-                             a.AppointmentTime < appointment.AppointmentTime.Add(TimeSpan.FromMinutes(appointment.Duration)))))
-                .ToListAsync();
-
-            if (conflictingAppointments.Any())
-            {
-                ModelState.AddModelError("AppointmentTime", "Bác sĩ đã có lịch hẹn vào thời gian này.");
-            }
-
             if (ModelState.IsValid)
             {
-                _context.Add(appointment);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    // Kiểm tra xung đột lịch hẹn
+                    var appointmentDateTime = appointment.AppointmentDate.Add(appointment.AppointmentTime);
+                    if (!await _appointmentService.IsDoctorAvailableAsync(appointment.DoctorId, appointmentDateTime))
+                    {
+                        ModelState.AddModelError("", "Bác sĩ không có sẵn vào thời gian này.");
+                    }
+                    else if (!await _appointmentService.IsPatientAvailableAsync(appointment.PatientId, appointmentDateTime))
+                    {
+                        ModelState.AddModelError("", "Bệnh nhân đã có lịch hẹn khác vào thời gian này.");
+                    }
+                    else
+                    {
+                        await _appointmentService.CreateAppointmentAsync(appointment);
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
-            ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "FullName", appointment.DoctorId);
-            ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FullName", appointment.PatientId);
-            ViewData["TreatmentId"] = new SelectList(_context.Treatments, "Id", "TreatmentName", appointment.TreatmentId);
+
+            var patients = await _patientService.GetAllPatientsAsync();
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName", appointment.DoctorId);
+            ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", appointment.PatientId);
             return View(appointment);
         }
 
@@ -188,67 +147,46 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var appointment = await _context.Appointments.FindAsync(id);
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(id.Value);
             if (appointment == null)
             {
                 return NotFound();
             }
-            ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "FullName", appointment.DoctorId);
-            ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FullName", appointment.PatientId);
-            ViewData["TreatmentId"] = new SelectList(_context.Treatments, "Id", "TreatmentName", appointment.TreatmentId);
+
+            var patients = await _patientService.GetAllPatientsAsync();
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName", appointment.DoctorId);
+            ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", appointment.PatientId);
             return View(appointment);
         }
 
         // POST: Appointments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,DoctorId,TreatmentId,AppointmentDate,AppointmentTime,Duration,Purpose,Status,Notes")] Appointment appointment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,DoctorId,AppointmentDate,AppointmentTime,Purpose,Status,Notes")] Appointment appointment)
         {
             if (id != appointment.Id)
             {
                 return NotFound();
             }
 
-            // Kiểm tra xem bác sĩ có lịch trùng không (trừ chính lịch này)
-            var conflictingAppointments = await _context.Appointments
-                .Where(a => a.Id != id &&
-                           a.DoctorId == appointment.DoctorId && 
-                           a.AppointmentDate == appointment.AppointmentDate &&
-                           a.Status != "Cancelled" &&
-                           ((a.AppointmentTime <= appointment.AppointmentTime && 
-                             a.AppointmentTime.Add(TimeSpan.FromMinutes(a.Duration)) > appointment.AppointmentTime) ||
-                            (a.AppointmentTime >= appointment.AppointmentTime && 
-                             a.AppointmentTime < appointment.AppointmentTime.Add(TimeSpan.FromMinutes(appointment.Duration)))))
-                .ToListAsync();
-
-            if (conflictingAppointments.Any())
-            {
-                ModelState.AddModelError("AppointmentTime", "Bác sĩ đã có lịch hẹn vào thời gian này.");
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(appointment);
-                    await _context.SaveChangesAsync();
+                    await _appointmentService.UpdateAppointmentAsync(appointment);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!AppointmentExists(appointment.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("", ex.Message);
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "FullName", appointment.DoctorId);
-            ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FullName", appointment.PatientId);
-            ViewData["TreatmentId"] = new SelectList(_context.Treatments, "Id", "TreatmentName", appointment.TreatmentId);
+
+            var patients = await _patientService.GetAllPatientsAsync();
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName", appointment.DoctorId);
+            ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", appointment.PatientId);
             return View(appointment);
         }
 
@@ -260,11 +198,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var appointment = await _context.Appointments
-                .Include(a => a.Doctor)
-                .Include(a => a.Patient)
-                .Include(a => a.Treatment)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var appointment = await _appointmentService.GetAppointmentWithDetailsAsync(id.Value);
             if (appointment == null)
             {
                 return NotFound();
@@ -278,83 +212,145 @@ namespace InfertilityApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var appointment = await _context.Appointments.FindAsync(id);
-            if (appointment != null)
+            try
             {
-                _context.Appointments.Remove(appointment);
-                await _context.SaveChangesAsync();
+                await _appointmentService.DeleteAppointmentAsync(id);
+                return RedirectToAction(nameof(Index));
             }
-            
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                var appointment = await _appointmentService.GetAppointmentWithDetailsAsync(id);
+                return View(appointment);
+            }
+        }
+
+        // Action methods cho quản lý lịch hẹn
+        [HttpPost]
+        public async Task<IActionResult> ConfirmAppointment(int id)
+        {
+            try
+            {
+                await _appointmentService.ConfirmAppointmentAsync(id);
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Details), new { id });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CancelAppointment(int id, string reason)
+        {
+            try
+            {
+                await _appointmentService.CancelAppointmentAsync(id, reason);
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Details), new { id });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RescheduleAppointment(int id, DateTime newDate, TimeSpan newTime)
+        {
+            try
+            {
+                var newDateTime = newDate.Add(newTime);
+                await _appointmentService.RescheduleAppointmentAsync(id, newDateTime);
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Details), new { id });
+            }
+        }
+
+        // GET: Appointments/GetAvailableSlots
+        public async Task<IActionResult> GetAvailableSlots(int doctorId, DateTime date)
+        {
+            try
+            {
+                var availableSlots = await _appointmentService.GetAvailableTimeSlotsAsync(doctorId, date);
+                return Json(availableSlots);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
         }
 
         // GET: Appointments/Calendar
-        public async Task<IActionResult> Calendar(DateTime? date, int? doctorId)
+        public async Task<IActionResult> Calendar(int? doctorId, DateTime? date)
         {
-            DateTime selectedDate = date ?? DateTime.Today;
-            
-            // Lấy tất cả các cuộc hẹn trong ngày đã chọn
-            var query = _context.Appointments
-                .Include(a => a.Doctor)
-                .Include(a => a.Patient)
-                .Where(a => a.AppointmentDate.Date == selectedDate.Date);
-                
-            // Lọc theo bác sĩ nếu có
+            var selectedDate = date ?? DateTime.Today;
+            var appointments = await _appointmentService.GetUpcomingAppointmentsAsync();
+
+            // Lọc theo ngày được chọn
+            appointments = appointments.Where(a => 
+                a.AppointmentDate >= selectedDate && 
+                a.AppointmentDate <= selectedDate.AddDays(30));
+
             if (doctorId.HasValue)
             {
-                query = query.Where(a => a.DoctorId == doctorId.Value);
+                appointments = appointments.Where(a => a.DoctorId == doctorId.Value);
             }
-            
-            var appointments = await query
-                .OrderBy(a => a.AppointmentTime)
-                .ToListAsync();
-                
-            ViewData["Doctors"] = new SelectList(_context.Doctors, "Id", "FullName", doctorId);
+
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+            ViewData["Doctors"] = new SelectList(doctors, "Id", "FullName", doctorId);
             ViewData["SelectedDate"] = selectedDate;
-            ViewData["SelectedDoctorId"] = doctorId;
-            
+
             return View(appointments);
         }
 
-        // GET: Appointments/UpcomingReminders
-        public async Task<IActionResult> UpcomingReminders()
+        // GET: Appointments/Today
+        public async Task<IActionResult> Today()
         {
-            // Lấy các cuộc hẹn sắp tới trong 7 ngày
             var today = DateTime.Today;
-            var nextWeek = today.AddDays(7);
-            
-            var upcomingAppointments = await _context.Appointments
-                .Include(a => a.Doctor)
-                .Include(a => a.Patient)
-                .Where(a => a.AppointmentDate >= today && a.AppointmentDate <= nextWeek && a.Status == "Scheduled")
-                .OrderBy(a => a.AppointmentDate)
-                .ThenBy(a => a.AppointmentTime)
-                .ToListAsync();
-                
-            return View(upcomingAppointments);
+            var appointments = await _appointmentService.GetAppointmentsByDateAsync(today);
+
+            ViewBag.TotalAppointments = appointments.Count();
+            ViewBag.ConfirmedAppointments = appointments.Count(a => a.Status == "Đã xác nhận");
+            ViewBag.CompletedAppointments = appointments.Count(a => a.Status == "Hoàn thành");
+            ViewBag.CancelledAppointments = appointments.Count(a => a.Status == "Đã hủy");
+
+            return View(appointments.OrderBy(a => a.AppointmentTime));
         }
 
-        // POST: Appointments/UpdateStatus/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateStatus(int id, string status)
+        // GET: Appointments/Statistics
+        public async Task<IActionResult> Statistics()
         {
-            var appointment = await _context.Appointments.FindAsync(id);
-            if (appointment == null)
+            var totalAppointments = await _appointmentService.GetTotalAppointmentsCountAsync();
+            var appointmentsByStatus = await _appointmentService.GetAppointmentsByStatusStatisticsAsync();
+            var completionRate = await _appointmentService.GetAppointmentCompletionRateAsync();
+            var cancellationRate = await _appointmentService.GetAppointmentCancellationRateAsync();
+
+            ViewBag.TotalAppointments = totalAppointments;
+            ViewBag.AppointmentsByStatus = appointmentsByStatus;
+            ViewBag.CompletionRate = completionRate;
+            ViewBag.CancellationRate = cancellationRate;
+
+            return View();
+        }
+
+        // Action cho tính năng chart thống kê
+        public async Task<IActionResult> GetAppointmentStatistics()
+        {
+            var statistics = new
             {
-                return NotFound();
-            }
-            
-            appointment.Status = status;
-            _context.Update(appointment);
-            await _context.SaveChangesAsync();
-            
-            return RedirectToAction(nameof(Index));
-        }
+                statusStats = await _appointmentService.GetAppointmentsByStatusStatisticsAsync(),
+                totalCount = await _appointmentService.GetTotalAppointmentsCountAsync(),
+                completionRate = await _appointmentService.GetAppointmentCompletionRateAsync(),
+                cancellationRate = await _appointmentService.GetAppointmentCancellationRateAsync()
+            };
 
-        private bool AppointmentExists(int id)
-        {
-            return _context.Appointments.Any(e => e.Id == id);
+            return Json(statistics);
         }
     }
 } 

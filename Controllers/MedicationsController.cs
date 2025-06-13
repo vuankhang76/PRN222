@@ -6,28 +6,56 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InfertilityApp.Models;
+using InfertilityApp.BusinessLogicLayer.Interfaces;
 
 namespace InfertilityApp.Controllers
 {
     public class MedicationsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IMedicationService _medicationService;
+        private readonly ITreatmentService _treatmentService;
 
-        public MedicationsController(ApplicationDbContext context)
+        public MedicationsController(IMedicationService medicationService, ITreatmentService treatmentService)
         {
-            _context = context;
+            _medicationService = medicationService;
+            _treatmentService = treatmentService;
         }
 
         // GET: Medications
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? treatmentId, string searchString, string medicationType)
         {
-            var medications = await _context.Medications
-                .Include(m => m.Treatment)
-                .ThenInclude(t => t.Patient)
-                .OrderBy(m => m.Treatment.PatientId)
-                .ThenBy(m => m.StartDate)
-                .ToListAsync();
-            return View(medications);
+            var medications = await _medicationService.GetAllMedicationsAsync();
+
+            // Lọc theo điều trị
+            if (treatmentId.HasValue)
+            {
+                medications = await _medicationService.GetMedicationsByTreatmentAsync(treatmentId.Value);
+            }
+
+            // Tìm kiếm theo tên thuốc
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                medications = medications.Where(m =>
+                    m.MedicationName.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                    (m.Dosage != null && m.Dosage.Contains(searchString, StringComparison.OrdinalIgnoreCase)) ||
+                    (m.Instructions != null && m.Instructions.Contains(searchString, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            // Lọc theo loại thuốc
+            if (!string.IsNullOrEmpty(medicationType))
+            {
+                medications = await _medicationService.GetMedicationsByTypeAsync(medicationType);
+            }
+
+            var treatments = await _treatmentService.GetAllTreatmentsAsync();
+
+            ViewData["TreatmentId"] = new SelectList(treatments, "Id", "TreatmentName", treatmentId);
+            ViewData["SearchString"] = searchString;
+            ViewData["MedicationTypes"] = new SelectList(
+                new[] { "Clomiphene", "Letrozole", "Gonadotropins", "Metformin", "Progesterone", "Bromocriptine" },
+                medicationType);
+
+            return View(medications.OrderBy(m => m.StartDate));
         }
 
         // GET: Medications/Details/5
@@ -38,11 +66,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var medication = await _context.Medications
-                .Include(m => m.Treatment)
-                .ThenInclude(t => t.Patient)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var medication = await _medicationService.GetMedicationByIdAsync(id.Value);
             if (medication == null)
             {
                 return NotFound();
@@ -52,42 +76,41 @@ namespace InfertilityApp.Controllers
         }
 
         // GET: Medications/Create
-        public IActionResult Create(int? treatmentId)
+        public async Task<IActionResult> Create(int? treatmentId)
         {
-            if (treatmentId.HasValue)
+            var treatments = await _treatmentService.GetAllTreatmentsAsync();
+
+            ViewData["TreatmentId"] = new SelectList(treatments, "Id", "TreatmentName", treatmentId);
+
+            var medication = new Medication
             {
-                ViewData["TreatmentId"] = new SelectList(_context.Treatments.Where(t => t.Id == treatmentId), "Id", "TreatmentName");
-                ViewData["FixedTreatmentId"] = treatmentId;
-                
-                var treatment = _context.Treatments
-                    .Include(t => t.Patient)
-                    .FirstOrDefault(t => t.Id == treatmentId);
-                
-                if (treatment != null)
-                {
-                    ViewData["PatientId"] = treatment.PatientId;
-                    ViewData["PatientName"] = treatment.Patient.FullName;
-                }
-            }
-            else
-            {
-                ViewData["TreatmentId"] = new SelectList(_context.Treatments, "Id", "TreatmentName");
-            }
-            return View();
+                StartDate = DateTime.Today,
+                TreatmentId = treatmentId ?? 0
+            };
+
+            return View(medication);
         }
 
         // POST: Medications/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,TreatmentId,MedicationName,Dosage,Instructions,StartDate,EndDate,Frequency,Notes,Status")] Medication medication)
+        public async Task<IActionResult> Create([Bind("Id,TreatmentId,MedicationName,Dosage,Frequency,StartDate,EndDate,Instructions,Notes,Status")] Medication medication)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(medication);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Details", "Treatments", new { id = medication.TreatmentId });
+                try
+                {
+                    await _medicationService.CreateMedicationAsync(medication);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
-            ViewData["TreatmentId"] = new SelectList(_context.Treatments, "Id", "TreatmentName", medication.TreatmentId);
+
+            var treatments = await _treatmentService.GetAllTreatmentsAsync();
+            ViewData["TreatmentId"] = new SelectList(treatments, "Id", "TreatmentName", medication.TreatmentId);
             return View(medication);
         }
 
@@ -99,19 +122,21 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var medication = await _context.Medications.FindAsync(id);
+            var medication = await _medicationService.GetMedicationByIdAsync(id.Value);
             if (medication == null)
             {
                 return NotFound();
             }
-            ViewData["TreatmentId"] = new SelectList(_context.Treatments, "Id", "TreatmentName", medication.TreatmentId);
+
+            var treatments = await _treatmentService.GetAllTreatmentsAsync();
+            ViewData["TreatmentId"] = new SelectList(treatments, "Id", "TreatmentName", medication.TreatmentId);
             return View(medication);
         }
 
         // POST: Medications/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,TreatmentId,MedicationName,Dosage,Instructions,StartDate,EndDate,Frequency,Notes,Status")] Medication medication)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,TreatmentId,MedicationName,Dosage,Frequency,StartDate,EndDate,Instructions,Notes,Status")] Medication medication)
         {
             if (id != medication.Id)
             {
@@ -122,23 +147,17 @@ namespace InfertilityApp.Controllers
             {
                 try
                 {
-                    _context.Update(medication);
-                    await _context.SaveChangesAsync();
+                    await _medicationService.UpdateMedicationAsync(medication);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!MedicationExists(medication.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("", ex.Message);
                 }
-                return RedirectToAction("Details", "Treatments", new { id = medication.TreatmentId });
             }
-            ViewData["TreatmentId"] = new SelectList(_context.Treatments, "Id", "TreatmentName", medication.TreatmentId);
+
+            var treatments = await _treatmentService.GetAllTreatmentsAsync();
+            ViewData["TreatmentId"] = new SelectList(treatments, "Id", "TreatmentName", medication.TreatmentId);
             return View(medication);
         }
 
@@ -150,9 +169,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var medication = await _context.Medications
-                .Include(m => m.Treatment)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var medication = await _medicationService.GetMedicationByIdAsync(id.Value);
             if (medication == null)
             {
                 return NotFound();
@@ -166,48 +183,46 @@ namespace InfertilityApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var medication = await _context.Medications.FindAsync(id);
-            if (medication == null)
+            try
             {
-                return NotFound();
+                await _medicationService.DeleteMedicationAsync(id);
+                return RedirectToAction(nameof(Index));
             }
-            
-            var treatmentId = medication.TreatmentId;
-            _context.Medications.Remove(medication);
-            await _context.SaveChangesAsync();
-            
-            return RedirectToAction("Details", "Treatments", new { id = treatmentId });
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                var medication = await _medicationService.GetMedicationByIdAsync(id);
+                return View(medication);
+            }
         }
 
-        // GET: Medications/TreatmentMedications/5
-        public async Task<IActionResult> TreatmentMedications(int? id)
+        // GET: Medications/Statistics
+        public async Task<IActionResult> Statistics()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var totalMedications = await _medicationService.GetTotalMedicationsCountAsync();
+            var medicationsByType = await _medicationService.GetMedicationsByTypeStatisticsAsync();
+            var averageDuration = await _medicationService.GetAverageMedicationDurationAsync();
 
-            var treatment = await _context.Treatments
-                .Include(t => t.Patient)
-                .Include(t => t.Medications)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            ViewBag.TotalMedications = totalMedications;
+            ViewBag.MedicationsByType = medicationsByType;
+            ViewBag.AverageDuration = averageDuration;
 
-            if (treatment == null)
-            {
-                return NotFound();
-            }
-
-            ViewData["TreatmentId"] = treatment.Id;
-            ViewData["TreatmentName"] = treatment.TreatmentName;
-            ViewData["PatientId"] = treatment.PatientId;
-            ViewData["PatientName"] = treatment.Patient.FullName;
-
-            return View(treatment.Medications.OrderBy(m => m.StartDate).ToList());
+            return View();
         }
 
-        private bool MedicationExists(int id)
+        // POST: Medications/CheckInteraction
+        [HttpPost]
+        public async Task<IActionResult> CheckInteraction(int patientId, string medicationName)
         {
-            return _context.Medications.Any(e => e.Id == id);
+            try
+            {
+                var hasInteraction = await _medicationService.CheckMedicationInteractionAsync(patientId, medicationName);
+                return Json(new { hasInteraction });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
         }
     }
 } 

@@ -6,25 +6,53 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InfertilityApp.Models;
+using InfertilityApp.BusinessLogicLayer.Interfaces;
 
 namespace InfertilityApp.Controllers
 {
     public class PartnersController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IPartnerService _partnerService;
+        private readonly IPatientService _patientService;
 
-        public PartnersController(ApplicationDbContext context)
+        public PartnersController(IPartnerService partnerService, IPatientService patientService)
         {
-            _context = context;
+            _partnerService = partnerService;
+            _patientService = patientService;
         }
 
         // GET: Partners
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string gender, int? ageFrom, int? ageTo)
         {
-            var partners = await _context.Partners
-                .Include(p => p.Patient)
-                .ToListAsync();
-            return View(partners);
+            var partners = await _partnerService.GetAllPartnersAsync();
+
+            // Tìm kiếm theo tên
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                partners = partners.Where(p =>
+                    p.FullName.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                    (p.Email != null && p.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            // Lọc theo giới tính
+            if (!string.IsNullOrEmpty(gender))
+            {
+                partners = partners.Where(p => p.Gender == gender);
+            }
+
+            // Lọc theo độ tuổi
+            if (ageFrom.HasValue && ageTo.HasValue)
+            {
+                partners = await _partnerService.GetPartnersByAgeRangeAsync(ageFrom.Value, ageTo.Value);
+            }
+
+            ViewData["SearchString"] = searchString;
+            ViewData["Gender"] = gender;
+            ViewData["AgeFrom"] = ageFrom;
+            ViewData["AgeTo"] = ageTo;
+            ViewData["Genders"] = new SelectList(new[] { "Nam", "Nữ" }, gender);
+
+            return View(partners.OrderBy(p => p.FullName));
         }
 
         // GET: Partners/Details/5
@@ -35,10 +63,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var partner = await _context.Partners
-                .Include(p => p.Patient)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var partner = await _partnerService.GetPartnerByIdAsync(id.Value);
             if (partner == null)
             {
                 return NotFound();
@@ -48,50 +73,39 @@ namespace InfertilityApp.Controllers
         }
 
         // GET: Partners/Create
-        public IActionResult Create(int? patientId)
+        public async Task<IActionResult> Create(int? patientId)
         {
-            // Check if patient already has a partner
-            if (patientId.HasValue)
+            var patients = await _patientService.GetAllPatientsAsync();
+            ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", patientId);
+
+            var partner = new Partner
             {
-                var existingPartner = _context.Partners.FirstOrDefault(p => p.PatientId == patientId);
-                if (existingPartner != null)
-                {
-                    return RedirectToAction("Edit", new { id = existingPartner.Id });
-                }
-                
-                ViewData["PatientId"] = new SelectList(_context.Patients.Where(p => p.Id == patientId), "Id", "FullName");
-                ViewData["FixedPatientId"] = patientId;
-                
-                var patient = _context.Patients.FirstOrDefault(p => p.Id == patientId);
-                if (patient != null)
-                {
-                    ViewData["PatientName"] = patient.FullName;
-                }
-            }
-            else
-            {
-                // Get patients without partners
-                var patientsWithoutPartners = _context.Patients
-                    .Where(p => !_context.Partners.Select(partner => partner.PatientId).Contains(p.Id))
-                    .ToList();
-                ViewData["PatientId"] = new SelectList(patientsWithoutPartners, "Id", "FullName");
-            }
-            
-            return View();
+                PatientId = patientId ?? 0
+            };
+
+            return View(partner);
         }
 
         // POST: Partners/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FullName,DateOfBirth,Gender,PhoneNumber,Email,Occupation,MedicalHistory,PatientId")] Partner partner)
+        public async Task<IActionResult> Create([Bind("Id,PatientId,FullName,DateOfBirth,Gender,PhoneNumber,Email,Address,Occupation,MedicalHistory")] Partner partner)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(partner);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Details", "Patients", new { id = partner.PatientId });
+                try
+                {
+                    await _partnerService.CreatePartnerAsync(partner);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
-            ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FullName", partner.PatientId);
+
+            var patients = await _patientService.GetAllPatientsAsync();
+            ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", partner.PatientId);
             return View(partner);
         }
 
@@ -103,20 +117,21 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var partner = await _context.Partners.FindAsync(id);
+            var partner = await _partnerService.GetPartnerByIdAsync(id.Value);
             if (partner == null)
             {
                 return NotFound();
             }
-            ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FullName", partner.PatientId);
-            ViewData["FixedPatientId"] = partner.PatientId;
+
+            var patients = await _patientService.GetAllPatientsAsync();
+            ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", partner.PatientId);
             return View(partner);
         }
 
         // POST: Partners/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,DateOfBirth,Gender,PhoneNumber,Email,Occupation,MedicalHistory,PatientId")] Partner partner)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,FullName,DateOfBirth,Gender,PhoneNumber,Email,Address,Occupation,MedicalHistory")] Partner partner)
         {
             if (id != partner.Id)
             {
@@ -127,23 +142,17 @@ namespace InfertilityApp.Controllers
             {
                 try
                 {
-                    _context.Update(partner);
-                    await _context.SaveChangesAsync();
+                    await _partnerService.UpdatePartnerAsync(partner);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!PartnerExists(partner.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("", ex.Message);
                 }
-                return RedirectToAction("Details", "Patients", new { id = partner.PatientId });
             }
-            ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FullName", partner.PatientId);
+
+            var patients = await _patientService.GetAllPatientsAsync();
+            ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", partner.PatientId);
             return View(partner);
         }
 
@@ -155,9 +164,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var partner = await _context.Partners
-                .Include(p => p.Patient)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var partner = await _partnerService.GetPartnerByIdAsync(id.Value);
             if (partner == null)
             {
                 return NotFound();
@@ -171,57 +178,56 @@ namespace InfertilityApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var partner = await _context.Partners.FindAsync(id);
-            if (partner == null)
+            try
             {
-                return NotFound();
+                await _partnerService.DeletePartnerAsync(id);
+                return RedirectToAction(nameof(Index));
             }
-            
-            var patientId = partner.PatientId;
-            _context.Partners.Remove(partner);
-            await _context.SaveChangesAsync();
-            
-            return RedirectToAction("Details", "Patients", new { id = patientId });
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                var partner = await _partnerService.GetPartnerByIdAsync(id);
+                return View(partner);
+            }
         }
 
-        // GET: Partners/PatientPartner/5
-        public async Task<IActionResult> PatientPartner(int? id)
+        // GET: Partners/Statistics
+        public async Task<IActionResult> Statistics()
+        {
+            var totalPartners = await _partnerService.GetTotalPartnersCountAsync();
+            var partnersByGender = await _partnerService.GetPartnersByGenderStatisticsAsync();
+            var averageAge = await _partnerService.GetAveragePartnerAgeAsync();
+
+            ViewBag.TotalPartners = totalPartners;
+            ViewBag.PartnersByGender = partnersByGender;
+            ViewBag.AverageAge = averageAge;
+
+            return View();
+        }
+
+        // GET: Partners/ByPatient/5
+        public async Task<IActionResult> ByPatient(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var partner = await _context.Partners
-                .Include(p => p.Patient)
-                .FirstOrDefaultAsync(p => p.PatientId == id);
+            var patient = await _patientService.GetPatientByIdAsync(id.Value);
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            var partner = await _partnerService.GetPartnerByPatientIdAsync(id.Value);
+            ViewBag.Patient = patient;
 
             if (partner == null)
             {
-                var patient = await _context.Patients.FindAsync(id);
-                if (patient == null)
-                {
-                    return NotFound();
-                }
-                
-                ViewData["PatientId"] = patient.Id;
-                ViewData["PatientName"] = patient.FullName;
-                ViewData["HasPartner"] = false;
-                
-                return View();
+                return View("NoPartner");
             }
 
-            ViewData["PatientId"] = partner.PatientId;
-            ViewData["PatientName"] = partner.Patient.FullName;
-            ViewData["HasPartner"] = true;
-            ViewData["PartnerId"] = partner.Id;
-
             return View(partner);
-        }
-
-        private bool PartnerExists(int id)
-        {
-            return _context.Partners.Any(e => e.Id == id);
         }
     }
 } 

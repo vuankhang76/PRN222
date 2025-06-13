@@ -6,65 +6,65 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InfertilityApp.Models;
+using InfertilityApp.BusinessLogicLayer.Interfaces;
 
 namespace InfertilityApp.Controllers
 {
     public class TreatmentsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ITreatmentService _treatmentService;
+        private readonly IPatientService _patientService;
+        private readonly IDoctorService _doctorService;
 
-        public TreatmentsController(ApplicationDbContext context)
+        public TreatmentsController(ITreatmentService treatmentService, IPatientService patientService, IDoctorService doctorService)
         {
-            _context = context;
+            _treatmentService = treatmentService;
+            _patientService = patientService;
+            _doctorService = doctorService;
         }
 
         // GET: Treatments
-        public async Task<IActionResult> Index(string searchString, string status, int? doctorId, int? patientId)
+        public async Task<IActionResult> Index(string searchString, string status, int? patientId, int? doctorId)
         {
-            var treatments = _context.Treatments
-                .Include(t => t.Doctor)
-                .Include(t => t.Patient)
-                .AsQueryable();
-
-            // Lọc theo tìm kiếm
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                treatments = treatments.Where(t => 
-                    t.TreatmentName.Contains(searchString) || 
-                    t.Patient.FullName.Contains(searchString) ||
-                    t.Doctor.FullName.Contains(searchString));
-            }
+            var treatments = await _treatmentService.GetAllTreatmentsAsync();
 
             // Lọc theo trạng thái
             if (!string.IsNullOrEmpty(status))
             {
-                treatments = treatments.Where(t => t.Status == status);
-            }
-
-            // Lọc theo bác sĩ
-            if (doctorId.HasValue)
-            {
-                treatments = treatments.Where(t => t.DoctorId == doctorId.Value);
+                treatments = await _treatmentService.GetTreatmentsByStatusAsync(status);
             }
 
             // Lọc theo bệnh nhân
             if (patientId.HasValue)
             {
-                treatments = treatments.Where(t => t.PatientId == patientId.Value);
+                treatments = await _treatmentService.GetTreatmentsByPatientAsync(patientId.Value);
             }
 
-            // Chuẩn bị dữ liệu cho dropdown
-            ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "FullName");
-            ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FullName");
-            ViewData["StatusList"] = new List<string> { "Active", "Completed", "Cancelled", "On Hold" };
+            // Lọc theo bác sĩ
+            if (doctorId.HasValue)
+            {
+                treatments = await _treatmentService.GetTreatmentsByDoctorAsync(doctorId.Value);
+            }
 
-            // Lưu các tham số lọc để hiển thị lại khi refresh trang
-            ViewData["CurrentSearch"] = searchString;
-            ViewData["CurrentStatus"] = status;
-            ViewData["CurrentDoctorId"] = doctorId;
-            ViewData["CurrentPatientId"] = patientId;
+            // Lọc theo tên bệnh nhân
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                var allTreatments = await _treatmentService.GetAllTreatmentsAsync();
+                treatments = allTreatments.Where(t =>
+                    t.Patient != null && t.Patient.FullName.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                    t.TreatmentName.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                    t.TreatmentType.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+            }
 
-            return View(await treatments.OrderByDescending(t => t.StartDate).ToListAsync());
+            var patients = await _patientService.GetAllPatientsAsync();
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+
+            ViewData["Patients"] = new SelectList(patients, "Id", "FullName", patientId);
+            ViewData["Doctors"] = new SelectList(doctors, "Id", "FullName", doctorId);
+            ViewData["Statuses"] = new SelectList(new[] { "Đang điều trị", "Hoàn thành", "Tạm dừng", "Đã hủy" }, status);
+            ViewData["SearchString"] = searchString;
+
+            return View(treatments);
         }
 
         // GET: Treatments/Details/5
@@ -75,14 +75,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var treatment = await _context.Treatments
-                .Include(t => t.Doctor)
-                .Include(t => t.Patient)
-                .Include(t => t.TreatmentStages)
-                .Include(t => t.Medications)
-                .Include(t => t.Appointments)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var treatment = await _treatmentService.GetTreatmentWithDetailsAsync(id.Value);
             if (treatment == null)
             {
                 return NotFound();
@@ -92,44 +85,46 @@ namespace InfertilityApp.Controllers
         }
 
         // GET: Treatments/Create
-        public IActionResult Create(int? patientId)
+        public async Task<IActionResult> Create(int? patientId)
         {
-            ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "FullName");
-            
-            // Nếu có patientId, tự động chọn bệnh nhân
-            if (patientId.HasValue)
-            {
-                ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FullName", patientId);
-            }
-            else
-            {
-                ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FullName");
-            }
-            
-            // Thiết lập giá trị mặc định
+            var patients = await _patientService.GetAllPatientsAsync();
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName");
+            ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", patientId);
+
             var treatment = new Treatment
             {
                 StartDate = DateTime.Today,
-                Status = "Active",
+                Status = "Đang điều trị",
                 PatientId = patientId.HasValue ? patientId.Value : 0
             };
-            
+
             return View(treatment);
         }
 
         // POST: Treatments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PatientId,DoctorId,StartDate,EndDate,TreatmentType,TreatmentName,Description,Status,Notes")] Treatment treatment)
+        public async Task<IActionResult> Create([Bind("Id,PatientId,DoctorId,TreatmentType,TreatmentName,Description,StartDate,Status,Notes")] Treatment treatment)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(treatment);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    await _treatmentService.CreateTreatmentAsync(treatment);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
-            ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "FullName", treatment.DoctorId);
-            ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FullName", treatment.PatientId);
+
+            var patients = await _patientService.GetAllPatientsAsync();
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName", treatment.DoctorId);
+            ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", treatment.PatientId);
             return View(treatment);
         }
 
@@ -141,20 +136,23 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var treatment = await _context.Treatments.FindAsync(id);
+            var treatment = await _treatmentService.GetTreatmentByIdAsync(id.Value);
             if (treatment == null)
             {
                 return NotFound();
             }
-            ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "FullName", treatment.DoctorId);
-            ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FullName", treatment.PatientId);
+
+            var patients = await _patientService.GetAllPatientsAsync();
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName", treatment.DoctorId);
+            ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", treatment.PatientId);
             return View(treatment);
         }
 
         // POST: Treatments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,DoctorId,StartDate,EndDate,TreatmentType,TreatmentName,Description,Status,Notes,Outcome")] Treatment treatment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,DoctorId,TreatmentType,TreatmentName,Description,StartDate,EndDate,Status,Outcome,Notes")] Treatment treatment)
         {
             if (id != treatment.Id)
             {
@@ -165,30 +163,19 @@ namespace InfertilityApp.Controllers
             {
                 try
                 {
-                    // Nếu trạng thái là "Completed", đảm bảo có ngày kết thúc
-                    if (treatment.Status == "Completed" && !treatment.EndDate.HasValue)
-                    {
-                        treatment.EndDate = DateTime.Today;
-                    }
-                    
-                    _context.Update(treatment);
-                    await _context.SaveChangesAsync();
+                    await _treatmentService.UpdateTreatmentAsync(treatment);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!TreatmentExists(treatment.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("", ex.Message);
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "FullName", treatment.DoctorId);
-            ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FullName", treatment.PatientId);
+
+            var patients = await _patientService.GetAllPatientsAsync();
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName", treatment.DoctorId);
+            ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", treatment.PatientId);
             return View(treatment);
         }
 
@@ -200,10 +187,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var treatment = await _context.Treatments
-                .Include(t => t.Doctor)
-                .Include(t => t.Patient)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var treatment = await _treatmentService.GetTreatmentWithDetailsAsync(id.Value);
             if (treatment == null)
             {
                 return NotFound();
@@ -217,162 +201,111 @@ namespace InfertilityApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var treatment = await _context.Treatments.FindAsync(id);
-            if (treatment != null)
+            try
             {
-                _context.Treatments.Remove(treatment);
-                await _context.SaveChangesAsync();
+                await _treatmentService.DeleteTreatmentAsync(id);
+                return RedirectToAction(nameof(Index));
             }
-            
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                var treatment = await _treatmentService.GetTreatmentWithDetailsAsync(id);
+                return View(treatment);
+            }
         }
 
-        // GET: Treatments/Progress/5
-        public async Task<IActionResult> Progress(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var treatment = await _context.Treatments
-                .Include(t => t.Doctor)
-                .Include(t => t.Patient)
-                .Include(t => t.TreatmentStages.OrderBy(ts => ts.StartDate))
-                .Include(t => t.Medications.OrderBy(m => m.StartDate))
-                .Include(t => t.Appointments.OrderBy(a => a.AppointmentDate).ThenBy(a => a.AppointmentTime))
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (treatment == null)
-            {
-                return NotFound();
-            }
-
-            return View(treatment);
-        }
-
-        // GET: Treatments/UpdateOutcome/5
-        public async Task<IActionResult> UpdateOutcome(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var treatment = await _context.Treatments
-                .Include(t => t.Doctor)
-                .Include(t => t.Patient)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (treatment == null)
-            {
-                return NotFound();
-            }
-
-            ViewData["OutcomeOptions"] = new List<string> { "Successful", "Unsuccessful", "Ongoing" };
-            return View(treatment);
-        }
-
-        // POST: Treatments/UpdateOutcome/5
+        // Action methods cho quản lý trạng thái điều trị
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateOutcome(int id, [Bind("Id,Outcome,Notes")] Treatment treatmentUpdate)
+        public async Task<IActionResult> StartTreatment(int id)
         {
-            var treatment = await _context.Treatments.FindAsync(id);
-            if (treatment == null)
+            try
             {
-                return NotFound();
+                await _treatmentService.StartTreatmentAsync(id);
+                return RedirectToAction(nameof(Details), new { id });
             }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Details), new { id });
+            }
+        }
 
-            if (ModelState.IsValid)
+        [HttpPost]
+        public async Task<IActionResult> CompleteTreatment(int id, string results)
+        {
+            try
             {
-                treatment.Outcome = treatmentUpdate.Outcome;
-                
-                // Nếu kết quả là "Successful" hoặc "Unsuccessful", cập nhật trạng thái và ngày kết thúc
-                if (treatmentUpdate.Outcome == "Successful" || treatmentUpdate.Outcome == "Unsuccessful")
-                {
-                    treatment.Status = "Completed";
-                    if (!treatment.EndDate.HasValue)
-                    {
-                        treatment.EndDate = DateTime.Today;
-                    }
-                }
-                
-                // Cập nhật ghi chú nếu có
-                if (!string.IsNullOrEmpty(treatmentUpdate.Notes))
-                {
-                    treatment.Notes = treatmentUpdate.Notes;
-                }
-                
-                _context.Update(treatment);
-                await _context.SaveChangesAsync();
-                
-                return RedirectToAction(nameof(Details), new { id = treatment.Id });
+                await _treatmentService.CompleteTreatmentAsync(id, results);
+                return RedirectToAction(nameof(Details), new { id });
             }
-            
-            ViewData["OutcomeOptions"] = new List<string> { "Successful", "Unsuccessful", "Ongoing" };
-            return View(treatment);
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Details), new { id });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PauseTreatment(int id, string reason)
+        {
+            try
+            {
+                await _treatmentService.PauseTreatmentAsync(id, reason);
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Details), new { id });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResumeTreatment(int id)
+        {
+            try
+            {
+                await _treatmentService.ResumeTreatmentAsync(id);
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Details), new { id });
+            }
         }
 
         // GET: Treatments/Statistics
-        public async Task<IActionResult> Statistics(int? year)
+        public async Task<IActionResult> Statistics()
         {
-            // Nếu không có năm được chọn, sử dụng năm hiện tại
-            int selectedYear = year ?? DateTime.Today.Year;
-            
-            // Lấy tất cả các điều trị đã hoàn thành trong năm đã chọn
-            var completedTreatments = await _context.Treatments
-                .Where(t => t.Status == "Completed" && 
-                           t.EndDate.HasValue && 
-                           t.EndDate.Value.Year == selectedYear)
-                .ToListAsync();
-            
-            // Thống kê theo loại điều trị
-            var treatmentTypeStats = completedTreatments
-                .GroupBy(t => t.TreatmentType)
-                .Select(g => new { 
-                    TreatmentType = g.Key, 
-                    Count = g.Count(),
-                    SuccessCount = g.Count(t => t.Outcome == "Successful"),
-                    SuccessRate = g.Count() > 0 ? (double)g.Count(t => t.Outcome == "Successful") / g.Count() * 100 : 0
-                })
-                .OrderByDescending(x => x.Count)
-                .ToList();
-            
-            // Thống kê theo tháng
-            var monthlyStats = Enumerable.Range(1, 12)
-                .Select(month => new {
-                    Month = month,
-                    MonthName = new DateTime(selectedYear, month, 1).ToString("MMMM"),
-                    Count = completedTreatments.Count(t => t.EndDate.HasValue && t.EndDate.Value.Month == month),
-                    SuccessCount = completedTreatments.Count(t => t.EndDate.HasValue && t.EndDate.Value.Month == month && t.Outcome == "Successful")
-                })
-                .ToList();
-            
-            ViewData["TreatmentTypeStats"] = treatmentTypeStats;
-            ViewData["MonthlyStats"] = monthlyStats;
-            ViewData["SelectedYear"] = selectedYear;
-            ViewData["TotalTreatments"] = completedTreatments.Count;
-            ViewData["SuccessfulTreatments"] = completedTreatments.Count(t => t.Outcome == "Successful");
-            ViewData["OverallSuccessRate"] = completedTreatments.Count > 0 ? 
-                (double)completedTreatments.Count(t => t.Outcome == "Successful") / completedTreatments.Count * 100 : 0;
-            
-            // Lấy danh sách các năm có dữ liệu để hiển thị dropdown
-            var years = await _context.Treatments
-                .Where(t => t.EndDate.HasValue)
-                .Select(t => t.EndDate.Value.Year)
-                .Distinct()
-                .OrderByDescending(y => y)
-                .ToListAsync();
-            
-            ViewData["Years"] = years;
-            
+            var totalTreatments = await _treatmentService.GetTotalTreatmentsCountAsync();
+            var treatmentsByStatus = await _treatmentService.GetTreatmentsByStatusStatisticsAsync();
+            var treatmentsByType = await _treatmentService.GetTreatmentsByTypeStatisticsAsync();
+            var averageDuration = await _treatmentService.GetAverageTreatmentDurationAsync();
+            var successRate = await _treatmentService.GetTreatmentSuccessRateAsync();
+
+            ViewBag.TotalTreatments = totalTreatments;
+            ViewBag.TreatmentsByStatus = treatmentsByStatus;
+            ViewBag.TreatmentsByType = treatmentsByType;
+            ViewBag.AverageDuration = averageDuration;
+            ViewBag.SuccessRate = successRate;
+
             return View();
         }
 
-        private bool TreatmentExists(int id)
+        // Action cho tính năng chart thống kê
+        public async Task<IActionResult> GetTreatmentStatistics()
         {
-            return _context.Treatments.Any(e => e.Id == id);
+            var statistics = new
+            {
+                statusStats = await _treatmentService.GetTreatmentsByStatusStatisticsAsync(),
+                typeStats = await _treatmentService.GetTreatmentsByTypeStatisticsAsync(),
+                totalCount = await _treatmentService.GetTotalTreatmentsCountAsync(),
+                averageDuration = await _treatmentService.GetAverageTreatmentDurationAsync(),
+                successRate = await _treatmentService.GetTreatmentSuccessRateAsync()
+            };
+
+            return Json(statistics);
         }
     }
 } 

@@ -20,6 +20,9 @@ namespace InfertilityApp.Models
         public DbSet<MedicalRecord> MedicalRecords { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<TestResult> TestResults { get; set; }
+        public DbSet<MedicationSchedule> MedicationSchedules { get; set; }
+        public DbSet<TreatmentOutcome> TreatmentOutcomes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -87,6 +90,45 @@ namespace InfertilityApp.Models
                 .HasOne(a => a.Doctor)
                 .WithMany(d => d.Appointments)
                 .HasForeignKey(a => a.DoctorId);
+
+            // Configure relationships for TestResult
+            modelBuilder.Entity<TestResult>()
+                .HasOne(tr => tr.Patient)
+                .WithMany()
+                .HasForeignKey(tr => tr.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TestResult>()
+                .HasOne(tr => tr.Partner)
+                .WithMany()
+                .HasForeignKey(tr => tr.PartnerId)
+                .IsRequired(false);
+
+            modelBuilder.Entity<TestResult>()
+                .HasOne(tr => tr.Doctor)
+                .WithMany()
+                .HasForeignKey(tr => tr.DoctorId)
+                .IsRequired(false);
+
+            // Configure relationship for MedicationSchedule
+            modelBuilder.Entity<MedicationSchedule>()
+                .HasOne(ms => ms.Medication)
+                .WithMany()
+                .HasForeignKey(ms => ms.MedicationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure relationship for TreatmentOutcome
+            modelBuilder.Entity<TreatmentOutcome>()
+                .HasOne(to => to.Treatment)
+                .WithMany()
+                .HasForeignKey(to => to.TreatmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TreatmentOutcome>()
+                .HasOne(to => to.Doctor)
+                .WithMany()
+                .HasForeignKey(to => to.DoctorId)
+                .IsRequired(false);
 
             // Configure one-to-many relationship between Treatment and Appointment
             modelBuilder.Entity<Appointment>()

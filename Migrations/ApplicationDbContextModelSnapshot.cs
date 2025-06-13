@@ -232,6 +232,62 @@ namespace InfertilityApp.Migrations
                     b.ToTable("Medications");
                 });
 
+            modelBuilder.Entity("InfertilityApp.Models.MedicationSchedule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("ActualTakenTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Dosage")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Instructions")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsReminded")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTaken")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MedicationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("ScheduledDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("ScheduledTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MedicationId");
+
+                    b.ToTable("MedicationSchedules");
+                });
+
             modelBuilder.Entity("InfertilityApp.Models.Partner", b =>
                 {
                     b.Property<int>("Id")
@@ -386,6 +442,75 @@ namespace InfertilityApp.Migrations
                     b.ToTable("Procedures");
                 });
 
+            modelBuilder.Entity("InfertilityApp.Models.TestResult", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AttachmentPath")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("PartnerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReferenceRange")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Results")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("TestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TestName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("TestType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("TestingLab")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("PartnerId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("TestResults");
+                });
+
             modelBuilder.Entity("InfertilityApp.Models.Treatment", b =>
                 {
                     b.Property<int>("Id")
@@ -439,6 +564,89 @@ namespace InfertilityApp.Migrations
                     b.HasIndex("PatientId");
 
                     b.ToTable("Treatments");
+                });
+
+            modelBuilder.Entity("InfertilityApp.Models.TreatmentOutcome", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("ActualBirthDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("BabyGender")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("BabyHealth")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal?>("BirthWeight")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<string>("Complications")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeliveryType")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("DoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ExpectedDueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FinalStatus")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsPregnant")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("NumberOfBabies")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("OutcomeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OutcomeType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("PregnancyTestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PregnancyTestResult")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("TreatmentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("TreatmentId");
+
+                    b.ToTable("TreatmentOutcomes");
                 });
 
             modelBuilder.Entity("InfertilityApp.Models.TreatmentStage", b =>
@@ -597,6 +805,17 @@ namespace InfertilityApp.Migrations
                     b.Navigation("Treatment");
                 });
 
+            modelBuilder.Entity("InfertilityApp.Models.MedicationSchedule", b =>
+                {
+                    b.HasOne("InfertilityApp.Models.Medication", "Medication")
+                        .WithMany()
+                        .HasForeignKey("MedicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Medication");
+                });
+
             modelBuilder.Entity("InfertilityApp.Models.Partner", b =>
                 {
                     b.HasOne("InfertilityApp.Models.Patient", "Patient")
@@ -619,6 +838,29 @@ namespace InfertilityApp.Migrations
                     b.Navigation("TreatmentStage");
                 });
 
+            modelBuilder.Entity("InfertilityApp.Models.TestResult", b =>
+                {
+                    b.HasOne("InfertilityApp.Models.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId");
+
+                    b.HasOne("InfertilityApp.Models.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId");
+
+                    b.HasOne("InfertilityApp.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Partner");
+
+                    b.Navigation("Patient");
+                });
+
             modelBuilder.Entity("InfertilityApp.Models.Treatment", b =>
                 {
                     b.HasOne("InfertilityApp.Models.Doctor", "Doctor")
@@ -636,6 +878,23 @@ namespace InfertilityApp.Migrations
                     b.Navigation("Doctor");
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("InfertilityApp.Models.TreatmentOutcome", b =>
+                {
+                    b.HasOne("InfertilityApp.Models.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId");
+
+                    b.HasOne("InfertilityApp.Models.Treatment", "Treatment")
+                        .WithMany()
+                        .HasForeignKey("TreatmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Treatment");
                 });
 
             modelBuilder.Entity("InfertilityApp.Models.TreatmentStage", b =>

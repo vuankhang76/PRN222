@@ -6,29 +6,56 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InfertilityApp.Models;
+using InfertilityApp.BusinessLogicLayer.Interfaces;
 
 namespace InfertilityApp.Controllers
 {
     public class TreatmentStagesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ITreatmentStageService _treatmentStageService;
+        private readonly ITreatmentService _treatmentService;
 
-        public TreatmentStagesController(ApplicationDbContext context)
+        public TreatmentStagesController(ITreatmentStageService treatmentStageService, ITreatmentService treatmentService)
         {
-            _context = context;
+            _treatmentStageService = treatmentStageService;
+            _treatmentService = treatmentService;
         }
 
         // GET: TreatmentStages
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? treatmentId, string searchString, string status)
         {
-            var treatmentStages = await _context.TreatmentStages
-                .Include(ts => ts.Treatment)
-                .ThenInclude(t => t.Patient)
-                .OrderBy(ts => ts.Treatment.PatientId)
-                .ThenBy(ts => ts.Treatment.Id)
-                .ThenBy(ts => ts.StageOrder)
-                .ToListAsync();
-            return View(treatmentStages);
+            var treatmentStages = await _treatmentStageService.GetAllTreatmentStagesAsync();
+
+            // Lọc theo điều trị
+            if (treatmentId.HasValue)
+            {
+                treatmentStages = await _treatmentStageService.GetTreatmentStagesByTreatmentAsync(treatmentId.Value);
+            }
+
+            // Tìm kiếm theo tên giai đoạn
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                treatmentStages = treatmentStages.Where(ts =>
+                    ts.StageName.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                    (ts.Description != null && ts.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            // Lọc theo trạng thái
+            if (!string.IsNullOrEmpty(status))
+            {
+                treatmentStages = await _treatmentStageService.GetTreatmentStagesByStatusAsync(status);
+            }
+
+            var treatments = await _treatmentService.GetAllTreatmentsAsync();
+
+            ViewData["TreatmentId"] = new SelectList(treatments, "Id", "TreatmentName", treatmentId);
+            ViewData["SearchString"] = searchString;
+            ViewData["Status"] = status;
+            ViewData["Statuses"] = new SelectList(
+                new[] { "Not Started", "In Progress", "Completed", "On Hold" },
+                status);
+
+            return View(treatmentStages.OrderBy(ts => ts.StageOrder));
         }
 
         // GET: TreatmentStages/Details/5
@@ -39,12 +66,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var treatmentStage = await _context.TreatmentStages
-                .Include(ts => ts.Treatment)
-                .ThenInclude(t => t.Patient)
-                .Include(ts => ts.Procedures)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var treatmentStage = await _treatmentStageService.GetTreatmentStageByIdAsync(id.Value);
             if (treatmentStage == null)
             {
                 return NotFound();
@@ -54,32 +76,42 @@ namespace InfertilityApp.Controllers
         }
 
         // GET: TreatmentStages/Create
-        public IActionResult Create(int? treatmentId)
+        public async Task<IActionResult> Create(int? treatmentId)
         {
-            if (treatmentId.HasValue)
+            var treatments = await _treatmentService.GetAllTreatmentsAsync();
+
+            ViewData["TreatmentId"] = new SelectList(treatments, "Id", "TreatmentName", treatmentId);
+
+            var treatmentStage = new TreatmentStage
             {
-                ViewData["TreatmentId"] = new SelectList(_context.Treatments.Where(t => t.Id == treatmentId), "Id", "TreatmentName");
-                ViewData["FixedTreatmentId"] = treatmentId;
-            }
-            else
-            {
-                ViewData["TreatmentId"] = new SelectList(_context.Treatments, "Id", "TreatmentName");
-            }
-            return View();
+                StartDate = DateTime.Today,
+                Status = "Not Started",
+                TreatmentId = treatmentId ?? 0
+            };
+
+            return View(treatmentStage);
         }
 
         // POST: TreatmentStages/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,TreatmentId,StageName,StageOrder,StartDate,EndDate,Status,Description,Notes,Results")] TreatmentStage treatmentStage)
+        public async Task<IActionResult> Create([Bind("Id,TreatmentId,StageName,Description,StageOrder,StartDate,EndDate,Status,Notes")] TreatmentStage treatmentStage)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(treatmentStage);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Details", "Treatments", new { id = treatmentStage.TreatmentId });
+                try
+                {
+                    await _treatmentStageService.CreateTreatmentStageAsync(treatmentStage);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
-            ViewData["TreatmentId"] = new SelectList(_context.Treatments, "Id", "TreatmentName", treatmentStage.TreatmentId);
+
+            var treatments = await _treatmentService.GetAllTreatmentsAsync();
+            ViewData["TreatmentId"] = new SelectList(treatments, "Id", "TreatmentName", treatmentStage.TreatmentId);
             return View(treatmentStage);
         }
 
@@ -91,19 +123,21 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var treatmentStage = await _context.TreatmentStages.FindAsync(id);
+            var treatmentStage = await _treatmentStageService.GetTreatmentStageByIdAsync(id.Value);
             if (treatmentStage == null)
             {
                 return NotFound();
             }
-            ViewData["TreatmentId"] = new SelectList(_context.Treatments, "Id", "TreatmentName", treatmentStage.TreatmentId);
+
+            var treatments = await _treatmentService.GetAllTreatmentsAsync();
+            ViewData["TreatmentId"] = new SelectList(treatments, "Id", "TreatmentName", treatmentStage.TreatmentId);
             return View(treatmentStage);
         }
 
         // POST: TreatmentStages/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,TreatmentId,StageName,StageOrder,StartDate,EndDate,Status,Description,Notes,Results")] TreatmentStage treatmentStage)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,TreatmentId,StageName,Description,StageOrder,StartDate,EndDate,Status,Notes")] TreatmentStage treatmentStage)
         {
             if (id != treatmentStage.Id)
             {
@@ -114,23 +148,17 @@ namespace InfertilityApp.Controllers
             {
                 try
                 {
-                    _context.Update(treatmentStage);
-                    await _context.SaveChangesAsync();
+                    await _treatmentStageService.UpdateTreatmentStageAsync(treatmentStage);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!TreatmentStageExists(treatmentStage.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("", ex.Message);
                 }
-                return RedirectToAction("Details", "Treatments", new { id = treatmentStage.TreatmentId });
             }
-            ViewData["TreatmentId"] = new SelectList(_context.Treatments, "Id", "TreatmentName", treatmentStage.TreatmentId);
+
+            var treatments = await _treatmentService.GetAllTreatmentsAsync();
+            ViewData["TreatmentId"] = new SelectList(treatments, "Id", "TreatmentName", treatmentStage.TreatmentId);
             return View(treatmentStage);
         }
 
@@ -142,9 +170,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var treatmentStage = await _context.TreatmentStages
-                .Include(ts => ts.Treatment)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var treatmentStage = await _treatmentStageService.GetTreatmentStageByIdAsync(id.Value);
             if (treatmentStage == null)
             {
                 return NotFound();
@@ -158,49 +184,97 @@ namespace InfertilityApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var treatmentStage = await _context.TreatmentStages.FindAsync(id);
-            if (treatmentStage == null)
+            try
             {
-                return NotFound();
+                await _treatmentStageService.DeleteTreatmentStageAsync(id);
+                return RedirectToAction(nameof(Index));
             }
-            
-            var treatmentId = treatmentStage.TreatmentId;
-            _context.TreatmentStages.Remove(treatmentStage);
-            await _context.SaveChangesAsync();
-            
-            return RedirectToAction("Details", "Treatments", new { id = treatmentId });
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                var treatmentStage = await _treatmentStageService.GetTreatmentStageByIdAsync(id);
+                return View(treatmentStage);
+            }
         }
 
-        // GET: TreatmentStages/TreatmentStages/5
-        public async Task<IActionResult> TreatmentStages(int? id)
+        // Action methods cho quản lý giai đoạn điều trị
+        [HttpPost]
+        public async Task<IActionResult> StartStage(int id)
+        {
+            try
+            {
+                await _treatmentStageService.StartTreatmentStageAsync(id);
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Details), new { id });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CompleteStage(int id, string results = "Hoàn thành")
+        {
+            try
+            {
+                await _treatmentStageService.CompleteTreatmentStageAsync(id, results);
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Details), new { id });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MoveToNextStage(int treatmentId)
+        {
+            try
+            {
+                await _treatmentStageService.MoveToNextStageAsync(treatmentId);
+                return RedirectToAction(nameof(Index), new { treatmentId });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Index), new { treatmentId });
+            }
+        }
+
+        // GET: TreatmentStages/ByTreatment/5
+        public async Task<IActionResult> ByTreatment(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var treatment = await _context.Treatments
-                .Include(t => t.Patient)
-                .Include(t => t.Doctor)
-                .Include(t => t.TreatmentStages)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var treatment = await _treatmentService.GetTreatmentByIdAsync(id.Value);
             if (treatment == null)
             {
                 return NotFound();
             }
 
-            ViewData["TreatmentName"] = treatment.TreatmentName;
-            ViewData["TreatmentId"] = treatment.Id;
-            ViewData["PatientName"] = treatment.Patient.FullName;
-            ViewData["PatientId"] = treatment.PatientId;
+            var treatmentStages = await _treatmentStageService.GetTreatmentStagesByTreatmentAsync(id.Value);
+            ViewBag.Treatment = treatment;
 
-            return View(treatment.TreatmentStages.OrderBy(ts => ts.StageOrder).ToList());
+            return View(treatmentStages.OrderBy(ts => ts.StageOrder));
         }
 
-        private bool TreatmentStageExists(int id)
+        // GET: TreatmentStages/Statistics
+        public async Task<IActionResult> Statistics()
         {
-            return _context.TreatmentStages.Any(e => e.Id == id);
+            var totalStages = await _treatmentStageService.GetTotalTreatmentStagesCountAsync();
+            var stagesByStatus = await _treatmentStageService.GetTreatmentStagesByStatusStatisticsAsync();
+            var averageDuration = await _treatmentStageService.GetAverageStageDurationAsync();
+
+            ViewBag.TotalStages = totalStages;
+            ViewBag.StagesByStatus = stagesByStatus;
+            ViewBag.AverageDuration = averageDuration;
+
+            return View();
         }
     }
 } 

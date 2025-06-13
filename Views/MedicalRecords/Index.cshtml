@@ -49,9 +49,12 @@
                             <label for="recordType">Loại hồ sơ:</label>
                             <select id="recordType" name="recordType" class="form-control">
                                 <option value="">-- Tất cả --</option>
-                                @foreach (var type in (List<string>)ViewData["RecordTypes"])
+                                @if (ViewData["RecordTypes"] != null)
                                 {
-                                    <option value="@type" selected="@(type == (string)ViewData["CurrentRecordType"])">@type</option>
+                                    @foreach (var type in (List<string>)ViewData["RecordTypes"])
+                                    {
+                                        <option value="@type" selected="@(type == (string)ViewData["CurrentRecordType"])">@type</option>
+                                    }
                                 }
                             </select>
                         </div>

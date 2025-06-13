@@ -6,22 +6,43 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InfertilityApp.Models;
+using InfertilityApp.BusinessLogicLayer.Interfaces;
 
 namespace InfertilityApp.Controllers
 {
     public class DoctorsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDoctorService _doctorService;
 
-        public DoctorsController(ApplicationDbContext context)
+        public DoctorsController(IDoctorService doctorService)
         {
-            _context = context;
+            _doctorService = doctorService;
         }
 
         // GET: Doctors
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string specialization)
         {
-            return View(await _context.Doctors.ToListAsync());
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                doctors = doctors.Where(d =>
+                    d.FullName.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                    d.Specialization.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                    d.LicenseNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrEmpty(specialization))
+            {
+                doctors = await _doctorService.GetDoctorsBySpecializationAsync(specialization);
+            }
+
+            ViewData["SearchString"] = searchString;
+            ViewData["Specializations"] = new SelectList(
+                new[] { "Reproductive Endocrinology", "Obstetrics and Gynecology", "Urology", "Andrology" },
+                specialization);
+
+            return View(doctors);
         }
 
         // GET: Doctors/Details/5
@@ -32,10 +53,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var doctor = await _context.Doctors
-                .Include(d => d.Appointments)
-                .Include(d => d.Treatments)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var doctor = await _doctorService.GetDoctorByIdAsync(id.Value);
             if (doctor == null)
             {
                 return NotFound();
@@ -53,13 +71,19 @@ namespace InfertilityApp.Controllers
         // POST: Doctors/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FullName,Specialization,PhoneNumber,Email,LicenseNumber")] Doctor doctor)
+        public async Task<IActionResult> Create([Bind("Id,FullName,DateOfBirth,Gender,Email,PhoneNumber,Address,Specialization,LicenseNumber,YearsOfExperience")] Doctor doctor)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(doctor);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    await _doctorService.CreateDoctorAsync(doctor);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
             return View(doctor);
         }
@@ -72,7 +96,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var doctor = await _context.Doctors.FindAsync(id);
+            var doctor = await _doctorService.GetDoctorByIdAsync(id.Value);
             if (doctor == null)
             {
                 return NotFound();
@@ -83,7 +107,7 @@ namespace InfertilityApp.Controllers
         // POST: Doctors/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Specialization,PhoneNumber,Email,LicenseNumber")] Doctor doctor)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,DateOfBirth,Gender,Email,PhoneNumber,Address,Specialization,LicenseNumber,YearsOfExperience")] Doctor doctor)
         {
             if (id != doctor.Id)
             {
@@ -94,21 +118,13 @@ namespace InfertilityApp.Controllers
             {
                 try
                 {
-                    _context.Update(doctor);
-                    await _context.SaveChangesAsync();
+                    await _doctorService.UpdateDoctorAsync(doctor);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!DoctorExists(doctor.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("", ex.Message);
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View(doctor);
         }
@@ -121,8 +137,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var doctor = await _context.Doctors
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var doctor = await _doctorService.GetDoctorByIdAsync(id.Value);
             if (doctor == null)
             {
                 return NotFound();
@@ -136,122 +151,44 @@ namespace InfertilityApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var doctor = await _context.Doctors.FindAsync(id);
-            if (doctor != null)
+            try
             {
-                _context.Doctors.Remove(doctor);
-                await _context.SaveChangesAsync();
+                await _doctorService.DeleteDoctorAsync(id);
+                return RedirectToAction(nameof(Index));
             }
-            
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                var doctor = await _doctorService.GetDoctorByIdAsync(id);
+                return View(doctor);
+            }
         }
 
-        // GET: Doctors/Schedule/5
-        public async Task<IActionResult> Schedule(int? id, DateTime? date)
+        // GET: Doctors/Statistics
+        public async Task<IActionResult> Statistics()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var totalDoctors = await _doctorService.GetTotalDoctorsCountAsync();
+            var doctorsBySpecialization = await _doctorService.GetDoctorsBySpecializationStatisticsAsync();
+            var availableDoctors = (await _doctorService.GetAvailableDoctorsAsync()).Count();
 
-            var doctor = await _context.Doctors.FindAsync(id);
-            if (doctor == null)
-            {
-                return NotFound();
-            }
+            ViewBag.TotalDoctors = totalDoctors;
+            ViewBag.DoctorsBySpecialization = doctorsBySpecialization;
+            ViewBag.AvailableDoctors = availableDoctors;
 
-            // Nếu không có ngày được chọn, sử dụng ngày hiện tại
-            DateTime selectedDate = date ?? DateTime.Today;
-            
-            // Lấy lịch làm việc của bác sĩ trong ngày đã chọn
-            var appointments = await _context.Appointments
-                .Include(a => a.Patient)
-                .Where(a => a.DoctorId == id && a.AppointmentDate.Date == selectedDate.Date)
-                .OrderBy(a => a.AppointmentTime)
-                .ToListAsync();
-
-            ViewData["Doctor"] = doctor;
-            ViewData["SelectedDate"] = selectedDate;
-            
-            return View(appointments);
-        }
-
-        // GET: Doctors/PatientStatistics/5
-        public async Task<IActionResult> PatientStatistics(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var doctor = await _context.Doctors.FindAsync(id);
-            if (doctor == null)
-            {
-                return NotFound();
-            }
-
-            // Lấy số lượng bệnh nhân đang điều trị với bác sĩ
-            var activePatients = await _context.Treatments
-                .Where(t => t.DoctorId == id && t.Status == "Active")
-                .Select(t => t.PatientId)
-                .Distinct()
-                .CountAsync();
-
-            // Lấy số lượng cuộc hẹn trong tuần này
-            var startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek);
-            var endOfWeek = startOfWeek.AddDays(6);
-            var appointmentsThisWeek = await _context.Appointments
-                .Where(a => a.DoctorId == id && a.AppointmentDate >= startOfWeek && a.AppointmentDate <= endOfWeek)
-                .CountAsync();
-
-            // Lấy số lượng điều trị thành công
-            var successfulTreatments = await _context.Treatments
-                .Where(t => t.DoctorId == id && t.Status == "Completed" && t.Outcome == "Successful")
-                .CountAsync();
-
-            ViewData["Doctor"] = doctor;
-            ViewData["ActivePatients"] = activePatients;
-            ViewData["AppointmentsThisWeek"] = appointmentsThisWeek;
-            ViewData["SuccessfulTreatments"] = successfulTreatments;
-
-            // Lấy danh sách bệnh nhân đang điều trị với bác sĩ
-            var patients = await _context.Treatments
-                .Where(t => t.DoctorId == id && t.Status == "Active")
-                .Include(t => t.Patient)
-                .Select(t => t.Patient)
-                .Distinct()
-                .ToListAsync();
-
-            return View(patients);
-        }
-
-        // GET: Doctors/WorkSchedule
-        public async Task<IActionResult> WorkSchedule()
-        {
-            // Lấy danh sách tất cả bác sĩ
-            var doctors = await _context.Doctors.ToListAsync();
-            
-            // Lấy ngày hiện tại và 6 ngày tiếp theo
-            var today = DateTime.Today;
-            var dates = Enumerable.Range(0, 7).Select(i => today.AddDays(i)).ToList();
-            
-            // Lấy tất cả các cuộc hẹn trong 7 ngày tới
-            var appointments = await _context.Appointments
-                .Include(a => a.Doctor)
-                .Include(a => a.Patient)
-                .Where(a => a.AppointmentDate >= today && a.AppointmentDate <= today.AddDays(6))
-                .ToListAsync();
-                
-            ViewData["Doctors"] = doctors;
-            ViewData["Dates"] = dates;
-            ViewData["Appointments"] = appointments;
-            
             return View();
         }
 
-        private bool DoctorExists(int id)
+        // Action cho tính năng chart thống kê
+        public async Task<IActionResult> GetDoctorStatistics()
         {
-            return _context.Doctors.Any(e => e.Id == id);
+            var statistics = new
+            {
+                specializationStats = await _doctorService.GetDoctorsBySpecializationStatisticsAsync(),
+                totalCount = await _doctorService.GetTotalDoctorsCountAsync(),
+                availableCount = (await _doctorService.GetAvailableDoctorsAsync()).Count()
+            };
+
+            return Json(statistics);
         }
     }
 } 

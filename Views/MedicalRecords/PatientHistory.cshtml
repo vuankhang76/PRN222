@@ -2,8 +2,8 @@
 
 @{
     ViewData["Title"] = "Lịch sử hồ sơ y tế";
-    string patientName = ViewData["PatientName"] as string;
-    int patientId = (int)ViewData["PatientId"];
+    string? patientName = ViewData["PatientName"] as string ?? "Không xác định";
+    int patientId = ViewData["PatientId"] as int? ?? 0;
 }
 
 <div class="container-fluid">
@@ -33,31 +33,40 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model)
+                        @if (Model != null)
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.RecordDate.ToString("dd/MM/yyyy")</td>
+                                    <td>@item.RecordType</td>
+                                    <td>@item.RecordTitle</td>
+                                    <td>@(item.Doctor?.FullName ?? "Không có")</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.AttachmentPath))
+                                        {
+                                            <a asp-action="DownloadAttachment" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-download"></i> Tải xuống
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span>Không có</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Chi tiết</a>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td>@item.RecordDate.ToString("dd/MM/yyyy")</td>
-                                <td>@item.RecordType</td>
-                                <td>@item.RecordTitle</td>
-                                <td>@(item.Doctor?.FullName ?? "Không có")</td>
-                                <td>
-                                    @if (!string.IsNullOrEmpty(item.AttachmentPath))
-                                    {
-                                        <a asp-action="DownloadAttachment" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
-                                            <i class="fas fa-download"></i> Tải xuống
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <span>Không có</span>
-                                    }
-                                </td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Chi tiết</a>
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
-                                    </div>
-                                </td>
+                                <td colspan="6" class="text-center">Chưa có hồ sơ y tế nào</td>
                             </tr>
                         }
                     </tbody>

@@ -6,27 +6,47 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InfertilityApp.Models;
-using System.Security.Cryptography;
-using System.Text;
+using InfertilityApp.BusinessLogicLayer.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace InfertilityApp.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUserService _userService;
 
-        public UsersController(ApplicationDbContext context)
+        public UsersController(IUserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
         // GET: Users
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string role)
         {
-            var users = await _context.Users
-                .Include(u => u.Doctor)
-                .ToListAsync();
-            return View(users);
+            var users = await _userService.GetAllUsersAsync();
+
+            // Tìm kiếm theo tên hoặc email
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                users = users.Where(u =>
+                    u.FullName.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                    u.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                    u.Username.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Lọc theo role
+            if (!string.IsNullOrEmpty(role))
+            {
+                users = await _userService.GetUsersByRoleAsync(role);
+            }
+
+            ViewData["SearchString"] = searchString;
+            ViewData["Role"] = role;
+            ViewData["Roles"] = new SelectList(
+                new[] { "Admin", "Doctor", "Nurse", "Receptionist" },
+                role);
+
+            return View(users.OrderBy(u => u.FullName));
         }
 
         // GET: Users/Details/5
@@ -37,10 +57,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
-                .Include(u => u.Doctor)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var user = await _userService.GetUserByIdAsync(id.Value);
             if (user == null)
             {
                 return NotFound();
@@ -52,70 +69,33 @@ namespace InfertilityApp.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
-            var doctorsWithoutUsers = _context.Doctors
-                .Where(d => !_context.Users.Where(u => u.DoctorId.HasValue).Select(u => u.DoctorId).Contains(d.Id))
-                .ToList();
-            ViewData["DoctorId"] = new SelectList(doctorsWithoutUsers, "Id", "FullName");
+            ViewData["Roles"] = new SelectList(
+                new[] { "Admin", "Doctor", "Nurse", "Receptionist" });
+
             return View();
         }
 
         // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(User user, string Password)
+        public async Task<IActionResult> Create([Bind("Id,Username,PasswordHash,FullName,Email,PhoneNumber,Role,IsActive")] User user)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // Xử lý IsActive từ form
-                user.IsActive = true; // Mặc định là true
-
-                // Kiểm tra và gán mật khẩu
-                if (string.IsNullOrEmpty(Password))
+                try
                 {
-                    ModelState.AddModelError("Password", "Mật khẩu là bắt buộc");
-                    var doctorsWithoutUsers = _context.Doctors
-                        .Where(d => !_context.Users.Where(u => u.DoctorId.HasValue).Select(u => u.DoctorId).Contains(d.Id))
-                        .ToList();
-                    ViewData["DoctorId"] = new SelectList(doctorsWithoutUsers, "Id", "FullName", user.DoctorId);
-                    return View(user);
+                    await _userService.CreateUserAsync(user);
+                    return RedirectToAction(nameof(Index));
                 }
-
-                // Gán mật khẩu vào PasswordHash
-                user.PasswordHash = Password;
-
-                // Kiểm tra username đã tồn tại chưa
-                if (_context.Users.Any(u => u.Username == user.Username))
+                catch (Exception ex)
                 {
-                    ModelState.AddModelError("Username", "Tên đăng nhập đã tồn tại");
-                    var doctorsWithoutUsers = _context.Doctors
-                        .Where(d => !_context.Users.Where(u => u.DoctorId.HasValue).Select(u => u.DoctorId).Contains(d.Id))
-                        .ToList();
-                    ViewData["DoctorId"] = new SelectList(doctorsWithoutUsers, "Id", "FullName", user.DoctorId);
-                    return View(user);
+                    ModelState.AddModelError("", ex.Message);
                 }
+            }
 
-                // Thiết lập các giá trị mặc định
-                user.CreatedAt = DateTime.Now;
-                
-                // Thêm người dùng vào database
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                
-                // Chuyển hướng đến trang danh sách
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                // Xử lý ngoại lệ
-                ModelState.AddModelError("", "Có lỗi xảy ra khi tạo người dùng: " + ex.Message);
-                
-                // Nếu có lỗi, hiển thị lại form với thông báo lỗi
-                var doctorsWithoutUsers = _context.Doctors
-                    .Where(d => !_context.Users.Where(u => u.DoctorId.HasValue).Select(u => u.DoctorId).Contains(d.Id))
-                    .ToList();
-                ViewData["DoctorId"] = new SelectList(doctorsWithoutUsers, "Id", "FullName", user.DoctorId);
-                return View(user);
-            }
+            ViewData["Roles"] = new SelectList(
+                new[] { "Admin", "Doctor", "Nurse", "Receptionist" });
+            return View(user);
         }
 
         // GET: Users/Edit/5
@@ -126,75 +106,45 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userService.GetUserByIdAsync(id.Value);
             if (user == null)
             {
                 return NotFound();
             }
-            
-            var doctorsWithoutUsers = _context.Doctors
-                .Where(d => !_context.Users.Where(u => u.DoctorId.HasValue && u.Id != id).Select(u => u.DoctorId).Contains(d.Id))
-                .ToList();
-            ViewData["DoctorId"] = new SelectList(doctorsWithoutUsers, "Id", "FullName", user.DoctorId);
+
+            ViewData["Roles"] = new SelectList(
+                new[] { "Admin", "Doctor", "Nurse", "Receptionist" },
+                user.Role);
+
             return View(user);
         }
 
         // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,FullName,Email,PhoneNumber,Role,IsActive,DoctorId")] User user, string Password)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,PasswordHash,FullName,Email,PhoneNumber,Role,IsActive")] User user)
         {
             if (id != user.Id)
             {
                 return NotFound();
             }
 
-            // Lấy thông tin người dùng hiện tại từ database
-            var existingUser = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
-            if (existingUser == null)
-            {
-                return NotFound();
-            }
-
-            // Giữ nguyên các giá trị không được chỉnh sửa
-            user.CreatedAt = existingUser.CreatedAt;
-            user.LastLogin = existingUser.LastLogin;
-            
-            // Xử lý mật khẩu
-            if (!string.IsNullOrEmpty(Password))
-            {
-                user.PasswordHash = Password;
-            }
-            else
-            {
-                user.PasswordHash = existingUser.PasswordHash;
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
+                    await _userService.UpdateUserAsync(user);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!UserExists(user.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("", ex.Message);
                 }
-                return RedirectToAction(nameof(Index));
             }
-            
-            var doctorsWithoutUsers = _context.Doctors
-                .Where(d => !_context.Users.Where(u => u.DoctorId.HasValue && u.Id != id).Select(u => u.DoctorId).Contains(d.Id))
-                .ToList();
-            ViewData["DoctorId"] = new SelectList(doctorsWithoutUsers, "Id", "FullName", user.DoctorId);
+
+            ViewData["Roles"] = new SelectList(
+                new[] { "Admin", "Doctor", "Nurse", "Receptionist" },
+                user.Role);
             return View(user);
         }
 
@@ -206,9 +156,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
-                .Include(u => u.Doctor)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var user = await _userService.GetUserByIdAsync(id.Value);
             if (user == null)
             {
                 return NotFound();
@@ -222,14 +170,17 @@ namespace InfertilityApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user != null)
+            try
             {
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
+                await _userService.DeleteUserAsync(id);
+                return RedirectToAction(nameof(Index));
             }
-            
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                var user = await _userService.GetUserByIdAsync(id);
+                return View(user);
+            }
         }
 
         // GET: Users/Login
@@ -245,37 +196,33 @@ namespace InfertilityApp.Controllers
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                ViewData["Error"] = "Username and password are required";
+                ViewData["Error"] = "Vui lòng nhập tên đăng nhập và mật khẩu";
                 return View();
             }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == username);
-
-            if (user == null || !VerifyPassword(password, user.PasswordHash))
+            try
             {
-                ViewData["Error"] = "Invalid username or password";
-                return View();
-            }
+                var user = await _userService.AuthenticateUserAsync(username, password);
+                if (user != null && user.IsActive)
+                {
+                    // Lưu thông tin user vào session
+                    HttpContext.Session.SetString("UserId", user.Id.ToString());
+                    HttpContext.Session.SetString("UserFullName", user.FullName);
+                    HttpContext.Session.SetString("UserRole", user.Role);
 
-            if (!user.IsActive)
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ViewData["Error"] = "Tên đăng nhập hoặc mật khẩu không đúng";
+                    return View();
+                }
+            }
+            catch (Exception ex)
             {
-                ViewData["Error"] = "Your account is inactive. Please contact administrator";
+                ViewData["Error"] = "Đã xảy ra lỗi: " + ex.Message;
                 return View();
             }
-
-            // Update last login time
-            user.LastLogin = DateTime.Now;
-            _context.Update(user);
-            await _context.SaveChangesAsync();
-
-            // Store user info in session
-            HttpContext.Session.SetInt32("UserId", user.Id);
-            HttpContext.Session.SetString("UserName", user.Username);
-            HttpContext.Session.SetString("UserFullName", user.FullName);
-            HttpContext.Session.SetString("UserRole", user.Role);
-
-            return RedirectToAction("Index", "Home");
         }
 
         // GET: Users/Logout
@@ -285,45 +232,109 @@ namespace InfertilityApp.Controllers
             return RedirectToAction("Login");
         }
 
-        // GET: Users/ToggleActive/5
-        public async Task<IActionResult> ToggleActive(int? id)
+        // GET: Users/ChangePassword/5
+        public async Task<IActionResult> ChangePassword(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userService.GetUserByIdAsync(id.Value);
             if (user == null)
             {
                 return NotFound();
             }
 
-            // Toggle the IsActive status
-            user.IsActive = !user.IsActive;
-            _context.Update(user);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            ViewBag.User = user;
+            return View();
         }
 
-        private bool UserExists(int id)
+        // POST: Users/ChangePassword/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(int id, string currentPassword, string newPassword, string confirmPassword)
         {
-            return _context.Users.Any(e => e.Id == id);
+            if (newPassword != confirmPassword)
+            {
+                ModelState.AddModelError("", "Mật khẩu xác nhận không khớp.");
+                var user = await _userService.GetUserByIdAsync(id);
+                ViewBag.User = user;
+                return View();
+            }
+
+            try
+            {
+                await _userService.ChangePasswordAsync(id, currentPassword, newPassword);
+                TempData["Success"] = "Đổi mật khẩu thành công!";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                var user = await _userService.GetUserByIdAsync(id);
+                ViewBag.User = user;
+                return View();
+            }
         }
 
-        private string HashPassword(string password)
+        // POST: Users/UpdateRole
+        [HttpPost]
+        public async Task<IActionResult> UpdateRole(int userId, string newRole)
         {
-            return password;
+            try
+            {
+                await _userService.UpdateUserRoleAsync(userId, newRole);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, error = ex.Message });
+            }
         }
 
-        private bool VerifyPassword(string password, string hash)
+        // GET: Users/Statistics
+        public async Task<IActionResult> Statistics()
         {
-            // Kiểm tra trực tiếp mật khẩu văn bản thô
-            return password == hash;
-            
-            // Code cũ sử dụng băm
-            // return HashPassword(password) == hash;
+            var totalUsers = await _userService.GetTotalUsersCountAsync();
+            var usersByRole = await _userService.GetUsersByRoleStatisticsAsync();
+            var activeUsersStats = await _userService.GetActiveUsersStatisticsAsync();
+
+            ViewBag.TotalUsers = totalUsers;
+            ViewBag.UsersByRole = usersByRole;
+            ViewBag.ActiveUsersStats = activeUsersStats;
+
+            return View();
+        }
+
+        // GET: Users/ToggleActive/5
+        public async Task<IActionResult> ToggleActive(int id)
+        {
+            try
+            {
+                var user = await _userService.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    TempData["Error"] = "Không tìm thấy người dùng.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Toggle IsActive status
+                user.IsActive = !user.IsActive;
+                await _userService.UpdateUserAsync(user);
+
+                string statusMessage = user.IsActive ? "kích hoạt" : "vô hiệu hóa";
+                TempData["Success"] = $"Đã {statusMessage} người dùng {user.FullName} thành công!";
+
+                // Redirect back to Index
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // In case of error, redirect back with error message
+                TempData["Error"] = $"Có lỗi xảy ra: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 } 

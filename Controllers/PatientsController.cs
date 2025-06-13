@@ -6,22 +6,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InfertilityApp.Models;
+using InfertilityApp.BusinessLogicLayer.Interfaces;
 
 namespace InfertilityApp.Controllers
 {
     public class PatientsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IPatientService _patientService;
 
-        public PatientsController(ApplicationDbContext context)
+        public PatientsController(IPatientService patientService)
         {
-            _context = context;
+            _patientService = patientService;
         }
 
         // GET: Patients
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Patients.ToListAsync());
+            var patients = await _patientService.GetAllPatientsAsync();
+            return View(patients);
         }
 
         // GET: Patients/Details/5
@@ -32,11 +34,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var patient = await _context.Patients
-                .Include(p => p.Partner)
-                .Include(p => p.Treatments)
-                .Include(p => p.MedicalRecords)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var patient = await _patientService.GetPatientWithDetailsAsync(id.Value);
 
             if (patient == null)
             {
@@ -59,10 +57,15 @@ namespace InfertilityApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                patient.RegistrationDate = DateTime.Now;
-                _context.Add(patient);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    await _patientService.CreatePatientAsync(patient);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ArgumentException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
             return View(patient);
         }
@@ -75,7 +78,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var patient = await _context.Patients.FindAsync(id);
+            var patient = await _patientService.GetPatientByIdAsync(id.Value);
             if (patient == null)
             {
                 return NotFound();
@@ -97,12 +100,16 @@ namespace InfertilityApp.Controllers
             {
                 try
                 {
-                    _context.Update(patient);
-                    await _context.SaveChangesAsync();
+                    await _patientService.UpdatePatientAsync(patient);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (ArgumentException ex)
                 {
-                    if (!PatientExists(patient.Id))
+                    ModelState.AddModelError("", ex.Message);
+                }
+                catch (Exception)
+                {
+                    if (!await PatientExistsAsync(patient.Id))
                     {
                         return NotFound();
                     }
@@ -111,7 +118,6 @@ namespace InfertilityApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View(patient);
         }
@@ -124,8 +130,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var patient = await _context.Patients
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var patient = await _patientService.GetPatientByIdAsync(id.Value);
             if (patient == null)
             {
                 return NotFound();
@@ -139,19 +144,22 @@ namespace InfertilityApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var patient = await _context.Patients.FindAsync(id);
-            if (patient != null)
+            try
             {
-                _context.Patients.Remove(patient);
-                await _context.SaveChangesAsync();
+                await _patientService.DeletePatientAsync(id);
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["Error"] = ex.Message;
             }
             
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PatientExists(int id)
+        private async Task<bool> PatientExistsAsync(int id)
         {
-            return _context.Patients.Any(e => e.Id == id);
+            var patient = await _patientService.GetPatientByIdAsync(id);
+            return patient != null;
         }
     }
 } 
