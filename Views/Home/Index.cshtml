@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Trang chủ";
+    ViewData["Title"] = "Trang chủ - Quản lý Điều trị";
 }
 
 <div class="bg-white">
@@ -10,42 +10,23 @@
                 <main class="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
                     <div class="text-center">
                         <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-                            <span class="block">Hệ thống Hỗ trợ</span>
-                            <span class="block text-blue-600">Chẩn đoán Hiếm muộn</span>
+                            <span class="block">Hệ thống Quản lý & Theo dõi</span>
+                            <span class="block text-blue-600">Điều trị Hiếm muộn</span>
                         </h1>
                         <p class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl">
-                            Đánh giá nguy cơ hiếm muộn thông qua bộ câu hỏi chuyên khoa, 
-                            giúp bạn hiểu rõ hơn về tình trạng sức khỏe sinh sản của mình.
+                            Theo dõi và quản lý quá trình điều trị hiếm muộn của bạn một cách hiệu quả, 
+                            với sự hỗ trợ từ các công cụ chuyên biệt và thông tin cập nhật.
                         </p>
                         <div class="mt-5 sm:mt-8 sm:flex sm:justify-center">
                             <div class="rounded-md shadow">
                                 <a href="@Url.Action("Start", "Diagnosis")" 
                                    class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10">
-                                    Bắt đầu Chẩn đoán
+                                    Bắt đầu Quản lý Hồ sơ
                                 </a>
                             </div>
                         </div>
                     </div>
                 </main>
-            </div>
-        </div>
-    </div>
-
-    <!-- Warning Section -->
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6">
-        <div class="rounded-lg bg-yellow-50 p-4">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm text-yellow-700">
-                        <strong class="font-medium">Lưu ý:</strong> Kết quả chỉ mang tính chất tham khảo. 
-                        Để có chẩn đoán chính xác, vui lòng tham khảo ý kiến bác sĩ chuyên khoa.
-                    </p>
-                </div>
             </div>
         </div>
     </div>
@@ -60,14 +41,14 @@
                         <div class="flex items-center">
                             <div class="w-12 h-12 bg-blue-100 rounded-md flex items-center justify-center">
                                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v10m0-12h-2" />
                                 </svg>
                             </div>
-                            <h3 class="ml-3 text-lg font-medium text-gray-900">Bộ câu hỏi chuyên khoa</h3>
+                            <h3 class="ml-3 text-lg font-medium text-gray-900">Quản lý Hồ sơ Điều trị</h3>
                         </div>
                         <div class="mt-4">
                             <p class="text-base text-gray-500">
-                                Được thiết kế dựa trên các yếu tố nguy cơ hiếm muộn được công nhận trong y khoa
+                                Lưu trữ và theo dõi toàn bộ lịch sử, kế hoạch điều trị và các xét nghiệm của bạn một cách an toàn.
                             </p>
                         </div>
                     </div>
@@ -82,11 +63,11 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                 </svg>
                             </div>
-                            <h3 class="ml-3 text-lg font-medium text-gray-900">Đánh giá nguy cơ</h3>
+                            <h3 class="ml-3 text-lg font-medium text-gray-900">Theo dõi Tiến độ</h3>
                         </div>
                         <div class="mt-4">
                             <p class="text-base text-gray-500">
-                                Phân tích và đưa ra mức độ nguy cơ hiếm muộn dựa trên các thông tin được cung cấp
+                                Cập nhật và giám sát tiến trình điều trị, các chỉ số sức khỏe quan trọng và lịch sử dùng thuốc.
                             </p>
                         </div>
                     </div>
@@ -98,14 +79,14 @@
                         <div class="flex items-center">
                             <div class="w-12 h-12 bg-purple-100 rounded-md flex items-center justify-center">
                                 <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                             </div>
-                            <h3 class="ml-3 text-lg font-medium text-gray-900">Khuyến nghị cá nhân</h3>
+                            <h3 class="ml-3 text-lg font-medium text-gray-900">Nhắc nhở & Lịch hẹn</h3>
                         </div>
                         <div class="mt-4">
                             <p class="text-base text-gray-500">
-                                Đưa ra lời khuyên và hướng dẫn phù hợp với tình trạng của từng cá nhân
+                                Nhận thông báo về lịch uống thuốc, tái khám và các cột mốc quan trọng trong quá trình điều trị.
                             </p>
                         </div>
                     </div>

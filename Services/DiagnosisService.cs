@@ -192,11 +192,11 @@ namespace InfertilityApp.Services
             
             return riskLevel switch
             {
-                RiskLevel.Low => $"Nguy cơ hiếm muộn ở mức thấp. Tuy nhiên, nếu sau 12 tháng (hoặc 6 tháng nếu trên 35 tuổi) vẫn chưa có thai, nên tham khảo ý kiến bác sĩ.",
-                RiskLevel.Medium => $"Có một số yếu tố nguy cơ hiếm muộn. Khuyến nghị tham khảo ý kiến bác sĩ chuyên khoa để được tư vấn và kiểm tra thêm.",
-                RiskLevel.High => $"Nguy cơ hiếm muộn ở mức cao. Nên đến cơ sở y tế chuyên khoa để được kiểm tra và điều trị kịp thời.",
-                RiskLevel.VeryHigh => $"Nguy cơ hiếm muộn rất cao. Cần đến cơ sở y tế chuyên khoa ngay để được chẩn đoán và điều trị chuyên sâu.",
-                _ => "Không thể đánh giá chính xác. Vui lòng tham khảo ý kiến bác sĩ."
+                RiskLevel.Low => $"Hồ sơ cho thấy các yếu tố nguy cơ ở mức thấp. Tiếp tục theo dõi và tuân thủ kế hoạch điều trị (nếu có).",
+                RiskLevel.Medium => $"Hồ sơ cho thấy một số yếu tố cần lưu ý trong quá trình điều trị. Nên thảo luận kỹ với bác sĩ về kế hoạch theo dõi và các điều chỉnh cần thiết.",
+                RiskLevel.High => $"Hồ sơ cho thấy các yếu tố nguy cơ ở mức cao. Cần tuân thủ chặt chẽ kế hoạch điều trị và theo dõi sát sao với bác sĩ chuyên khoa.",
+                RiskLevel.VeryHigh => $"Hồ sơ cho thấy các yếu tố nguy cơ ở mức rất cao. Việc theo dõi và quản lý điều trị cần được thực hiện hết sức cẩn trọng dưới sự giám sát y tế chặt chẽ.",
+                _ => "Không đủ thông tin để đưa ra đánh giá chi tiết. Vui lòng cập nhật đầy đủ hồ sơ và tham khảo ý kiến bác sĩ."
             };
         }
 
@@ -204,31 +204,34 @@ namespace InfertilityApp.Services
         {
             var commonRecommendations = new List<string>
             {
-                "Duy trì chế độ ăn uống lành mạnh, cân bằng dinh dưỡng",
-                "Tập thể dục đều đặn, tránh stress",
-                "Hạn chế rượu bia, không hút thuốc lá",
-                "Quan hệ tình dục đều đặn vào thời kỳ rụng trứng"
+                "Duy trì chế độ ăn uống lành mạnh, cân bằng dinh dưỡng theo hướng dẫn của bác sĩ.",
+                "Tập thể dục đều đặn với cường độ phù hợp, quản lý stress hiệu quả.",
+                "Tuân thủ lịch uống thuốc và các chỉ định điều trị khác.",
+                "Ghi chép lại các triệu chứng hoặc thay đổi bất thường để thảo luận với bác sĩ.",
+                "Tái khám đúng hẹn để bác sĩ theo dõi tiến trình điều trị."
             };
 
-            var specificRecommendations = riskLevel switch
-            {
-                RiskLevel.Medium or RiskLevel.High or RiskLevel.VeryHigh => new List<string>
-                {
-                    "Khám sức khỏe sinh sản định kỳ",
-                    "Xét nghiệm hormone sinh sản",
-                    "Siêu âm kiểm tra cơ quan sinh sản",
-                    "Tham khảo ý kiến bác sĩ chuyên khoa hiếm muộn"
-                },
-                _ => new List<string>()
-            };
+            var specificRecommendations = new List<string>();
 
-            if (gender == Gender.Female && riskLevel >= RiskLevel.Medium)
+            switch (riskLevel)
             {
-                specificRecommendations.Add("Theo dõi chu kỳ kinh nguyệt và thời kỳ rụng trứng");
+                case RiskLevel.Low:
+                    specificRecommendations.Add("Tiếp tục duy trì lối sống lành mạnh và theo dõi định kỳ.");
+                    break;
+                case RiskLevel.Medium:
+                    specificRecommendations.Add("Thảo luận với bác sĩ về các biện pháp hỗ trợ cụ thể cho tình trạng của bạn.");
+                    specificRecommendations.Add("Cân nhắc việc theo dõi một số chỉ số sức khỏe thường xuyên hơn.");
+                    break;
+                case RiskLevel.High:
+                case RiskLevel.VeryHigh:
+                    specificRecommendations.Add("Tuyệt đối tuân thủ phác đồ điều trị và hướng dẫn của bác sĩ.");
+                    specificRecommendations.Add("Không tự ý thay đổi hoặc ngưng thuốc mà không có chỉ định.");
+                    specificRecommendations.Add("Thông báo ngay cho bác sĩ nếu có bất kỳ dấu hiệu bất thường nghiêm trọng nào.");
+                    break;
             }
-
-            var allRecommendations = commonRecommendations.Concat(specificRecommendations);
-            return string.Join("\n• ", allRecommendations.Select((r, i) => $"{i + 1}. {r}"));
+            
+            commonRecommendations.AddRange(specificRecommendations);
+            return string.Join("\n- ", commonRecommendations.Prepend("- "));
         }
     }
 } 

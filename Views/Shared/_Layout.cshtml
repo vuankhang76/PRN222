@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Ứng dụng Chẩn đoán Hiếm muộn</title>
+    <title>@ViewData["Title"] - Quản lý Điều trị Hiếm muộn</title>
     <link rel="stylesheet" href="~/css/styles.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -17,14 +17,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                   d="M19.5 5.5h-15v13h15v-13zM9.5 9.5h5M9.5 13.5h5"/>
                         </svg>
-                        <span class="text-xl font-bold text-gray-900">Chẩn đoán Hiếm muộn</span>
+                        <span class="text-xl font-bold text-gray-900">Quản lý Điều trị Hiếm muộn</span>
                     </a>
                 </div>
                 <div class="flex items-center space-x-4">
                     <a class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors" 
                        asp-controller="Home" asp-action="Index">Trang chủ</a>
                     <a class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors" 
-                       asp-controller="Diagnosis" asp-action="Start">Chẩn đoán</a>
+                       asp-controller="Diagnosis" asp-action="Start">Hồ sơ Điều trị</a>
                     <a class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors" 
                        asp-controller="Home" asp-action="Privacy">Quyền riêng tư</a>
                 </div>
@@ -42,7 +42,7 @@
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="text-sm text-gray-500 mb-4 md:mb-0">
-                    &copy; @DateTime.Now.Year - Ứng dụng Chẩn đoán Hiếm muộn
+                    &copy; @DateTime.Now.Year - Ứng dụng Quản lý và Theo dõi Điều trị Hiếm muộn
                 </div>
                 <div class="flex space-x-6">
                     <a class="text-sm text-gray-500 hover:text-gray-900" asp-controller="Home" asp-action="Privacy">
