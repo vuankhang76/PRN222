@@ -128,9 +128,6 @@
                         {
                             <div class="user-profile-dropdown">
                                 <button class="btn btn-ghost user-profile-btn" data-bs-toggle="dropdown">
-                                    <div class="user-avatar">
-                                        <img src="https://via.placeholder.com/32" alt="Avatar" class="avatar-img">
-                                    </div>
                                     <div class="user-info">
                                         <span class="user-name">@Context.Session.GetString("UserFullName")</span>
                                         <small class="user-role">Quản trị viên</small>
@@ -138,23 +135,6 @@
                                     <i class="bi bi-chevron-down"></i>
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-end user-menu">
-                                    <div class="dropdown-header">
-                                        <div class="user-avatar-large">
-                                            <img src="https://via.placeholder.com/48" alt="Avatar">
-                                        </div>
-                                        <div>
-                                            <h6>@Context.Session.GetString("UserFullName")</h6>
-                                            <small class="text-muted">Quản trị viên</small>
-                                        </div>
-                                    </div>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-person"></i> Hồ sơ cá nhân
-                                    </a>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-gear"></i> Cài đặt
-                                    </a>
-                                    <div class="dropdown-divider"></div>
                                     <a class="dropdown-item text-danger" asp-controller="Users" asp-action="Logout">
                                         <i class="bi bi-box-arrow-right"></i> Đăng xuất
                                     </a>
