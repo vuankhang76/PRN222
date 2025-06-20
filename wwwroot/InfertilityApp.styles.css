@@ -27,42 +27,12 @@ body {
     }
 }
 
-/* Dropdown Fixes - MẠNH MẼ HƠN */
-.dropdown-menu {
-    z-index: 9999 !important;
-    border: none;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
-    padding: 8px 0;
-    min-width: 200px;
-    position: fixed !important;
-    transform: none !important;
-    background: white;
-    border: 1px solid rgba(0,0,0,0.1);
-}
+/* Using Bootstrap default dropdown styles */
 
-.dropdown-item {
-    padding: 10px 16px;
-    transition: all 0.3s ease;
-    border-radius: 8px;
-    margin: 2px 8px;
-    color: #333;
-    text-decoration: none;
-}
-
-.dropdown-item:hover {
-    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-    color: white !important;
-    transform: translateX(4px);
-}
-
+/* Icons spacing for dropdown items */
 .dropdown-item i {
     margin-right: 8px;
     width: 16px;
-}
-
-.dropdown-toggle::after {
-    margin-left: 8px;
 }
 
 /* Table Responsive Fix - FORCE VISIBLE */
