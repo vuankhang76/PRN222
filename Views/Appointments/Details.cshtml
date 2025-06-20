@@ -1,0 +1,236 @@
+@model InfertilityApp.Models.Appointment
+
+@{
+    ViewData["Title"] = "Chi tiết lịch hẹn";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Chi tiết lịch hẹn</h2>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+            <i class="bi bi-pencil"></i> Chỉnh sửa
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Quay lại danh sách
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Thông tin lịch hẹn</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="fw-bold">Bệnh nhân:</label>
+                        <p>
+                            <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.PatientId">
+                                @Model.Patient.FullName
+                            </a>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-bold">Bác sĩ:</label>
+                        <p>
+                            <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId">
+                                @Model.Doctor.FullName
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="fw-bold">Ngày hẹn:</label>
+                        <p>@Model.AppointmentDate.ToString("dd/MM/yyyy")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-bold">Giờ hẹn:</label>
+                        <p>@Model.AppointmentTime.ToString(@"hh\:mm")</p>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="fw-bold">Thời gian (phút):</label>
+                        <p>@Model.Duration</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-bold">Trạng thái:</label>
+                        <p>
+                            @switch (Model.Status)
+                            {
+                                case "Scheduled":
+                                    <span class="badge bg-primary">Đã lên lịch</span>
+                                    break;
+                                case "Completed":
+                                    <span class="badge bg-success">Hoàn thành</span>
+                                    break;
+                                case "Cancelled":
+                                    <span class="badge bg-danger">Đã hủy</span>
+                                    break;
+                                case "Rescheduled":
+                                    <span class="badge bg-warning">Đổi lịch</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-secondary">@Model.Status</span>
+                                    break;
+                            }
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="fw-bold">Loại cuộc hẹn:</label>
+                        <p>@Model.AppointmentType</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-bold">Điều trị:</label>
+                        <p>
+                            @if (Model.TreatmentId.HasValue)
+                            {
+                                <a asp-controller="Treatments" asp-action="Details" asp-route-id="@Model.TreatmentId">
+                                    @Model.Treatment.TreatmentName
+                                </a>
+                            }
+                            else
+                            {
+                                <span>Không liên kết với điều trị</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold">Ghi chú:</label>
+                    <p>@(string.IsNullOrEmpty(Model.Notes) ? "Không có" : Model.Notes)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Thông tin nhanh</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="avatar-placeholder me-3">
+                        <i class="bi bi-person-circle fs-1"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">@Model.Patient.FullName</h5>
+                        <p class="text-muted mb-0">Bệnh nhân</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-center mb-3">
+                    <div class="avatar-placeholder me-3">
+                        <i class="bi bi-hospital fs-1"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">@Model.Doctor.FullName</h5>
+                        <p class="text-muted mb-0">Bác sĩ</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-center">
+                    <div class="avatar-placeholder me-3">
+                        <i class="bi bi-calendar-date fs-1"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">@Model.AppointmentDate.ToString("dd/MM/yyyy")</h5>
+                        <p class="text-muted mb-0">@Model.AppointmentTime.ToString(@"hh\:mm")</p>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="d-grid gap-2">
+                    @if (Model.Status == "Scheduled")
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" asp-route-status="Completed" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Đánh dấu hoàn thành
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" asp-route-status="Cancelled" class="btn btn-danger">
+                            <i class="bi bi-x-circle"></i> Hủy lịch hẹn
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" asp-route-status="Rescheduled" class="btn btn-warning">
+                            <i class="bi bi-calendar-plus"></i> Đổi lịch hẹn
+                        </a>
+                    }
+                    else if (Model.Status == "Cancelled" || Model.Status == "Rescheduled")
+                    {
+                        <a asp-action="Create" asp-route-patientId="@Model.PatientId" asp-route-doctorId="@Model.DoctorId" class="btn btn-primary">
+                            <i class="bi bi-calendar-plus"></i> Tạo lịch hẹn mới
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        @if (Model.TreatmentId.HasValue)
+        {
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Điều trị liên quan</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="fw-bold">Tên điều trị:</label>
+                        <p>@Model.Treatment.TreatmentName</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="fw-bold">Loại điều trị:</label>
+                        <p>@Model.Treatment.TreatmentType</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="fw-bold">Trạng thái:</label>
+                        <p>
+                            @switch (Model.Treatment.Status)
+                            {
+                                case "In Progress":
+                                    <span class="badge bg-primary">Đang tiến hành</span>
+                                    break;
+                                case "Completed":
+                                    <span class="badge bg-success">Hoàn thành</span>
+                                    break;
+                                case "Cancelled":
+                                    <span class="badge bg-danger">Đã hủy</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-secondary">@Model.Treatment.Status</span>
+                                    break;
+                            }
+                        </p>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <a asp-controller="Treatments" asp-action="Details" asp-route-id="@Model.TreatmentId" class="btn btn-outline-primary">
+                            <i class="bi bi-clipboard2-pulse"></i> Xem chi tiết điều trị
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .avatar-placeholder {
+        width: 60px;
+        height: 60px;
+        background-color: #f8f9fa;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style> 

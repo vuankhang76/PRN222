@@ -1,0 +1,47 @@
+@model InfertilityApp.Models.MedicalRecord
+
+@{
+    ViewData["Title"] = "Xóa hồ sơ y tế";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Xóa hồ sơ y tế</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-danger text-white">
+            <h4>Bạn có chắc chắn muốn xóa hồ sơ y tế này?</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Tiêu đề:</dt>
+                <dd class="col-sm-9">@Model.RecordTitle</dd>
+                
+                <dt class="col-sm-3">Bệnh nhân:</dt>
+                <dd class="col-sm-9">@Model.Patient?.FullName</dd>
+                
+                <dt class="col-sm-3">Bác sĩ:</dt>
+                <dd class="col-sm-9">@(Model.Doctor?.FullName ?? "Không có")</dd>
+                
+                <dt class="col-sm-3">Ngày ghi nhận:</dt>
+                <dd class="col-sm-9">@Model.RecordDate.ToString("dd/MM/yyyy")</dd>
+                
+                <dt class="col-sm-3">Loại hồ sơ:</dt>
+                <dd class="col-sm-9">@Model.RecordType</dd>
+            </dl>
+            
+            <div class="alert alert-warning">
+                <strong>Cảnh báo:</strong> Việc xóa hồ sơ y tế này sẽ xóa vĩnh viễn dữ liệu và không thể khôi phục.
+                @if (!string.IsNullOrEmpty(Model.AttachmentPath))
+                {
+                    <span>Tệp đính kèm cũng sẽ bị xóa.</span>
+                }
+            </div>
+            
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <input type="submit" value="Xóa" class="btn btn-danger" />
+                <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+            </form>
+        </div>
+    </div>
+</div> 

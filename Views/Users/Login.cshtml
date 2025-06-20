@@ -1,0 +1,31 @@
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "_LoginLayout";
+}
+
+@if (ViewData["Error"] != null)
+{
+    <div class="alert alert-danger" style="font-size: 15px;" role="alert">
+        @ViewData["Error"]
+    </div>
+}
+
+<form method="post" asp-action="Login">
+    <div class="mb-3">
+        <div class="form-label">
+            <label for="username" class="text-muted">Tên đăng nhập</label>
+        </div>
+        <input type="text" class="form-control" id="username" name="username" placeholder="Tên đăng nhập" required>
+    </div>
+    
+    <div class="mb-3">
+        <div class="form-label">
+            <label for="password" class="text-muted">Mật khẩu</label>
+        </div>
+        <input type="password" class="form-control" id="password" name="password" placeholder="Mật khẩu" required>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">
+        Đăng nhập
+    </button>
+</form>

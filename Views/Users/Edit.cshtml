@@ -1,0 +1,96 @@
+@model InfertilityApp.Models.User
+
+@{
+    ViewData["Title"] = "Chỉnh sửa người dùng";
+}
+
+<h1>Chỉnh sửa người dùng</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <input type="hidden" name="PasswordHash" value="@Model.PasswordHash" />
+            
+            <div class="form-group">
+                <label for="Username">Tên đăng nhập</label>
+                <input id="Username" name="Username" class="form-control" value="@Model.Username" readonly />
+                <small class="form-text text-muted">Tên đăng nhập không thể thay đổi</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="FullName">Họ và tên</label>
+                <input id="FullName" name="FullName" class="form-control" value="@Model.FullName" />
+            </div>
+            
+            <div class="form-group">
+                <label for="Email">Email</label>
+                <input id="Email" name="Email" class="form-control" type="email" value="@Model.Email" />
+            </div>
+            
+            <div class="form-group">
+                <label for="Role">Vai trò</label>
+                <select id="Role" name="Role" class="form-control">
+                    @if (Model.Role == "Admin")
+                    {
+                        <option value="Admin" selected>Quản trị viên</option>
+                    }
+                    else
+                    {
+                        <option value="Admin">Quản trị viên</option>
+                    }
+                    
+                    @if (Model.Role == "Doctor")
+                    {
+                        <option value="Doctor" selected>Bác sĩ</option>
+                    }
+                    else
+                    {
+                        <option value="Doctor">Bác sĩ</option>
+                    }
+                    
+                    @if (Model.Role == "Staff")
+                    {
+                        <option value="Staff" selected>Nhân viên</option>
+                    }
+                    else
+                    {
+                        <option value="Staff">Nhân viên</option>
+                    }
+                </select>
+            </div>
+            
+            <div class="form-group" id="doctorIdGroup" style="display: none;">
+                <label for="DoctorId">Liên kết với bác sĩ</label>
+                <select id="DoctorId" name="DoctorId" class="form-control" asp-items="ViewBag.DoctorId">
+                    <option value="">-- Chọn bác sĩ --</option>
+                </select>
+            </div>
+            
+            <div class="form-group mt-3">
+                <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $("#Role").change(function() {
+                if ($(this).val() === "Doctor") {
+                    $("#doctorIdGroup").show();
+                } else {
+                    $("#doctorIdGroup").hide();
+                    $("#DoctorId").val("");
+                }
+            });
+            
+            if ($("#Role").val() === "Doctor") {
+                $("#doctorIdGroup").show();
+            }
+        });
+    </script>
+} 

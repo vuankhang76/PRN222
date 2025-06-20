@@ -1,0 +1,51 @@
+@model IEnumerable<InfertilityApp.Models.Doctor>
+
+@{
+    ViewData["Title"] = "Danh sách bác sĩ";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Danh sách bác sĩ</h1>
+    
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Thêm bác sĩ mới</a>
+    </p>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Họ và tên</th>
+                            <th>Chuyên môn</th>
+                            <th>Email</th>
+                            <th>Số điện thoại</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.FullName</td>
+                                <td>@item.Specialization</td>
+                                <td>@item.Email</td>
+                                <td>@item.PhoneNumber</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Chi tiết</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Xóa</a>
+                                        <a asp-action="Schedule" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Lịch làm việc</a>
+                                        <a asp-action="PatientStatistics" asp-route-id="@item.Id" class="btn btn-sm btn-success">Thống kê</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div> 

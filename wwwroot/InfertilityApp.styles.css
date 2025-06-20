@@ -1,0 +1,220 @@
+/* InfertilityApp Styles */
+
+/* This file is for application-specific styles */
+/* Additional styles can be added here */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.main-content {
+    padding: 20px;
+}
+
+/* Custom styles for the application */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* Dropdown Fixes - MẠNH MẼ HƠN */
+.dropdown-menu {
+    z-index: 9999 !important;
+    border: none;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 8px 0;
+    min-width: 200px;
+    position: fixed !important;
+    transform: none !important;
+    background: white;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 2px 8px;
+    color: #333;
+    text-decoration: none;
+}
+
+.dropdown-item:hover {
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
+    transform: translateX(4px);
+}
+
+.dropdown-item i {
+    margin-right: 8px;
+    width: 16px;
+}
+
+.dropdown-toggle::after {
+    margin-left: 8px;
+}
+
+/* Table Responsive Fix - FORCE VISIBLE */
+.table-responsive {
+    overflow: visible !important;
+}
+
+.table {
+    position: relative;
+}
+
+.table td {
+    position: relative;
+    overflow: visible !important;
+}
+
+/* Force dropdown to be on top */
+.table .dropdown {
+    position: relative;
+}
+
+.table .dropdown-menu {
+    position: fixed !important;
+    z-index: 9999 !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    margin: 0 !important;
+    display: none;
+}
+
+.table .dropdown-menu.show {
+    display: block !important;
+    position: fixed !important;
+    z-index: 9999 !important;
+}
+
+/* Override Bootstrap defaults */
+.dropdown-menu[data-bs-popper] {
+    position: fixed !important;
+    z-index: 9999 !important;
+}
+
+/* Card and container fixes */
+.card, .card-body {
+    overflow: visible !important;
+}
+
+.container-fluid {
+    overflow: visible !important;
+}
+
+/* Action Buttons - Đơn giản hơn */
+.action-buttons {
+    align-items: center;
+}
+
+.action-buttons .btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+}
+
+.more-menu {
+    position: fixed !important;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    z-index: 9999 !important;
+    min-width: 180px;
+    padding: 8px 0;
+    display: none;
+}
+
+.more-item {
+    display: block;
+    padding: 8px 16px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.more-item:hover {
+    background-color: #f8f9fa;
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.more-item.text-danger:hover {
+    background-color: #fff5f5;
+    color: #dc3545;
+}
+
+.more-item i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+/* Tooltip cho action buttons */
+.action-buttons .btn[title]:hover::before {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    z-index: 1060;
+    margin-bottom: 5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .action-buttons .btn {
+        min-width: 28px;
+        padding: 2px 6px;
+        font-size: 11px;
+    }
+    
+    .more-menu {
+        min-width: 160px;
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #5a6fd8 0%, #6a4190 100%);
+} 

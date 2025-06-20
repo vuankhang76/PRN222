@@ -1,0 +1,111 @@
+@model IEnumerable<InfertilityApp.Models.MedicalRecord>
+
+@{
+    ViewData["Title"] = "Danh sách hồ sơ y tế";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Danh sách hồ sơ y tế</h1>
+    
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Thêm hồ sơ mới</a>
+    </p>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Tìm kiếm và lọc</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Index" method="get">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="searchString">Tìm kiếm:</label>
+                            <input type="text" id="searchString" name="searchString" class="form-control" value="@ViewData["CurrentSearch"]" placeholder="Tên, mô tả..." />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="fromDate">Từ ngày:</label>
+                            <input type="date" id="fromDate" name="fromDate" class="form-control" value="@ViewData["CurrentFromDate"]" />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="toDate">Đến ngày:</label>
+                            <input type="date" id="toDate" name="toDate" class="form-control" value="@ViewData["CurrentToDate"]" />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="patientId">Bệnh nhân:</label>
+                            <select id="patientId" name="patientId" class="form-control" asp-items="ViewBag.PatientId">
+                                <option value="">-- Tất cả --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="recordType">Loại hồ sơ:</label>
+                            <select id="recordType" name="recordType" class="form-control">
+                                <option value="">-- Tất cả --</option>
+                                @if (ViewData["RecordTypes"] != null)
+                                {
+                                    @foreach (var type in (List<string>)ViewData["RecordTypes"])
+                                    {
+                                        <option value="@type" selected="@(type == (string)ViewData["CurrentRecordType"])">@type</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Lọc</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Tiêu đề</th>
+                            <th>Bệnh nhân</th>
+                            <th>Bác sĩ</th>
+                            <th>Ngày</th>
+                            <th>Loại hồ sơ</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.RecordTitle</td>
+                                <td>@item.Patient?.FullName</td>
+                                <td>@item.Doctor?.FullName</td>
+                                <td>@item.RecordDate.ToString("dd/MM/yyyy")</td>
+                                <td>@item.RecordType</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Chi tiết</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Xóa</a>
+                                        @if (!string.IsNullOrEmpty(item.AttachmentPath))
+                                        {
+                                            <a asp-action="DownloadAttachment" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Tải tệp</a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div> 

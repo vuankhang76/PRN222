@@ -1,0 +1,99 @@
+@model InfertilityApp.Models.MedicalRecord
+
+@{
+    ViewData["Title"] = "Chỉnh sửa hồ sơ y tế";
+}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Chỉnh sửa hồ sơ y tế</h1>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="AttachmentPath" />
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="PatientId" class="control-label">Bệnh nhân</label>
+                            <select asp-for="PatientId" class="form-control" asp-items="ViewBag.PatientId"></select>
+                            <span asp-validation-for="PatientId" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="DoctorId" class="control-label">Bác sĩ</label>
+                            <select asp-for="DoctorId" class="form-control" asp-items="ViewBag.DoctorId">
+                                <option value="">-- Chọn bác sĩ --</option>
+                            </select>
+                            <span asp-validation-for="DoctorId" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="RecordDate" class="control-label">Ngày ghi nhận</label>
+                            <input asp-for="RecordDate" class="form-control" type="date" />
+                            <span asp-validation-for="RecordDate" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="RecordType" class="control-label">Loại hồ sơ</label>
+                            <select asp-for="RecordType" class="form-control">
+                                <option value="">-- Chọn loại hồ sơ --</option>
+                                @foreach (var type in (List<string>)ViewData["RecordTypes"])
+                                {
+                                    <option value="@type">@type</option>
+                                }
+                            </select>
+                            <span asp-validation-for="RecordType" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="RecordTitle" class="control-label">Tiêu đề</label>
+                            <input asp-for="RecordTitle" class="form-control" />
+                            <span asp-validation-for="RecordTitle" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="Description" class="control-label">Mô tả</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="Results" class="control-label">Kết quả</label>
+                            <textarea asp-for="Results" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Results" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="attachment" class="control-label">Tệp đính kèm mới</label>
+                            <input type="file" id="attachment" name="attachment" class="form-control" />
+                            <small class="form-text text-muted">Để trống nếu không muốn thay đổi tệp đính kèm</small>
+                            
+                            @if (!string.IsNullOrEmpty(Model.AttachmentPath))
+                            {
+                                <div class="mt-2">
+                                    <p>Tệp đính kèm hiện tại: 
+                                        <a asp-action="DownloadAttachment" asp-route-id="@Model.Id">Xem/Tải xuống</a>
+                                    </p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group mt-3">
+                    <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

@@ -1,0 +1,88 @@
+@model InfertilityApp.Models.Patient
+
+@{
+    ViewData["Title"] = "Thêm bệnh nhân mới";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Thêm bệnh nhân mới</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Quay lại danh sách
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="FullName" class="form-label">Họ và tên</label>
+                    <input asp-for="FullName" class="form-control" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="DateOfBirth" class="form-label">Ngày sinh</label>
+                    <input asp-for="DateOfBirth" class="form-control" type="date" />
+                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Gender" class="form-label">Giới tính</label>
+                    <select asp-for="Gender" class="form-select">
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PhoneNumber" class="form-label">Số điện thoại</label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Email" class="form-label">Email</label>
+                    <input asp-for="Email" class="form-control" type="email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label">Địa chỉ</label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Occupation" class="form-label">Nghề nghiệp</label>
+                <input asp-for="Occupation" class="form-control" />
+                <span asp-validation-for="Occupation" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="MedicalHistory" class="form-label">Tiền sử bệnh</label>
+                <textarea asp-for="MedicalHistory" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="MedicalHistory" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="AllergiesInfo" class="form-label">Thông tin dị ứng</label>
+                <textarea asp-for="AllergiesInfo" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="AllergiesInfo" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <a asp-action="Index" class="btn btn-secondary me-2">Hủy</a>
+                <button type="submit" class="btn btn-primary">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

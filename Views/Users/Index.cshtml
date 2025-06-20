@@ -1,0 +1,183 @@
+@model IEnumerable<InfertilityApp.Models.User>
+
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+}
+
+<style>
+    /* Action buttons styling */
+    .btn-group .btn {
+        margin-right: 2px;
+    }
+    
+    .btn-group .btn:last-child {
+        margin-right: 0;
+    }
+    
+    /* Ensure buttons don't wrap */
+    .btn-group {
+        white-space: nowrap;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Quản lý người dùng</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Thêm người dùng mới
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <div class="input-group">
+                <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm người dùng...">
+                <button class="btn btn-outline-secondary" type="button">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="table-responsive" style="overflow: visible !important;">
+            <table class="table table-hover" id="usersTable">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Username)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FullName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Email)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Role)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.IsActive)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LastLogin)
+                        </th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Username)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FullName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Email)
+                            </td>
+                            <td>
+                                @switch (item.Role)
+                                {
+                                    case "Admin":
+                                        <span class="badge bg-danger">Quản trị viên</span>
+                                        break;
+                                    case "Doctor":
+                                        <span class="badge bg-primary">Bác sĩ</span>
+                                        break;
+                                    case "Staff":
+                                        <span class="badge bg-success">Nhân viên</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-secondary">@item.Role</span>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge bg-success">Hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Vô hiệu</span>
+                                }
+                            </td>
+                            <td>
+                                @(item.LastLogin.HasValue ? item.LastLogin.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa đăng nhập")
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info" title="Chi tiết">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    @if (item.IsActive)
+                                    {
+                                        <button class="btn btn-sm btn-outline-warning" onclick="confirmDeactivate(@item.Id)" title="Vô hiệu hóa">
+                                            <i class="bi bi-slash-circle"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-sm btn-outline-success" onclick="confirmActivate(@item.Id)" title="Kích hoạt">
+                                            <i class="bi bi-check-circle"></i>
+                                        </button>
+                                    }
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#searchInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#usersTable tbody tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+
+        });
+        
+        function confirmDeactivate(id) {
+            if (confirm("Bạn có chắc chắn muốn vô hiệu hóa người dùng này?")) {
+                window.location.href = "/Users/ToggleActive/" + id;
+            }
+        }
+        
+        function confirmActivate(id) {
+            if (confirm("Bạn có chắc chắn muốn kích hoạt người dùng này?")) {
+                window.location.href = "/Users/ToggleActive/" + id;
+            }
+        }
+    </script>
+} 

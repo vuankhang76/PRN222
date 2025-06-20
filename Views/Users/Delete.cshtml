@@ -1,0 +1,53 @@
+@model InfertilityApp.Models.User
+
+@{
+    ViewData["Title"] = "Xóa người dùng";
+}
+
+<h1>Xóa người dùng</h1>
+
+<div class="alert alert-danger">
+    <h3>Bạn có chắc chắn muốn xóa người dùng này?</h3>
+    <p>Hành động này không thể hoàn tác.</p>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>Thông tin người dùng</h4>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Tên đăng nhập</dt>
+            <dd class="col-sm-9">@Model.Username</dd>
+            
+            <dt class="col-sm-3">Họ và tên</dt>
+            <dd class="col-sm-9">@Model.FullName</dd>
+            
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+            
+            <dt class="col-sm-3">Số điện thoại</dt>
+            <dd class="col-sm-9">@Model.PhoneNumber</dd>
+            
+            <dt class="col-sm-3">Vai trò</dt>
+            <dd class="col-sm-9">@Model.Role</dd>
+            
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9">@(Model.IsActive ? "Hoạt động" : "Không hoạt động")</dd>
+            
+            <dt class="col-sm-3">Ngày tạo</dt>
+            <dd class="col-sm-9">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
+            
+            <dt class="col-sm-3">Đăng nhập lần cuối</dt>
+            <dd class="col-sm-9">
+                @(Model.LastLogin.HasValue ? Model.LastLogin.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa đăng nhập")
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <input type="submit" value="Xóa" class="btn btn-danger" />
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form> 

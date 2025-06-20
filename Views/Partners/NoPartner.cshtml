@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Thông tin người phối ngẫu";
+    var patient = ViewBag.Patient as InfertilityApp.Models.Patient;
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Thông tin người phối ngẫu - @patient?.FullName</h2>
+        <a asp-controller="Patients" asp-action="Details" asp-route-id="@patient?.Id" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Quay lại hồ sơ bệnh nhân
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-person-plus-fill display-1 text-muted"></i>
+                    </div>
+                    
+                    <h4 class="mb-3">Chưa có thông tin người phối ngẫu</h4>
+                    <p class="text-muted mb-4">
+                        Bệnh nhân <strong>@patient?.FullName</strong> chưa có thông tin về người phối ngẫu. 
+                        Bạn có thể thêm thông tin người phối ngẫu để hoàn thiện hồ sơ điều trị.
+                    </p>
+                    
+                    <div class="d-flex justify-content-center gap-3">
+                        <a asp-action="Create" asp-route-patientId="@patient?.Id" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Thêm thông tin người phối ngẫu
+                        </a>
+                        <a asp-controller="Patients" asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-list"></i> Danh sách bệnh nhân
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
