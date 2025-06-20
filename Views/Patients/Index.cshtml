@@ -75,9 +75,6 @@
             <table class="table table-hover mb-0" id="patientsTable">
                 <thead>
                     <tr>
-                        <th class="border-0 ps-4">
-                            <input type="checkbox" class="form-check-input" id="selectAll">
-                        </th>
                         <th class="border-0">Bệnh nhân</th>
                         <th class="border-0">Ngày sinh</th>
                         <th class="border-0">Giới tính</th>
@@ -91,14 +88,8 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td class="border-0 ps-4">
-                                <input type="checkbox" class="form-check-input patient-checkbox" value="@item.Id">
-                            </td>
                             <td class="border-0">
                                 <div class="d-flex align-items-center">
-                                    <div class="avatar-circle me-3">
-                                        @((item.FullName ?? "?").Substring(0, 1).ToUpper())
-                                    </div>
                                     <div>
                                         <h6 class="mb-0 fw-semibold">@(item.FullName ?? "N/A")</h6>
                                         <small class="text-muted">ID: #@item.Id.ToString().PadLeft(6, '0')</small>

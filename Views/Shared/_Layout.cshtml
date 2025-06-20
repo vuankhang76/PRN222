@@ -77,23 +77,22 @@
         <!-- Main Content Area -->
         <main class="main-content">
             <!-- Top Header -->
-            <header class="main-header">
-                <div class="header-left">
-                    <button type="button" class="sidebar-toggle" id="sidebarToggle">
+            <header class="main-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-outline-secondary me-3" id="sidebarToggle">
                         <i class="bi bi-list"></i>
                     </button>
-                    <div class="breadcrumb-wrapper">
-                        <h4 class="page-title">@ViewData["Title"]</h4>
+                    <div>
+                        <h4 class="mb-0">@ViewData["Title"]</h4>
                         <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
+                            <ol class="breadcrumb mb-0 small">
                                 <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
                             </ol>
                         </nav>
                     </div>
                 </div>
-                <div class="header-right">
-                    <div class="header-actions">
+                <div>
                         <!-- User Profile -->
                         @if (Context.Session.GetString("UserFullName") != null)
                         {
@@ -119,8 +118,6 @@
                                 <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
                             </a>
                         }
-                    </div>
-                </div>
             </header>
 
             <!-- Page Content -->
@@ -132,14 +129,14 @@
 
     <!-- Footer -->
     <footer class="main-footer">
-        <div class="footer-content">
-            <div class="footer-left">
-                <p>&copy; @DateTime.Now.Year FertilityCare - Hệ thống quản lý điều trị hiếm muộn</p>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <p class="mb-0 text-muted small">&copy; @DateTime.Now.Year FertilityCare - Hệ thống quản lý điều trị hiếm muộn</p>
             </div>
-            <div class="footer-right">
-                <a href="#">Hỗ trợ</a>
-                <a href="#">Chính sách bảo mật</a>
-                <a href="#">Điều khoản sử dụng</a>
+            <div class="d-flex gap-3">
+                <a href="#" class="text-decoration-none small">Hỗ trợ</a>
+                <a href="#" class="text-decoration-none small">Chính sách bảo mật</a>
+                <a href="#" class="text-decoration-none small">Điều khoản sử dụng</a>
             </div>
         </div>
     </footer>
