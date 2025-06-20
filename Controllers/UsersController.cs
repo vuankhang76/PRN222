@@ -205,7 +205,6 @@ namespace InfertilityApp.Controllers
                 var user = await _userService.AuthenticateUserAsync(username, password);
                 if (user != null && user.IsActive)
                 {
-                    // Lưu thông tin user vào session
                     HttpContext.Session.SetString("UserId", user.Id.ToString());
                     HttpContext.Session.SetString("UserFullName", user.FullName);
                     HttpContext.Session.SetString("UserRole", user.Role);
