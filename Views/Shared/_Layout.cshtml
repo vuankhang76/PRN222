@@ -4,96 +4,148 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Phần mềm quản lý điều trị hiếm muộn</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/InfertilityApp.styles.css" asp-append-version="true" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 <body>
-    <div class="d-flex">
+    <div class="flex">
         <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h3>Quản lý điều trị hiếm muộn</h3>
+        <div class="sidebar fixed h-screen w-64 bg-gray-800 text-white transition-all duration-300 z-50">
+            <div class="sidebar-header bg-gray-900 p-5">
+                <h3 class="text-lg font-semibold">Quản lý điều trị hiếm muộn</h3>
             </div>
-            <ul class="list-unstyled">
-                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
-                    <a asp-controller="Home" asp-action="Index"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <ul class="list-none">
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "bg-blue-600" : "")">
+                    <a asp-controller="Home" asp-action="Index" class="flex items-center p-4 text-white no-underline hover:bg-gray-700 transition-all duration-300">
+                        <i class="bi bi-speedometer2 mr-3"></i> Dashboard
+                    </a>
                 </li>
-                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Patients" ? "active" : "")">
-                    <a asp-controller="Patients" asp-action="Index"><i class="bi bi-people"></i> Bệnh nhân</a>
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Patients" ? "bg-blue-600" : "")">
+                    <a asp-controller="Patients" asp-action="Index" class="flex items-center p-4 text-white no-underline hover:bg-gray-700 transition-all duration-300">
+                        <i class="bi bi-people mr-3"></i> Bệnh nhân
+                    </a>
                 </li>
-                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Doctors" ? "active" : "")">
-                    <a asp-controller="Doctors" asp-action="Index"><i class="bi bi-hospital"></i> Bác sĩ</a>
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Doctors" ? "bg-blue-600" : "")">
+                    <a asp-controller="Doctors" asp-action="Index" class="flex items-center p-4 text-white no-underline hover:bg-gray-700 transition-all duration-300">
+                        <i class="bi bi-hospital mr-3"></i> Bác sĩ
+                    </a>
                 </li>
-                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Appointments" ? "active" : "")">
-                    <a asp-controller="Appointments" asp-action="Index"><i class="bi bi-calendar-check"></i> Lịch hẹn</a>
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Appointments" ? "bg-blue-600" : "")">
+                    <a asp-controller="Appointments" asp-action="Index" class="flex items-center p-4 text-white no-underline hover:bg-gray-700 transition-all duration-300">
+                        <i class="bi bi-calendar-check mr-3"></i> Lịch hẹn
+                    </a>
                 </li>
-                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Treatments" ? "active" : "")">
-                    <a asp-controller="Treatments" asp-action="Index"><i class="bi bi-clipboard2-pulse"></i> Điều trị</a>
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Treatments" ? "bg-blue-600" : "")">
+                    <a asp-controller="Treatments" asp-action="Index" class="flex items-center p-4 text-white no-underline hover:bg-gray-700 transition-all duration-300">
+                        <i class="bi bi-clipboard2-pulse mr-3"></i> Điều trị
+                    </a>
                 </li>
-                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "MedicalRecords" ? "active" : "")">
-                    <a asp-controller="MedicalRecords" asp-action="Index"><i class="bi bi-file-earmark-medical"></i> Hồ sơ y tế</a>
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "MedicalRecords" ? "bg-blue-600" : "")">
+                    <a asp-controller="MedicalRecords" asp-action="Index" class="flex items-center p-4 text-white no-underline hover:bg-gray-700 transition-all duration-300">
+                        <i class="bi bi-file-earmark-medical mr-3"></i> Hồ sơ y tế
+                    </a>
                 </li>
-                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
-                    <a asp-controller="Users" asp-action="Index"><i class="bi bi-person-gear"></i> Người dùng</a>
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "bg-blue-600" : "")">
+                    <a asp-controller="Users" asp-action="Index" class="flex items-center p-4 text-white no-underline hover:bg-gray-700 transition-all duration-300">
+                        <i class="bi bi-person-gear mr-3"></i> Người dùng
+                    </a>
                 </li>
             </ul>
         </div>
 
         <!-- Main Content -->
-        <div class="content-wrapper">
+        <div class="content-wrapper flex-1 ml-64 flex flex-col min-h-screen transition-all duration-300">
             <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="container-fluid">
-                    <button type="button" id="sidebarCollapse" class="btn btn-sm btn-primary">
-                        <i class="bi bi-list"></i>
-                    </button>
-                    <div class="ms-auto d-flex align-items-center">
-                        @if (Context.Session.GetString("UserFullName") != null)
-                        {
-                            <div class="dropdown">
-                                <button class="btn btn-link dropdown-toggle text-decoration-none" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-person-circle me-1"></i> @Context.Session.GetString("UserFullName")
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                    <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Hồ sơ</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Cài đặt</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" asp-controller="Users" asp-action="Logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
-                                </ul>
-                            </div>
-                        }
-                        else
-                        {
-                            <a asp-controller="Users" asp-action="Login" class="btn btn-primary">Đăng nhập</a>
-                        }
+            <nav class="bg-white shadow-md">
+                <div class="px-4 py-3">
+                    <div class="flex items-center justify-between">
+                        <button type="button" id="sidebarCollapse" class="bg-blue-600 text-white px-3 py-2 rounded text-sm hover:bg-blue-700 transition-colors duration-200">
+                            <i class="bi bi-list"></i>
+                        </button>
+                        <div class="flex items-center ml-auto">
+                            @if (Context.Session.GetString("UserFullName") != null)
+                            {
+                                <div class="relative">
+                                    <button class="flex items-center text-gray-700 hover:text-gray-900 focus:outline-none" type="button" id="userDropdown" onclick="toggleDropdown()">
+                                        <i class="bi bi-person-circle mr-2"></i> @Context.Session.GetString("UserFullName")
+                                        <i class="bi bi-chevron-down ml-1"></i>
+                                    </button>
+                                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 hidden" id="dropdownMenu">
+                                        <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            <i class="bi bi-person mr-2"></i> Hồ sơ
+                                        </a>
+                                        <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            <i class="bi bi-gear mr-2"></i> Cài đặt
+                                        </a>
+                                        <hr class="border-gray-200">
+                                        <a asp-controller="Users" asp-action="Logout" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            <i class="bi bi-box-arrow-right mr-2"></i> Đăng xuất
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <a asp-controller="Users" asp-action="Login" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors duration-200">Đăng nhập</a>
+                            }
+                        </div>
                     </div>
                 </div>
             </nav>
 
             <!-- Page Content -->
-            <div class="container-fluid p-4">
+            <div class="flex-1 p-6">
                 @RenderBody()
             </div>
         </div>
     </div>
 
-    <footer class="footer text-center py-3">
-        <div class="container">
+    <footer class="text-center py-6 bg-gray-50 border-t border-gray-200 mt-auto">
+        <div class="container mx-auto">
             &copy; @DateTime.Now.Year - Phần mềm quản lý điều trị hiếm muộn
         </div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
         $(document).ready(function () {
             $('#sidebarCollapse').on('click', function () {
-                $('.sidebar').toggleClass('active');
-                $('.content-wrapper').toggleClass('active');
+                $('.sidebar').toggleClass('-ml-64');
+                $('.content-wrapper').toggleClass('ml-0');
             });
+        });
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('dropdownMenu');
+            const button = document.getElementById('userDropdown');
+            
+            if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
         });
     </script>
 
@@ -104,67 +156,33 @@
 @@<style>
     body {
         min-height: 100vh;
-        background-color: #f8f9fa;
+        background-color: #f8fafc;
     }
 
     .sidebar {
-        min-width: 250px;
-        max-width: 250px;
-        background: #343a40;
-        color: #fff;
-        transition: all 0.3s;
-        height: 100vh;
-        position: fixed;
-        z-index: 999;
+        transition: margin-left 0.3s ease;
     }
 
-    .sidebar.active {
-        margin-left: -250px;
+    .sidebar.-ml-64 {
+        margin-left: -16rem;
     }
 
-    .sidebar .sidebar-header {
-        padding: 20px;
-        background: #212529;
-    }
-
-    .sidebar ul li a {
-        padding: 15px;
-        display: block;
-        color: #fff;
-        text-decoration: none;
-        transition: all 0.3s;
-    }
-
-    .sidebar ul li a:hover {
-        background: #495057;
-    }
-
-    .sidebar ul li.active a {
-        background: #0d6efd;
-        color: #fff;
-    }
-
-    .content-wrapper {
-        width: 100%;
-        margin-left: 250px;
-        transition: all 0.3s;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-    }
-
-    .content-wrapper.active {
+    .content-wrapper.ml-0 {
         margin-left: 0;
     }
 
-    .navbar {
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .sidebar {
+            margin-left: -16rem;
+        }
+        
+        .content-wrapper {
+            margin-left: 0;
+        }
+        
+        .sidebar.mobile-open {
+            margin-left: 0;
+        }
     }
-
-    .footer {
-        margin-top: auto;
-        background-color: #f8f9fa;
-        border-top: 1px solid #dee2e6;
-    }
-
 </style>

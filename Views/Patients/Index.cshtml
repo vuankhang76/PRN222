@@ -4,180 +4,103 @@
     ViewData["Title"] = "Danh sách bệnh nhân";
 }
 
-<style>
-    .dropdown-toggle-no-caret::after {
-        display: none;
-    }
-
-    .dropdown-item i {
-        width: 16px;
-        margin-right: 8px;
-    }
-
-    .action-buttons {
-        position: relative;
-    }
-
-    /* Fix dropdown z-index and positioning */
-    .dropdown-menu {
-        z-index: 9999 !important;
-        min-width: 200px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        position: absolute !important;
-    }
-
-    /* Ensure table and card don't interfere */
-    .card {
-        overflow: visible !important;
-    }
-
-    .card-body {
-        overflow: visible !important;
-    }
-
-    /* Fix table responsive to prevent horizontal scroll */
-    .table-responsive {
-        overflow-x: auto !important;
-        overflow-y: visible !important;
-    }
-
-    .table {
-        overflow: visible !important;
-    }
-
-    /* Ensure table cell doesn't overflow */
-    td {
-        position: relative;
-        overflow: visible !important;
-    }
-
-    /* Fix for action buttons column */
-    .action-buttons {
-        position: relative;
-        overflow: visible !important;
-    }
-
-    .dropdown {
-        position: relative !important;
-    }
-
-    /* Ensure dropdown shows above everything */
-    .dropdown.show .dropdown-menu {
-        display: block !important;
-        z-index: 9999 !important;
-        position: absolute !important;
-    }
-
-    /* Prevent dropdown from affecting table width */
-    .dropdown-menu {
-        white-space: nowrap;
-        width: auto !important;
-        min-width: 200px;
-        max-width: 300px;
-    }
-
-    /* Ensure the last column doesn't expand */
-    td:last-child {
-        width: 120px;
-        max-width: 120px;
-    }
-</style>
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Danh sách bệnh nhân</h2>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Thêm bệnh nhân mới
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-gray-900">Danh sách bệnh nhân</h2>
+    <a asp-action="Create" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
+        <i class="bi bi-plus-circle mr-2"></i> Thêm bệnh nhân mới
     </a>
 </div>
 
-<div class="card">
-    <div class="card-body">
-        <div class="mb-3">
-            <div class="input-group">
-                <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm bệnh nhân...">
-                <button class="btn btn-outline-secondary" type="button">
-                    <i class="bi bi-search"></i>
-                </button>
+<div class="bg-white rounded-lg shadow-lg">
+    <div class="p-6">
+        <div class="mb-6">
+            <div class="relative">
+                <input type="text" id="searchInput" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Tìm kiếm bệnh nhân...">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="bi bi-search text-gray-400"></i>
+                </div>
             </div>
         </div>
         
-        <div class="table-responsive" style="overflow: visible !important;">
-            <table class="table table-hover" id="patientsTable">
+        <div class="overflow-x-auto">
+            <table class="w-full" id="patientsTable">
                 <thead>
-                    <tr>
-                        <th>
+                    <tr class="border-b border-gray-200">
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
                             @Html.DisplayNameFor(model => model.FullName)
                         </th>
-                        <th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
                             @Html.DisplayNameFor(model => model.DateOfBirth)
                         </th>
-                        <th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
                             @Html.DisplayNameFor(model => model.Gender)
                         </th>
-                        <th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
                             @Html.DisplayNameFor(model => model.PhoneNumber)
                         </th>
-                        <th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
                             @Html.DisplayNameFor(model => model.Email)
                         </th>
-                        <th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
                             @Html.DisplayNameFor(model => model.RegistrationDate)
                         </th>
-                        <th>Thao tác</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700 w-32">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr>
-                            <td>
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
+                            <td class="py-3 px-4 text-gray-900">
                                 @Html.DisplayFor(modelItem => item.FullName)
                             </td>
-                            <td>
+                            <td class="py-3 px-4 text-gray-700">
                                 @item.DateOfBirth.ToString("dd/MM/yyyy")
                             </td>
-                            <td>
+                            <td class="py-3 px-4 text-gray-700">
                                 @Html.DisplayFor(modelItem => item.Gender)
                             </td>
-                            <td>
+                            <td class="py-3 px-4 text-gray-700">
                                 @Html.DisplayFor(modelItem => item.PhoneNumber)
                             </td>
-                            <td>
+                            <td class="py-3 px-4 text-gray-700">
                                 @Html.DisplayFor(modelItem => item.Email)
                             </td>
-                            <td>
+                            <td class="py-3 px-4 text-gray-700">
                                 @item.RegistrationDate.ToString("dd/MM/yyyy")
                             </td>
-                            <td style="width: 120px;">
-                                <div class="d-flex gap-1 action-buttons">
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info" title="Chi tiết">
+                            <td class="py-3 px-4">
+                                <div class="flex items-center space-x-1">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="bg-blue-100 text-blue-600 p-2 rounded hover:bg-blue-200 transition-colors duration-200" title="Chi tiết">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning" title="Chỉnh sửa">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="bg-yellow-100 text-yellow-600 p-2 rounded hover:bg-yellow-200 transition-colors duration-200" title="Chỉnh sửa">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <div class="dropdown">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle dropdown-toggle-no-caret" data-bs-toggle="dropdown" data-bs-auto-close="true" data-bs-boundary="viewport" aria-expanded="false" title="Thêm tùy chọn">
+                                    <div class="relative">
+                                        <button type="button" class="bg-gray-100 text-gray-600 p-2 rounded hover:bg-gray-200 transition-colors duration-200 dropdown-toggle" onclick="togglePatientDropdown('@item.Id')" title="Thêm tùy chọn">
                                             <i class="bi bi-three-dots-vertical"></i>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" asp-controller="Partners" asp-action="ByPatient" asp-route-id="@item.Id">
-                                                <i class="bi bi-people"></i> Người phối ngẫu
-                                            </a></li>
-                                            <li><a class="dropdown-item" asp-controller="MedicalRecords" asp-action="PatientHistory" asp-route-id="@item.Id">
-                                                <i class="bi bi-file-earmark-medical"></i> Hồ sơ y tế
-                                            </a></li>
-                                            <li><a class="dropdown-item" asp-controller="Treatments" asp-action="Index" asp-route-patientId="@item.Id">
-                                                <i class="bi bi-clipboard2-pulse"></i> Điều trị
-                                            </a></li>
-                                            <li><a class="dropdown-item" asp-controller="Appointments" asp-action="Index" asp-route-patientId="@item.Id">
-                                                <i class="bi bi-calendar-check"></i> Lịch hẹn
-                                            </a></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">
-                                                <i class="bi bi-trash"></i> Xóa
-                                            </a></li>
-                                        </ul>
+                                        <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50 hidden" id="dropdown-@item.Id">
+                                            <div class="py-1">
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Partners" asp-action="ByPatient" asp-route-id="@item.Id">
+                                                    <i class="bi bi-people mr-3 w-4"></i> Người phối ngẫu
+                                                </a>
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="MedicalRecords" asp-action="PatientHistory" asp-route-id="@item.Id">
+                                                    <i class="bi bi-file-earmark-medical mr-3 w-4"></i> Hồ sơ y tế
+                                                </a>
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Treatments" asp-action="Index" asp-route-patientId="@item.Id">
+                                                    <i class="bi bi-clipboard2-pulse mr-3 w-4"></i> Điều trị
+                                                </a>
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Appointments" asp-action="Index" asp-route-patientId="@item.Id">
+                                                    <i class="bi bi-calendar-check mr-3 w-4"></i> Lịch hẹn
+                                                </a>
+                                                <hr class="border-gray-200 my-1">
+                                                <a class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50" asp-action="Delete" asp-route-id="@item.Id">
+                                                    <i class="bi bi-trash mr-3 w-4"></i> Xóa
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </td>
@@ -199,87 +122,29 @@
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
+        });
 
-            // Bootstrap dropdown will handle the menu toggle automatically
+        function togglePatientDropdown(patientId) {
+            const dropdown = document.getElementById('dropdown-' + patientId);
             
-            // Ensure dropdown visibility
-            $('.dropdown').on('show.bs.dropdown', function () {
-                var $dropdown = $(this);
-                var $menu = $dropdown.find('.dropdown-menu');
-                
-                // Force visibility
-                $menu.css({
-                    'display': 'block',
-                    'visibility': 'visible',
-                    'opacity': '1',
-                    'z-index': '9999',
-                    'position': 'absolute'
-                });
-            });
-            
-            $('.dropdown').on('shown.bs.dropdown', function () {
-                var $dropdown = $(this);
-                var $menu = $dropdown.find('.dropdown-menu');
-                
-                // Ensure it's visible and positioned correctly
-                $menu.css({
-                    'display': 'block !important',
-                    'visibility': 'visible !important',
-                    'opacity': '1 !important',
-                    'z-index': '9999 !important'
-                });
-                
-                // Smart positioning to prevent overflow
-                var dropdownOffset = $dropdown.offset();
-                var menuWidth = $menu.outerWidth();
-                var menuHeight = $menu.outerHeight();
-                var windowWidth = $(window).width();
-                var windowHeight = $(window).height();
-                var scrollLeft = $(window).scrollLeft();
-                var scrollTop = $(window).scrollTop();
-                
-                // Check if menu would overflow to the right
-                if (dropdownOffset.left + menuWidth > windowWidth + scrollLeft - 20) {
-                    $menu.removeClass('dropdown-menu-start').addClass('dropdown-menu-end');
-                    
-                    // If still overflowing, use fixed positioning
-                    setTimeout(function() {
-                        var newOffset = $dropdown.offset();
-                        if (newOffset.left + menuWidth > windowWidth + scrollLeft - 20) {
-                            var newLeft = Math.max(20, windowWidth + scrollLeft - menuWidth - 20);
-                            $menu.css({
-                                'position': 'fixed',
-                                'left': newLeft + 'px',
-                                'top': (newOffset.top + $dropdown.outerHeight() - scrollTop) + 'px',
-                                'right': 'auto'
-                            });
-                        }
-                    }, 10);
-                } else {
-                    $menu.removeClass('dropdown-menu-end').addClass('dropdown-menu-start');
-                }
-                
-                // Check if menu would overflow to the bottom
-                if (dropdownOffset.top + $dropdown.outerHeight() + menuHeight > windowHeight + scrollTop - 20) {
-                    $menu.css({
-                        'top': 'auto',
-                        'bottom': '100%'
-                    });
+            // Hide all other dropdowns
+            document.querySelectorAll('[id^="dropdown-"]').forEach(function(menu) {
+                if (menu.id !== 'dropdown-' + patientId) {
+                    menu.classList.add('hidden');
                 }
             });
             
-            // Clean up when hidden
-            $('.dropdown').on('hidden.bs.dropdown', function () {
-                var $menu = $(this).find('.dropdown-menu');
-                $menu.removeClass('dropdown-menu-end dropdown-menu-start');
-                $menu.css({
-                    'position': '',
-                    'left': '',
-                    'top': '',
-                    'right': '',
-                    'bottom': ''
+            // Toggle current dropdown
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown-toggle') && !event.target.closest('[id^="dropdown-"]')) {
+                document.querySelectorAll('[id^="dropdown-"]').forEach(function(menu) {
+                    menu.classList.add('hidden');
                 });
-            });
+            }
         });
     </script>
 } 

@@ -3,147 +3,80 @@
     Layout = "_LoginLayout";
 }
 
-<div class="login-container">
-    <div class="login-box card">
-        <div class="card-header text-center">
-            <i class="bi bi-heart-pulse-fill fs-1 mb-3"></i>
-            <h3>Phần mềm quản lý điều trị hiếm muộn</h3>
-            <p class="mb-0">Đăng nhập vào hệ thống</p>
-        </div>
-        
-        <div class="card-body">
-            @if (ViewData["Error"] != null)
-            {
-                <div class="alert alert-danger d-flex align-items-center">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    <div>@ViewData["Error"]</div>
-                </div>
-            }
-            
-            <form method="post" asp-action="Login">
-                <div class="mb-3">
-                    <label for="username" class="form-label">
-                        <i class="bi bi-person-fill me-2"></i>Tên đăng nhập
-                    </label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Nhập tên đăng nhập" required>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="password" class="form-label">
-                        <i class="bi bi-lock-fill me-2"></i>Mật khẩu
-                    </label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
-                </div>
-                
-                <div class="mb-4 form-check">
-                    <input type="checkbox" class="form-check-input" id="rememberMe">
-                    <label class="form-check-label" for="rememberMe">
-                        <i class="bi bi-check-circle me-1"></i>Ghi nhớ đăng nhập
-                    </label>
-                </div>
-                
-                <button type="submit" class="btn btn-primary w-100 py-3">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>
-                    Đăng nhập
-                </button>
-            </form>
-            
-            <div class="text-center mt-4">
-                <small class="text-muted">
-                    <i class="bi bi-shield-lock-fill me-1"></i>
-                    Hệ thống bảo mật cao - Chỉ dành cho nhân viên được ủy quyền
-                </small>
+<div class="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden backdrop-blur-sm bg-opacity-95">
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-8 text-center">
+                <i class="bi bi-heart-pulse-fill text-6xl mb-4 block"></i>
+                <h3 class="text-2xl font-bold mb-2">Phần mềm quản lý điều trị hiếm muộn</h3>
+                <p class="text-blue-100">Đăng nhập vào hệ thống</p>
             </div>
             
-            <div class="mt-4 text-center">
-                <p class="text-muted small">
-                    <strong>Tài khoản mặc định:</strong><br>
-                    Tên đăng nhập: <code>admin</code><br>
-                    Mật khẩu: <code>123456</code>
-                </p>
+            <div class="p-8">
+                @if (ViewData["Error"] != null)
+                {
+                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 flex items-center">
+                        <i class="bi bi-exclamation-triangle-fill mr-2"></i>
+                        <div>@ViewData["Error"]</div>
+                    </div>
+                }
+                
+                <form method="post" asp-action="Login">
+                    <div class="mb-4">
+                        <label for="username" class="block text-gray-700 text-sm font-semibold mb-2">
+                            <i class="bi bi-person-fill mr-2"></i>Tên đăng nhập
+                        </label>
+                        <input type="text" 
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                               id="username" 
+                               name="username" 
+                               placeholder="Nhập tên đăng nhập" 
+                               required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="block text-gray-700 text-sm font-semibold mb-2">
+                            <i class="bi bi-lock-fill mr-2"></i>Mật khẩu
+                        </label>
+                        <input type="password" 
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                               id="password" 
+                               name="password" 
+                               placeholder="Nhập mật khẩu" 
+                               required>
+                    </div>
+                    
+                    <div class="mb-6 flex items-center">
+                        <input type="checkbox" 
+                               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" 
+                               id="rememberMe">
+                        <label class="ml-2 block text-sm text-gray-700" for="rememberMe">
+                            <i class="bi bi-check-circle mr-1"></i>Ghi nhớ đăng nhập
+                        </label>
+                    </div>
+                    
+                    <button type="submit" 
+                            class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transform hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
+                        <i class="bi bi-box-arrow-in-right mr-2"></i>
+                        Đăng nhập
+                    </button>
+                </form>
+                
+                <div class="text-center mt-6">
+                    <small class="text-gray-500 flex items-center justify-center">
+                        <i class="bi bi-shield-lock-fill mr-1"></i>
+                        Hệ thống bảo mật cao - Chỉ dành cho nhân viên được ủy quyền
+                    </small>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-gray-600 text-sm">
+                        <strong>Tài khoản mặc định:</strong><br>
+                        Tên đăng nhập: <code class="bg-gray-100 text-blue-600 px-2 py-1 rounded font-semibold">admin</code><br>
+                        Mật khẩu: <code class="bg-gray-100 text-blue-600 px-2 py-1 rounded font-semibold">123456</code>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<style>
-    body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    .login-container {
-        width: 100%;
-        max-width: 450px;
-        padding: 20px;
-    }
-    
-    .login-box {
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-        border: none;
-        border-radius: 20px;
-        overflow: hidden;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-    }
-    
-    .card-header {
-        background: linear-gradient(45deg, #667eea, #764ba2);
-        color: white;
-        border: none;
-        padding: 2rem;
-    }
-    
-    .form-control {
-        border-radius: 10px;
-        border: 2px solid #e9ecef;
-        padding: 12px 15px;
-        transition: all 0.3s ease;
-    }
-    
-    .form-control:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        transform: translateY(-1px);
-    }
-    
-    .btn-primary {
-        background: linear-gradient(45deg, #667eea, #764ba2);
-        border: none;
-        border-radius: 10px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-    }
-    
-    .alert {
-        border-radius: 10px;
-        border: none;
-    }
-    
-    .form-check-input:checked {
-        background-color: #667eea;
-        border-color: #667eea;
-    }
-    
-    .text-muted {
-        color: #6c757d !important;
-    }
-    
-    code {
-        background-color: #f8f9fa;
-        color: #667eea;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-weight: 600;
-    }
-</style> 
+</div> 
