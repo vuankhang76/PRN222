@@ -4,108 +4,151 @@
     ViewData["Title"] = "Danh sách điều trị";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Danh sách điều trị</h2>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Thêm điều trị mới
+@if (TempData["Success"] != null)
+{
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 flex items-center justify-between" role="alert">
+        <span>@TempData["Success"]</span>
+        <button type="button" class="text-green-700 hover:text-green-900" onclick="this.parentElement.remove()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 flex items-center justify-between" role="alert">
+        <span>@TempData["Error"]</span>
+        <button type="button" class="text-red-700 hover:text-red-900" onclick="this.parentElement.remove()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+}
+
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-gray-900">Danh sách điều trị</h2>
+    <a asp-action="Create" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
+        <i class="bi bi-plus-circle mr-2"></i> Thêm điều trị mới
     </a>
 </div>
 
-<div class="card">
-    <div class="card-body">
-        <div class="mb-3">
-            <div class="input-group">
-                <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm điều trị...">
-                <button class="btn btn-outline-secondary" type="button">
-                    <i class="bi bi-search"></i>
-                </button>
+<div class="bg-white rounded-lg shadow-lg">
+    <div class="p-6">
+        <div class="mb-6">
+            <div class="relative">
+                <input type="text" id="searchInput" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Tìm kiếm điều trị...">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="bi bi-search text-gray-400"></i>
+                </div>
             </div>
         </div>
         
-        <div class="table-responsive">
-            <table class="table table-hover" id="treatmentsTable">
+        <div class="overflow-x-auto">
+            <table class="w-full" id="treatmentsTable">
                 <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.TreatmentName)
+                    <tr class="border-b border-gray-200">
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
+                            Tên điều trị
                         </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Patient)
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
+                            Bệnh nhân
                         </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Doctor)
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
+                            Bác sĩ
                         </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.TreatmentType)
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
+                            Loại điều trị
                         </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.StartDate)
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
+                            Ngày bắt đầu
                         </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.EndDate)
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
+                            Ngày kết thúc
                         </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Status)
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
+                            Trạng thái
                         </th>
-                        <th>Thao tác</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700 w-32">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr>
-                            <td>
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
+                            <td class="py-3 px-4 text-gray-900 font-medium">
                                 @Html.DisplayFor(modelItem => item.TreatmentName)
                             </td>
-                            <td>
-                                <a asp-controller="Patients" asp-action="Details" asp-route-id="@item.PatientId">
+                            <td class="py-3 px-4 text-gray-900">
+                                <a asp-controller="Patients" asp-action="Details" asp-route-id="@item.PatientId" class="text-blue-600 hover:text-blue-800 hover:underline">
                                     @item.Patient.FullName
                                 </a>
                             </td>
-                            <td>
-                                <a asp-controller="Doctors" asp-action="Details" asp-route-id="@item.DoctorId">
+                            <td class="py-3 px-4 text-gray-900">
+                                <a asp-controller="Doctors" asp-action="Details" asp-route-id="@item.DoctorId" class="text-blue-600 hover:text-blue-800 hover:underline">
                                     @item.Doctor.FullName
                                 </a>
                             </td>
-                            <td>
+                            <td class="py-3 px-4 text-gray-700">
                                 @Html.DisplayFor(modelItem => item.TreatmentType)
                             </td>
-                            <td>
+                            <td class="py-3 px-4 text-gray-700">
                                 @item.StartDate.ToString("dd/MM/yyyy")
                             </td>
-                            <td>
+                            <td class="py-3 px-4 text-gray-700">
                                 @(item.EndDate.HasValue ? item.EndDate.Value.ToString("dd/MM/yyyy") : "-")
                             </td>
-                            <td>
+                            <td class="py-3 px-4">
                                 @switch (item.Status)
                                 {
                                     case "In Progress":
-                                        <span class="badge bg-primary">Đang tiến hành</span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Đang điều trị</span>
                                         break;
                                     case "Completed":
-                                        <span class="badge bg-success">Hoàn thành</span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Hoàn thành</span>
+                                        break;
+                                    case "Paused":
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Tạm dừng</span>
                                         break;
                                     case "Cancelled":
-                                        <span class="badge bg-danger">Đã hủy</span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Đã hủy</span>
                                         break;
                                     default:
-                                        <span class="badge bg-secondary">@item.Status</span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">@item.Status</span>
                                         break;
                                 }
                             </td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                        Thao tác
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-eye"></i> Chi tiết</a></li>
-                                        <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil"></i> Chỉnh sửa</a></li>
-                                        <li><a class="dropdown-item" asp-controller="TreatmentStages" asp-action="TreatmentStages" asp-route-id="@item.Id"><i class="bi bi-list-check"></i> Giai đoạn</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Medications" asp-action="TreatmentMedications" asp-route-id="@item.Id"><i class="bi bi-capsule"></i> Thuốc</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash"></i> Xóa</a></li>
-                                    </ul>
+                            <td class="py-3 px-4">
+                                <div class="flex items-center space-x-1">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="bg-blue-100 text-blue-600 p-2 rounded hover:bg-blue-200 transition-colors duration-200" title="Chi tiết">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="bg-yellow-100 text-yellow-600 p-2 rounded hover:bg-yellow-200 transition-colors duration-200" title="Chỉnh sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <div class="relative">
+                                        <button type="button" class="bg-gray-100 text-gray-600 p-2 rounded hover:bg-gray-200 transition-colors duration-200 dropdown-toggle" onclick="toggleTreatmentDropdown('@item.Id')" title="Thêm tùy chọn">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50 hidden dropdown-menu" id="dropdown-@item.Id" style="transform-origin: top right;">
+                                            <div class="py-1">
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="TreatmentStages" asp-action="TreatmentStages" asp-route-id="@item.Id">
+                                                    <i class="bi bi-list-check mr-3 w-4"></i> Giai đoạn điều trị
+                                                </a>
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Medications" asp-action="TreatmentMedications" asp-route-id="@item.Id">
+                                                    <i class="bi bi-capsule mr-3 w-4"></i> Thuốc điều trị
+                                                </a>
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="MedicalRecords" asp-action="Index" asp-route-treatmentId="@item.Id">
+                                                    <i class="bi bi-file-earmark-medical mr-3 w-4"></i> Hồ sơ y tế
+                                                </a>
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="TestResults" asp-action="Index" asp-route-treatmentId="@item.Id">
+                                                    <i class="bi bi-clipboard-data mr-3 w-4"></i> Kết quả xét nghiệm
+                                                </a>
+                                                <hr class="border-gray-200 my-1">
+                                                <a class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50" asp-action="Delete" asp-route-id="@item.Id">
+                                                    <i class="bi bi-trash mr-3 w-4"></i> Xóa
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -119,12 +162,56 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+            // Search functionality
             $("#searchInput").on("keyup", function () {
                 var value = $(this).val().toLowerCase();
                 $("#treatmentsTable tbody tr").filter(function () {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
+        });
+
+        function toggleTreatmentDropdown(treatmentId) {
+            const dropdown = document.getElementById('dropdown-' + treatmentId);
+            const button = event.target.closest('.dropdown-toggle');
+            
+            // Hide all other dropdowns
+            document.querySelectorAll('[id^="dropdown-"]').forEach(function(menu) {
+                if (menu.id !== 'dropdown-' + treatmentId) {
+                    menu.classList.add('hidden');
+                }
+            });
+            
+            // Toggle current dropdown
+            dropdown.classList.toggle('hidden');
+            
+            // Adjust dropdown position if it's near the bottom
+            if (!dropdown.classList.contains('hidden')) {
+                const rect = dropdown.getBoundingClientRect();
+                const viewportHeight = window.innerHeight;
+                
+                // If dropdown would go below viewport, position it above the button
+                if (rect.bottom > viewportHeight - 20) {
+                    dropdown.style.top = 'auto';
+                    dropdown.style.bottom = '100%';
+                    dropdown.style.marginTop = '0';
+                    dropdown.style.marginBottom = '0.5rem';
+                } else {
+                    dropdown.style.top = '';
+                    dropdown.style.bottom = '';
+                    dropdown.style.marginTop = '0.5rem';
+                    dropdown.style.marginBottom = '';
+                }
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown-toggle') && !event.target.closest('[id^="dropdown-"]')) {
+                document.querySelectorAll('[id^="dropdown-"]').forEach(function(menu) {
+                    menu.classList.add('hidden');
+                });
+            }
         });
     </script>
 } 

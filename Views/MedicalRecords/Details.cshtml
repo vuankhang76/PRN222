@@ -4,84 +4,117 @@
     ViewData["Title"] = "Chi tiết hồ sơ y tế";
 }
 
-<div class="container-fluid">
-    <h1 class="mt-4">Chi tiết hồ sơ y tế</h1>
-    
-    <div class="card mb-4">
-        <div class="card-header">
-            <h4>@Model.RecordTitle</h4>
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-gray-900">Chi tiết hồ sơ y tế</h2>
+    <a asp-action="Index" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex items-center">
+        <i class="bi bi-arrow-left mr-2"></i> Quay lại
+    </a>
+</div>
+
+<div class="bg-white rounded-lg shadow-lg">
+    <div class="p-6">
+        <div class="flex items-center mb-6">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                <i class="bi bi-file-earmark-medical text-3xl text-blue-600"></i>
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold text-gray-900">@Model.RecordTitle</h3>
+                <p class="text-gray-600">@Model.RecordType - @Model.RecordDate.ToString("dd/MM/yyyy")</p>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <dl class="row">
-                        <dt class="col-sm-4">Bệnh nhân:</dt>
-                        <dd class="col-sm-8">@Model.Patient?.FullName</dd>
-                        
-                        <dt class="col-sm-4">Bác sĩ:</dt>
-                        <dd class="col-sm-8">@(Model.Doctor?.FullName ?? "Không có")</dd>
-                        
-                        <dt class="col-sm-4">Ngày ghi nhận:</dt>
-                        <dd class="col-sm-8">@Model.RecordDate.ToString("dd/MM/yyyy")</dd>
-                        
-                        <dt class="col-sm-4">Loại hồ sơ:</dt>
-                        <dd class="col-sm-8">@Model.RecordType</dd>
-                    </dl>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Bệnh nhân</label>
+                    <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.PatientId" class="text-blue-600 hover:text-blue-800 hover:underline font-medium">
+                        @Model.Patient?.FullName
+                    </a>
                 </div>
-                <div class="col-md-6">
-                    @if (!string.IsNullOrEmpty(Model.AttachmentPath))
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Bác sĩ</label>
+                    @if (Model.Doctor != null)
                     {
-                        <div class="card">
-                            <div class="card-header">
-                                <h5>Tệp đính kèm</h5>
-                            </div>
-                            <div class="card-body">
-                                <a asp-action="DownloadAttachment" asp-route-id="@Model.Id" class="btn btn-primary">
-                                    <i class="fas fa-download"></i> Tải xuống tệp đính kèm
-                                </a>
-                                @if (Model.AttachmentPath.EndsWith(".jpg") || Model.AttachmentPath.EndsWith(".jpeg") || Model.AttachmentPath.EndsWith(".png"))
-                                {
-                                    <div class="mt-3">
-                                        <img src="@Model.AttachmentPath" class="img-fluid" alt="Hình ảnh đính kèm" />
-                                    </div>
-                                }
-                            </div>
-                        </div>
+                        <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId" class="text-blue-600 hover:text-blue-800 hover:underline">
+                            @Model.Doctor.FullName
+                        </a>
+                    }
+                    else
+                    {
+                        <p class="text-gray-500">Không có</p>
                     }
                 </div>
-            </div>
-            
-            <div class="row mt-4">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Mô tả</h5>
-                        </div>
-                        <div class="card-body">
-                            <p>@Model.Description</p>
-                        </div>
-                    </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Ngày ghi nhận</label>
+                    <p class="text-gray-900">@Model.RecordDate.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Loại hồ sơ</label>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        @Model.RecordType
+                    </span>
                 </div>
             </div>
             
-            <div class="row mt-4">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Kết quả</h5>
-                        </div>
-                        <div class="card-body">
-                            <p>@Model.Results</p>
+            <div class="space-y-4">
+                @if (!string.IsNullOrEmpty(Model.AttachmentPath))
+                {
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tệp đính kèm</label>
+                        <div class="p-3 bg-blue-50 rounded-lg">
+                            <a asp-action="DownloadAttachment" asp-route-id="@Model.Id" class="text-blue-600 hover:text-blue-800 underline flex items-center">
+                                <i class="bi bi-download mr-2"></i> Tải xuống tệp đính kèm
+                            </a>
+                            @if (Model.AttachmentPath.EndsWith(".jpg") || Model.AttachmentPath.EndsWith(".jpeg") || Model.AttachmentPath.EndsWith(".png"))
+                            {
+                                <div class="mt-3">
+                                    <img src="@Model.AttachmentPath" class="max-w-full h-auto rounded-lg" alt="Hình ảnh đính kèm" />
+                                </div>
+                            }
                         </div>
                     </div>
+                }
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Ngày ghi nhận</label>
+                    <p class="text-gray-900">@Model.RecordDate.ToString("dd/MM/yyyy HH:mm")</p>
                 </div>
             </div>
-            
-            <div class="mt-4">
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Sửa</a>
-                <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
-                <a asp-action="PatientHistory" asp-route-id="@Model.PatientId" class="btn btn-info">Xem lịch sử bệnh nhân</a>
+        </div>
+        
+        @if (!string.IsNullOrEmpty(Model.Description))
+        {
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <h4 class="text-lg font-semibold text-gray-900 mb-3">Mô tả</h4>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-gray-700 whitespace-pre-wrap">@Model.Description</p>
+                </div>
             </div>
+        }
+        
+        @if (!string.IsNullOrEmpty(Model.Results))
+        {
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <h4 class="text-lg font-semibold text-gray-900 mb-3">Kết quả</h4>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-gray-700 whitespace-pre-wrap">@Model.Results</p>
+                </div>
+            </div>
+        }
+        
+        <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+            <a asp-action="Index" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors duration-200">
+                Quay lại danh sách
+            </a>
+            <a asp-action="PatientHistory" asp-route-id="@Model.PatientId" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
+                <i class="bi bi-clock-history mr-2"></i> Lịch sử bệnh nhân
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors duration-200 flex items-center">
+                <i class="bi bi-pencil mr-2"></i> Sửa
+            </a>
         </div>
     </div>
 </div> 

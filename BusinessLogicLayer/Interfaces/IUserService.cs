@@ -17,6 +17,7 @@ namespace InfertilityApp.BusinessLogicLayer.Interfaces
         Task<User?> AuthenticateUserAsync(string username, string password);
         Task<bool> ChangePasswordAsync(int userId, string currentPassword, string newPassword);
         Task<bool> ResetPasswordAsync(int userId, string newPassword);
+        Task<bool> ResetPasswordForOldHashAsync(string username, string newPassword);
         Task<bool> IsUserInRoleAsync(int userId, string role);
         Task<IEnumerable<User>> GetUsersByRoleAsync(string role);
         

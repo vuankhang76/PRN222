@@ -1,32 +1,36 @@
 {
   "Files": [
     {
-      "Id": "E:\\PRU\\PRN222\\wwwroot\\InfertilityApp.styles.css",
+      "Id": "D:\\PRN222\\PRN222\\wwwroot\\InfertilityApp.styles.css",
       "PackagePath": "staticwebassets\\InfertilityApp.styles.css"
     },
     {
-      "Id": "E:\\PRU\\PRN222\\wwwroot\\css\\site.css",
+      "Id": "D:\\PRN222\\PRN222\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
     {
-      "Id": "E:\\PRU\\PRN222\\wwwroot\\css\\styles.css",
+      "Id": "D:\\PRN222\\PRN222\\wwwroot\\css\\styles.css",
       "PackagePath": "staticwebassets\\css\\styles.css"
     },
     {
-      "Id": "E:\\PRU\\PRN222\\wwwroot\\js\\site.js",
+      "Id": "D:\\PRN222\\PRN222\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },
     {
-      "Id": "E:\\PRU\\PRN222\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
+      "Id": "D:\\PRN222\\PRN222\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css"
     },
     {
-      "Id": "E:\\PRU\\PRN222\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
+      "Id": "D:\\PRN222\\PRN222\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js"
     },
     {
-      "Id": "E:\\PRU\\PRN222\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
+      "Id": "D:\\PRN222\\PRN222\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.js"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.InfertilityApp.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.InfertilityApp.Microsoft.AspNetCore.StaticWebAssets.props",

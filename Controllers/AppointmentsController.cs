@@ -93,7 +93,7 @@ namespace InfertilityApp.Controllers
             {
                 AppointmentDate = date ?? DateTime.Today.AddDays(1),
                 AppointmentTime = new TimeSpan(9, 0, 0),
-                Status = "Đã đặt",
+                Status = "Đã lên lịch",
                 PatientId = patientId ?? 0,
                 DoctorId = doctorId ?? 0
             };
@@ -123,12 +123,14 @@ namespace InfertilityApp.Controllers
                     else
                     {
                         await _appointmentService.CreateAppointmentAsync(appointment);
+                        TempData["Success"] = "Lịch hẹn đã được tạo thành công!";
                         return RedirectToAction(nameof(Index));
                     }
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", ex.Message);
+                    TempData["Error"] = $"Lỗi khi tạo lịch hẹn: {ex.Message}";
+                    return RedirectToAction(nameof(Index));
                 }
             }
 
@@ -175,11 +177,13 @@ namespace InfertilityApp.Controllers
                 try
                 {
                     await _appointmentService.UpdateAppointmentAsync(appointment);
+                    TempData["Success"] = "Lịch hẹn đã được cập nhật thành công!";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", ex.Message);
+                    TempData["Error"] = $"Lỗi khi cập nhật lịch hẹn: {ex.Message}";
+                    return RedirectToAction(nameof(Index));
                 }
             }
 
@@ -215,13 +219,13 @@ namespace InfertilityApp.Controllers
             try
             {
                 await _appointmentService.DeleteAppointmentAsync(id);
+                TempData["Success"] = "Lịch hẹn đã được xóa thành công!";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);
-                var appointment = await _appointmentService.GetAppointmentWithDetailsAsync(id);
-                return View(appointment);
+                TempData["Error"] = $"Lỗi khi xóa lịch hẹn: {ex.Message}";
+                return RedirectToAction(nameof(Index));
             }
         }
 

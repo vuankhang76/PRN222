@@ -6,6 +6,7 @@ namespace InfertilityApp.BusinessLogicLayer.Interfaces
     {
         // CRUD cơ bản
         Task<IEnumerable<MedicalRecord>> GetAllMedicalRecordsAsync();
+        Task<IEnumerable<MedicalRecord>> GetAllMedicalRecordsWithDetailsAsync();
         Task<MedicalRecord?> GetMedicalRecordByIdAsync(int id);
         Task<MedicalRecord?> GetMedicalRecordWithDetailsAsync(int id);
         Task<MedicalRecord> CreateMedicalRecordAsync(MedicalRecord medicalRecord);

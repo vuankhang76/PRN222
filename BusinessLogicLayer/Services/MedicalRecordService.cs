@@ -19,6 +19,13 @@ namespace InfertilityApp.BusinessLogicLayer.Services
             return await _unitOfWork.MedicalRecords.GetAllAsync();
         }
 
+        public async Task<IEnumerable<MedicalRecord>> GetAllMedicalRecordsWithDetailsAsync()
+        {
+            return await _unitOfWork.MedicalRecords.GetWithIncludeAsync(
+                mr => mr.Patient!,
+                mr => mr.Doctor!);
+        }
+
         public async Task<MedicalRecord?> GetMedicalRecordByIdAsync(int id)
         {
             return await _unitOfWork.MedicalRecords.GetByIdAsync(id);

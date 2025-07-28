@@ -14,17 +14,19 @@ namespace InfertilityApp.Controllers
     {
         private readonly IMedicalRecordService _medicalRecordService;
         private readonly IPatientService _patientService;
+        private readonly IDoctorService _doctorService;
 
-        public MedicalRecordsController(IMedicalRecordService medicalRecordService, IPatientService patientService)
+        public MedicalRecordsController(IMedicalRecordService medicalRecordService, IPatientService patientService, IDoctorService doctorService)
         {
             _medicalRecordService = medicalRecordService;
             _patientService = patientService;
+            _doctorService = doctorService;
         }
 
         // GET: MedicalRecords
         public async Task<IActionResult> Index(int? patientId, string searchString, DateTime? fromDate, DateTime? toDate, string recordType)
         {
-            var medicalRecords = await _medicalRecordService.GetAllMedicalRecordsAsync();
+            var medicalRecords = await _medicalRecordService.GetAllMedicalRecordsWithDetailsAsync();
 
             // Lọc theo bệnh nhân
             if (patientId.HasValue)
@@ -98,6 +100,21 @@ namespace InfertilityApp.Controllers
             var patients = await _patientService.GetAllPatientsAsync();
             ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", patientId);
 
+            var recordTypes = new List<string> 
+            { 
+                "Khám ban đầu", 
+                "Khám theo dõi", 
+                "Xét nghiệm", 
+                "Siêu âm", 
+                "Tư vấn", 
+                "Điều trị",
+                "Kết quả điều trị"
+            };
+            ViewData["RecordTypes"] = recordTypes;
+
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName");
+
             var medicalRecord = new MedicalRecord
             {
                 RecordDate = DateTime.Today,
@@ -110,8 +127,16 @@ namespace InfertilityApp.Controllers
         // POST: MedicalRecords/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PatientId,RecordDate,Diagnosis,Treatment,Notes,DoctorName")] MedicalRecord medicalRecord)
+        public async Task<IActionResult> Create([Bind("Id,PatientId,RecordDate,RecordType,RecordTitle,Description,Results,Diagnosis,Notes,DoctorId,AttachmentPath")] MedicalRecord medicalRecord)
         {
+            if (medicalRecord == null)
+            {
+                medicalRecord = new MedicalRecord
+                {
+                    RecordDate = DateTime.Today
+                };
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -127,6 +152,21 @@ namespace InfertilityApp.Controllers
 
             var patients = await _patientService.GetAllPatientsAsync();
             ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", medicalRecord.PatientId);
+            var recordTypes = new List<string> 
+            { 
+                "Khám ban đầu", 
+                "Khám theo dõi", 
+                "Xét nghiệm", 
+                "Siêu âm", 
+                "Tư vấn", 
+                "Điều trị",
+                "Kết quả điều trị"
+            };
+            ViewData["RecordTypes"] = recordTypes;
+            
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName");
+            
             return View(medicalRecord);
         }
 
@@ -146,15 +186,31 @@ namespace InfertilityApp.Controllers
 
             var patients = await _patientService.GetAllPatientsAsync();
             ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", medicalRecord.PatientId);
+            
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName", medicalRecord.DoctorId);
+            
+            var recordTypes = new List<string> 
+            { 
+                "Khám ban đầu", 
+                "Khám theo dõi", 
+                "Xét nghiệm", 
+                "Siêu âm", 
+                "Tư vấn", 
+                "Điều trị",
+                "Kết quả điều trị"
+            };
+            ViewData["RecordTypes"] = recordTypes;
+            
             return View(medicalRecord);
         }
 
         // POST: MedicalRecords/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,RecordDate,Diagnosis,Treatment,Notes,DoctorName")] MedicalRecord medicalRecord)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,RecordDate,RecordType,RecordTitle,Description,Results,Diagnosis,Notes,DoctorId,AttachmentPath")] MedicalRecord medicalRecord)
         {
-            if (id != medicalRecord.Id)
+            if (medicalRecord == null || id != medicalRecord.Id)
             {
                 return NotFound();
             }
@@ -174,6 +230,21 @@ namespace InfertilityApp.Controllers
 
             var patients = await _patientService.GetAllPatientsAsync();
             ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", medicalRecord.PatientId);
+            var recordTypes = new List<string> 
+            { 
+                "Khám ban đầu", 
+                "Khám theo dõi", 
+                "Xét nghiệm", 
+                "Siêu âm", 
+                "Tư vấn", 
+                "Điều trị",
+                "Kết quả điều trị"
+            };
+            ViewData["RecordTypes"] = recordTypes;
+            
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName", medicalRecord.DoctorId);
+            
             return View(medicalRecord);
         }
 
@@ -202,13 +273,13 @@ namespace InfertilityApp.Controllers
             try
             {
                 await _medicalRecordService.DeleteMedicalRecordAsync(id);
+                TempData["Success"] = "Hồ sơ y tế đã được xóa thành công!";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);
-                var medicalRecord = await _medicalRecordService.GetMedicalRecordByIdAsync(id);
-                return View(medicalRecord);
+                TempData["Error"] = $"Lỗi khi xóa hồ sơ y tế: {ex.Message}";
+                return RedirectToAction(nameof(Index));
             }
         }
 

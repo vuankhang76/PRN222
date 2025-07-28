@@ -4,6 +4,7 @@ using InfertilityApp.Models;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using BCrypt.Net;
 
 namespace InfertilityApp.BusinessLogicLayer.Services
 {
@@ -56,7 +57,6 @@ namespace InfertilityApp.BusinessLogicLayer.Services
                 throw new InvalidOperationException("Email đã được sử dụng");
             }
 
-            // Hash password
             user.PasswordHash = HashPassword(user.PasswordHash);
             user.CreatedAt = DateTime.Now;
             user.IsActive = true;
@@ -83,6 +83,11 @@ namespace InfertilityApp.BusinessLogicLayer.Services
                 throw new InvalidOperationException("Email đã được sử dụng");
             }
 
+            if (!string.IsNullOrEmpty(user.PasswordHash) && !user.PasswordHash.StartsWith("$2"))
+            {
+                user.PasswordHash = HashPassword(user.PasswordHash);
+            }
+
             await _unitOfWork.Users.UpdateAsync(user);
             await _unitOfWork.SaveChangesAsync();
             return user;
@@ -93,9 +98,7 @@ namespace InfertilityApp.BusinessLogicLayer.Services
             var user = await _unitOfWork.Users.GetByIdAsync(id);
             if (user == null) return false;
 
-            // Soft delete - chỉ deactivate thay vì xóa hoàn toàn
-            user.IsActive = false;
-            await _unitOfWork.Users.UpdateAsync(user);
+            await _unitOfWork.Users.DeleteAsync(user);
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
@@ -139,6 +142,22 @@ namespace InfertilityApp.BusinessLogicLayer.Services
         public async Task<bool> ResetPasswordAsync(int userId, string newPassword)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(userId);
+            if (user == null) return false;
+
+            if (!await ValidatePasswordComplexityAsync(newPassword))
+            {
+                throw new ArgumentException("Mật khẩu mới không đáp ứng yêu cầu bảo mật");
+            }
+
+            user.PasswordHash = HashPassword(newPassword);
+            await _unitOfWork.Users.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> ResetPasswordForOldHashAsync(string username, string newPassword)
+        {
+            var user = await GetUserByUsernameAsync(username);
             if (user == null) return false;
 
             if (!await ValidatePasswordComplexityAsync(newPassword))
@@ -237,7 +256,6 @@ namespace InfertilityApp.BusinessLogicLayer.Services
 
         public async Task<bool> ValidatePasswordComplexityAsync(string password)
         {
-            // Mật khẩu phải có ít nhất 8 ký tự, có chữ hoa, chữ thường, số và ký tự đặc biệt
             if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
                 return false;
 
@@ -253,15 +271,16 @@ namespace InfertilityApp.BusinessLogicLayer.Services
         {
             // Validate required fields
             if (string.IsNullOrWhiteSpace(user.Username) ||
-                string.IsNullOrWhiteSpace(user.Email) ||
                 string.IsNullOrWhiteSpace(user.FullName) ||
                 string.IsNullOrWhiteSpace(user.Role))
                 return false;
 
-            // Validate email format
-            var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
-            if (!emailRegex.IsMatch(user.Email))
-                return false;
+            if (!string.IsNullOrWhiteSpace(user.Email))
+            {
+                var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+                if (!emailRegex.IsMatch(user.Email))
+                    return false;
+            }
 
             // Validate role
             var validRoles = new[] { "Admin", "Doctor", "Nurse", "Receptionist" };
@@ -306,17 +325,19 @@ namespace InfertilityApp.BusinessLogicLayer.Services
         // Private helper methods
         private string HashPassword(string password)
         {
-            using (var sha256 = SHA256.Create())
-            {
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password + "salt"));
-                return Convert.ToBase64String(hashedBytes);
-            }
+            return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
         private bool VerifyPassword(string password, string hash)
         {
-            var hashOfInput = HashPassword(password);
-            return hashOfInput.Equals(hash);
+            try
+            {
+                return BCrypt.Net.BCrypt.Verify(password, hash);
+            }
+            catch (BCrypt.Net.SaltParseException)
+            {
+                return false;
+            }
         }
     }
 }

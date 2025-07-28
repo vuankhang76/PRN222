@@ -113,11 +113,13 @@ namespace InfertilityApp.Controllers
                 try
                 {
                     await _treatmentService.CreateTreatmentAsync(treatment);
+                    TempData["Success"] = "Điều trị đã được tạo thành công!";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", ex.Message);
+                    TempData["Error"] = $"Lỗi khi tạo điều trị: {ex.Message}";
+                    return RedirectToAction(nameof(Index));
                 }
             }
 
@@ -164,11 +166,13 @@ namespace InfertilityApp.Controllers
                 try
                 {
                     await _treatmentService.UpdateTreatmentAsync(treatment);
+                    TempData["Success"] = "Điều trị đã được cập nhật thành công!";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", ex.Message);
+                    TempData["Error"] = $"Lỗi khi cập nhật điều trị: {ex.Message}";
+                    return RedirectToAction(nameof(Index));
                 }
             }
 
@@ -204,13 +208,13 @@ namespace InfertilityApp.Controllers
             try
             {
                 await _treatmentService.DeleteTreatmentAsync(id);
+                TempData["Success"] = "Điều trị đã được xóa thành công!";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);
-                var treatment = await _treatmentService.GetTreatmentWithDetailsAsync(id);
-                return View(treatment);
+                TempData["Error"] = $"Lỗi khi xóa điều trị: {ex.Message}";
+                return RedirectToAction(nameof(Index));
             }
         }
 

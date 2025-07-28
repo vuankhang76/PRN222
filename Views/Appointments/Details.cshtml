@@ -4,233 +4,140 @@
     ViewData["Title"] = "Chi tiết lịch hẹn";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Chi tiết lịch hẹn</h2>
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
-            <i class="bi bi-pencil"></i> Chỉnh sửa
-        </a>
-        <a asp-action="Index" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Quay lại danh sách
-        </a>
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold text-gray-900">Chi tiết lịch hẹn</h2>
+        <div class="flex space-x-3">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors duration-200 flex items-center">
+                <i class="bi bi-pencil mr-2"></i> Chỉnh sửa
+            </a>
+            <a asp-action="Index" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex items-center">
+                <i class="bi bi-arrow-left mr-2"></i> Quay lại
+            </a>
+        </div>
     </div>
-</div>
 
-<div class="row">
-    <div class="col-md-8 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Thông tin lịch hẹn</h5>
+    <div class="bg-white rounded-lg shadow-lg">
+        <div class="p-6">
+            <div class="flex items-center mb-6">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                    <i class="bi bi-calendar-event text-3xl text-blue-600"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900">Lịch hẹn #@Model.Id</h3>
+                    <p class="text-gray-600">@Model.AppointmentDate.ToString("dd/MM/yyyy") - @Model.AppointmentTime.ToString(@"hh\:mm")</p>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="fw-bold">Bệnh nhân:</label>
-                        <p>
-                            <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.PatientId">
-                                @Model.Patient.FullName
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Bệnh nhân</label>
+                    <p class="text-gray-900">
+                        <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.PatientId" class="text-blue-600 hover:text-blue-800 hover:underline">
+                            @Model.Patient.FullName
+                        </a>
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Bác sĩ</label>
+                    <p class="text-gray-900">
+                        <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId" class="text-blue-600 hover:text-blue-800 hover:underline">
+                            BS. @Model.Doctor.FullName
+                        </a>
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Ngày hẹn</label>
+                    <p class="text-gray-900">@Model.AppointmentDate.ToString("dd/MM/yyyy")</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Giờ hẹn</label>
+                    <p class="text-gray-900">@Model.AppointmentTime.ToString(@"hh\:mm")</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Thời lượng</label>
+                    <p class="text-gray-900">@Model.Duration phút</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+                    @switch (Model.Status)
+                    {
+                        case "Đã lên lịch":
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Đã lên lịch</span>
+                            break;
+                        case "Hoàn thành":
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Hoàn thành</span>
+                            break;
+                        case "Đã hủy":
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Đã hủy</span>
+                            break;
+                        case "Đổi lịch":
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Đổi lịch</span>
+                            break;
+                        case "Không đến":
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">Không đến</span>
+                            break;
+                        default:
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">@Model.Status</span>
+                            break;
+                    }
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Loại cuộc hẹn</label>
+                    <p class="text-gray-900">@(string.IsNullOrEmpty(Model.AppointmentType) ? "Không có" : Model.AppointmentType)</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Điều trị liên quan</label>
+                    <p class="text-gray-900">
+                        @if (Model.TreatmentId.HasValue && Model.Treatment != null)
+                        {
+                            <a asp-controller="Treatments" asp-action="Details" asp-route-id="@Model.TreatmentId" class="text-blue-600 hover:text-blue-800 hover:underline">
+                                @Model.Treatment.TreatmentName
                             </a>
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="fw-bold">Bác sĩ:</label>
-                        <p>
-                            <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId">
-                                @Model.Doctor.FullName
-                            </a>
-                        </p>
+                        }
+                        else
+                        {
+                            <span class="text-gray-500">Không có</span>
+                        }
+                    </p>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Purpose))
+            {
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Mục đích cuộc hẹn</label>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-gray-900">@Model.Purpose</p>
                     </div>
                 </div>
-                
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="fw-bold">Ngày hẹn:</label>
-                        <p>@Model.AppointmentDate.ToString("dd/MM/yyyy")</p>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="fw-bold">Giờ hẹn:</label>
-                        <p>@Model.AppointmentTime.ToString(@"hh\:mm")</p>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="fw-bold">Thời gian (phút):</label>
-                        <p>@Model.Duration</p>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="fw-bold">Trạng thái:</label>
-                        <p>
-                            @switch (Model.Status)
-                            {
-                                case "Scheduled":
-                                    <span class="badge bg-primary">Đã lên lịch</span>
-                                    break;
-                                case "Completed":
-                                    <span class="badge bg-success">Hoàn thành</span>
-                                    break;
-                                case "Cancelled":
-                                    <span class="badge bg-danger">Đã hủy</span>
-                                    break;
-                                case "Rescheduled":
-                                    <span class="badge bg-warning">Đổi lịch</span>
-                                    break;
-                                default:
-                                    <span class="badge bg-secondary">@Model.Status</span>
-                                    break;
-                            }
-                        </p>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Ghi chú</label>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-gray-900">@Model.Notes</p>
                     </div>
                 </div>
-                
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="fw-bold">Loại cuộc hẹn:</label>
-                        <p>@Model.AppointmentType</p>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="fw-bold">Điều trị:</label>
-                        <p>
-                            @if (Model.TreatmentId.HasValue)
-                            {
-                                <a asp-controller="Treatments" asp-action="Details" asp-route-id="@Model.TreatmentId">
-                                    @Model.Treatment.TreatmentName
-                                </a>
-                            }
-                            else
-                            {
-                                <span>Không liên kết với điều trị</span>
-                            }
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="fw-bold">Ghi chú:</label>
-                    <p>@(string.IsNullOrEmpty(Model.Notes) ? "Không có" : Model.Notes)</p>
-                </div>
+            }
+
+            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+                <a asp-action="Index" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors duration-200">
+                    Quay lại danh sách
+                </a>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors duration-200 flex items-center">
+                    <i class="bi bi-pencil mr-2"></i> Chỉnh sửa
+                </a>
             </div>
         </div>
     </div>
-    
-    <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">Thông tin nhanh</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-flex align-items-center mb-3">
-                    <div class="avatar-placeholder me-3">
-                        <i class="bi bi-person-circle fs-1"></i>
-                    </div>
-                    <div>
-                        <h5 class="mb-0">@Model.Patient.FullName</h5>
-                        <p class="text-muted mb-0">Bệnh nhân</p>
-                    </div>
-                </div>
-                
-                <div class="d-flex align-items-center mb-3">
-                    <div class="avatar-placeholder me-3">
-                        <i class="bi bi-hospital fs-1"></i>
-                    </div>
-                    <div>
-                        <h5 class="mb-0">@Model.Doctor.FullName</h5>
-                        <p class="text-muted mb-0">Bác sĩ</p>
-                    </div>
-                </div>
-                
-                <div class="d-flex align-items-center">
-                    <div class="avatar-placeholder me-3">
-                        <i class="bi bi-calendar-date fs-1"></i>
-                    </div>
-                    <div>
-                        <h5 class="mb-0">@Model.AppointmentDate.ToString("dd/MM/yyyy")</h5>
-                        <p class="text-muted mb-0">@Model.AppointmentTime.ToString(@"hh\:mm")</p>
-                    </div>
-                </div>
-                
-                <hr>
-                
-                <div class="d-grid gap-2">
-                    @if (Model.Status == "Scheduled")
-                    {
-                        <a asp-action="Edit" asp-route-id="@Model.Id" asp-route-status="Completed" class="btn btn-success">
-                            <i class="bi bi-check-circle"></i> Đánh dấu hoàn thành
-                        </a>
-                        <a asp-action="Edit" asp-route-id="@Model.Id" asp-route-status="Cancelled" class="btn btn-danger">
-                            <i class="bi bi-x-circle"></i> Hủy lịch hẹn
-                        </a>
-                        <a asp-action="Edit" asp-route-id="@Model.Id" asp-route-status="Rescheduled" class="btn btn-warning">
-                            <i class="bi bi-calendar-plus"></i> Đổi lịch hẹn
-                        </a>
-                    }
-                    else if (Model.Status == "Cancelled" || Model.Status == "Rescheduled")
-                    {
-                        <a asp-action="Create" asp-route-patientId="@Model.PatientId" asp-route-doctorId="@Model.DoctorId" class="btn btn-primary">
-                            <i class="bi bi-calendar-plus"></i> Tạo lịch hẹn mới
-                        </a>
-                    }
-                </div>
-            </div>
-        </div>
-        
-        @if (Model.TreatmentId.HasValue)
-        {
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Điều trị liên quan</h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="fw-bold">Tên điều trị:</label>
-                        <p>@Model.Treatment.TreatmentName</p>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="fw-bold">Loại điều trị:</label>
-                        <p>@Model.Treatment.TreatmentType</p>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="fw-bold">Trạng thái:</label>
-                        <p>
-                            @switch (Model.Treatment.Status)
-                            {
-                                case "In Progress":
-                                    <span class="badge bg-primary">Đang tiến hành</span>
-                                    break;
-                                case "Completed":
-                                    <span class="badge bg-success">Hoàn thành</span>
-                                    break;
-                                case "Cancelled":
-                                    <span class="badge bg-danger">Đã hủy</span>
-                                    break;
-                                default:
-                                    <span class="badge bg-secondary">@Model.Treatment.Status</span>
-                                    break;
-                            }
-                        </p>
-                    </div>
-                    
-                    <div class="d-grid">
-                        <a asp-controller="Treatments" asp-action="Details" asp-route-id="@Model.TreatmentId" class="btn btn-outline-primary">
-                            <i class="bi bi-clipboard2-pulse"></i> Xem chi tiết điều trị
-                        </a>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-</div>
-
-<style>
-    .avatar-placeholder {
-        width: 60px;
-        height: 60px;
-        background-color: #f8f9fa;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-</style> 
+</div> 

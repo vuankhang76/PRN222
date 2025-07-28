@@ -1,0 +1,104 @@
+@model InfertilityApp.Models.Treatment
+
+@{
+    ViewData["Title"] = "Thêm điều trị mới";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold text-gray-900">Thêm điều trị mới</h2>
+        <a asp-action="Index" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex items-center">
+            <i class="bi bi-arrow-left mr-2"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg">
+        <div class="p-6">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6"></div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label asp-for="PatientId" class="block text-sm font-medium text-gray-700 mb-2">Bệnh nhân <span class="text-red-500">*</span></label>
+                        <select asp-for="PatientId" asp-items="@(ViewData["PatientId"] as SelectList)" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">-- Chọn bệnh nhân --</option>
+                        </select>
+                        <span asp-validation-for="PatientId" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="DoctorId" class="block text-sm font-medium text-gray-700 mb-2">Bác sĩ <span class="text-red-500">*</span></label>
+                        <select asp-for="DoctorId" asp-items="@(ViewData["DoctorId"] as SelectList)" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">-- Chọn bác sĩ --</option>
+                        </select>
+                        <span asp-validation-for="DoctorId" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="TreatmentType" class="block text-sm font-medium text-gray-700 mb-2">Loại điều trị <span class="text-red-500">*</span></label>
+                        <select asp-for="TreatmentType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">-- Chọn loại điều trị --</option>
+                            <option value="IVF">IVF (Thụ tinh trong ống nghiệm)</option>
+                            <option value="IUI">IUI (Thụ tinh nhân tạo)</option>
+                            <option value="ICSI">ICSI (Tiêm tinh trùng vào bào tương)</option>
+                            <option value="FET">FET (Chuyển phôi đông lạnh)</option>
+                            <option value="Surgery">Phẫu thuật</option>
+                            <option value="Medication">Điều trị bằng thuốc</option>
+                            <option value="Consultation">Tư vấn</option>
+                            <option value="Monitoring">Theo dõi</option>
+                        </select>
+                        <span asp-validation-for="TreatmentType" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="TreatmentName" class="block text-sm font-medium text-gray-700 mb-2">Tên điều trị <span class="text-red-500">*</span></label>
+                        <input asp-for="TreatmentName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nhập tên điều trị..." />
+                        <span asp-validation-for="TreatmentName" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="StartDate" class="block text-sm font-medium text-gray-700 mb-2">Ngày bắt đầu <span class="text-red-500">*</span></label>
+                        <input asp-for="StartDate" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                        <span asp-validation-for="StartDate" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Status" class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                        <select asp-for="Status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="Đang điều trị">Đang điều trị</option>
+                            <option value="Hoàn thành">Hoàn thành</option>
+                            <option value="Tạm dừng">Tạm dừng</option>
+                            <option value="Đã hủy">Đã hủy</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-red-500 text-sm"></span>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label asp-for="Description" class="block text-sm font-medium text-gray-700 mb-2">Mô tả</label>
+                    <textarea asp-for="Description" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Mô tả chi tiết về điều trị..."></textarea>
+                    <span asp-validation-for="Description" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div class="mt-6">
+                    <label asp-for="Notes" class="block text-sm font-medium text-gray-700 mb-2">Ghi chú</label>
+                    <textarea asp-for="Notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ghi chú bổ sung..."></textarea>
+                    <span asp-validation-for="Notes" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div class="flex justify-end space-x-4 mt-8">
+                    <a asp-action="Index" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors duration-200">
+                        Hủy
+                    </a>
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                        Thêm mới
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

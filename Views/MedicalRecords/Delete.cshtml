@@ -4,43 +4,86 @@
     ViewData["Title"] = "Xóa hồ sơ y tế";
 }
 
-<div class="container-fluid">
-    <h1 class="mt-4">Xóa hồ sơ y tế</h1>
-    
-    <div class="card mb-4">
-        <div class="card-header bg-danger text-white">
-            <h4>Bạn có chắc chắn muốn xóa hồ sơ y tế này?</h4>
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-gray-900">Xóa hồ sơ y tế</h2>
+    <a asp-action="Index" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex items-center">
+        <i class="bi bi-arrow-left mr-2"></i> Quay lại
+    </a>
+</div>
+
+<div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+    <div class="flex items-center">
+        <div class="flex-shrink-0">
+            <i class="bi bi-exclamation-triangle text-red-400 text-2xl"></i>
         </div>
-        <div class="card-body">
-            <dl class="row">
-                <dt class="col-sm-3">Tiêu đề:</dt>
-                <dd class="col-sm-9">@Model.RecordTitle</dd>
+        <div class="ml-3">
+            <h3 class="text-lg font-medium text-red-800">Bạn có chắc chắn muốn xóa hồ sơ y tế này?</h3>
+            <p class="mt-2 text-red-700">Hành động này không thể hoàn tác. Hồ sơ y tế sẽ bị xóa hoàn toàn khỏi hệ thống.</p>
+            @if (!string.IsNullOrEmpty(Model.AttachmentPath))
+            {
+                <p class="mt-1 text-red-600">Tệp đính kèm cũng sẽ bị xóa.</p>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="bg-white rounded-lg shadow-lg">
+    <div class="p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Thông tin hồ sơ y tế</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tiêu đề</label>
+                    <p class="text-gray-900 font-medium">@Model.RecordTitle</p>
+                </div>
                 
-                <dt class="col-sm-3">Bệnh nhân:</dt>
-                <dd class="col-sm-9">@Model.Patient?.FullName</dd>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Bệnh nhân</label>
+                    <p class="text-gray-900">@Model.Patient?.FullName</p>
+                </div>
                 
-                <dt class="col-sm-3">Bác sĩ:</dt>
-                <dd class="col-sm-9">@(Model.Doctor?.FullName ?? "Không có")</dd>
-                
-                <dt class="col-sm-3">Ngày ghi nhận:</dt>
-                <dd class="col-sm-9">@Model.RecordDate.ToString("dd/MM/yyyy")</dd>
-                
-                <dt class="col-sm-3">Loại hồ sơ:</dt>
-                <dd class="col-sm-9">@Model.RecordType</dd>
-            </dl>
-            
-            <div class="alert alert-warning">
-                <strong>Cảnh báo:</strong> Việc xóa hồ sơ y tế này sẽ xóa vĩnh viễn dữ liệu và không thể khôi phục.
-                @if (!string.IsNullOrEmpty(Model.AttachmentPath))
-                {
-                    <span>Tệp đính kèm cũng sẽ bị xóa.</span>
-                }
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Bác sĩ</label>
+                    <p class="text-gray-900">@(Model.Doctor?.FullName ?? "Không có")</p>
+                </div>
             </div>
             
-            <form asp-action="Delete">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Ngày ghi nhận</label>
+                    <p class="text-gray-900">@Model.RecordDate.ToString("dd/MM/yyyy")</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Loại hồ sơ</label>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        @Model.RecordType
+                    </span>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.AttachmentPath))
+                {
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tệp đính kèm</label>
+                        <p class="text-gray-900">
+                            <i class="bi bi-file-earmark mr-1"></i>
+                            Có tệp đính kèm
+                        </p>
+                    </div>
+                }
+            </div>
+        </div>
+        
+        <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+            <a asp-action="Index" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors duration-200">
+                Hủy
+            </a>
+            <form asp-action="Delete" method="post" class="inline">
                 <input type="hidden" asp-for="Id" />
-                <input type="submit" value="Xóa" class="btn btn-danger" />
-                <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+                <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 flex items-center">
+                    <i class="bi bi-trash mr-2"></i> Xóa hồ sơ y tế
+                </button>
             </form>
         </div>
     </div>

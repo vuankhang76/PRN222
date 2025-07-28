@@ -62,7 +62,7 @@
                         <i class="bi bi-file-earmark-medical mr-3"></i> Hồ sơ y tế
                     </a>
                 </li>
-                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "bg-blue-600" : "")">
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" ? "bg-blue-600" : "")">
                     <a asp-controller="Users" asp-action="Index" class="flex items-center p-4 text-white no-underline hover:bg-gray-700 transition-all duration-300">
                         <i class="bi bi-person-gear mr-3"></i> Người dùng
                     </a>
@@ -152,7 +152,6 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-
 @@<style>
     body {
         min-height: 100vh;

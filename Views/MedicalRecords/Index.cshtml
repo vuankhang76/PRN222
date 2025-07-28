@@ -4,108 +4,174 @@
     ViewData["Title"] = "Danh sách hồ sơ y tế";
 }
 
-<div class="container-fluid">
-    <h1 class="mt-4">Danh sách hồ sơ y tế</h1>
-    
-    <p>
-        <a asp-action="Create" class="btn btn-primary">Thêm hồ sơ mới</a>
-    </p>
-    
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5>Tìm kiếm và lọc</h5>
-        </div>
-        <div class="card-body">
-            <form asp-action="Index" method="get">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="searchString">Tìm kiếm:</label>
-                            <input type="text" id="searchString" name="searchString" class="form-control" value="@ViewData["CurrentSearch"]" placeholder="Tên, mô tả..." />
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="fromDate">Từ ngày:</label>
-                            <input type="date" id="fromDate" name="fromDate" class="form-control" value="@ViewData["CurrentFromDate"]" />
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="toDate">Đến ngày:</label>
-                            <input type="date" id="toDate" name="toDate" class="form-control" value="@ViewData["CurrentToDate"]" />
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="patientId">Bệnh nhân:</label>
-                            <select id="patientId" name="patientId" class="form-control" asp-items="ViewBag.PatientId">
-                                <option value="">-- Tất cả --</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="recordType">Loại hồ sơ:</label>
-                            <select id="recordType" name="recordType" class="form-control">
-                                <option value="">-- Tất cả --</option>
-                                @if (ViewData["RecordTypes"] != null)
-                                {
-                                    @foreach (var type in (List<string>)ViewData["RecordTypes"])
-                                    {
-                                        <option value="@type" selected="@(type == (string)ViewData["CurrentRecordType"])">@type</option>
-                                    }
-                                }
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-1 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary w-100">Lọc</button>
-                    </div>
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-gray-900">Danh sách hồ sơ y tế</h2>
+    <a asp-action="Create" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
+        <i class="bi bi-plus-circle mr-2"></i> Thêm hồ sơ mới
+    </a>
+</div>
+
+<div class="bg-white rounded-lg shadow-lg mb-6">
+    <div class="p-6">
+        <h5 class="text-lg font-semibold text-gray-900 mb-4">Tìm kiếm và lọc</h5>
+        <form asp-action="Index" method="get">
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                <div>
+                    <label for="searchString" class="block text-sm font-medium text-gray-700 mb-1">Tìm kiếm:</label>
+                    <input type="text" id="searchString" name="searchString" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" value="@ViewData["CurrentSearch"]" placeholder="Tên, mô tả..." />
                 </div>
-            </form>
-        </div>
-    </div>
-    
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Tiêu đề</th>
-                            <th>Bệnh nhân</th>
-                            <th>Bác sĩ</th>
-                            <th>Ngày</th>
-                            <th>Loại hồ sơ</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
+                <div>
+                    <label for="fromDate" class="block text-sm font-medium text-gray-700 mb-1">Từ ngày:</label>
+                    <input type="date" id="fromDate" name="fromDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" value="@ViewData["CurrentFromDate"]" />
+                </div>
+                <div>
+                    <label for="toDate" class="block text-sm font-medium text-gray-700 mb-1">Đến ngày:</label>
+                    <input type="date" id="toDate" name="toDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" value="@ViewData["CurrentToDate"]" />
+                </div>
+                <div>
+                    <label for="patientId" class="block text-sm font-medium text-gray-700 mb-1">Bệnh nhân:</label>
+                    <select id="patientId" name="patientId" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" asp-items="ViewBag.PatientId">
+                        <option value="">-- Tất cả --</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="recordType" class="block text-sm font-medium text-gray-700 mb-1">Loại hồ sơ:</label>
+                    <select id="recordType" name="recordType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">-- Tất cả --</option>
+                        @if (ViewData["RecordTypes"] != null)
                         {
-                            <tr>
-                                <td>@item.RecordTitle</td>
-                                <td>@item.Patient?.FullName</td>
-                                <td>@item.Doctor?.FullName</td>
-                                <td>@item.RecordDate.ToString("dd/MM/yyyy")</td>
-                                <td>@item.RecordType</td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Chi tiết</a>
-                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Xóa</a>
-                                        @if (!string.IsNullOrEmpty(item.AttachmentPath))
-                                        {
-                                            <a asp-action="DownloadAttachment" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Tải tệp</a>
-                                        }
-                                    </div>
-                                </td>
-                            </tr>
+                            @foreach (var type in (List<string>)ViewData["RecordTypes"])
+                            {
+                                <option value="@type" selected="@(type == (string)ViewData["CurrentRecordType"])">@type</option>
+                            }
                         }
-                    </tbody>
-                </table>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">Lọc</button>
+                </div>
             </div>
+        </form>
+    </div>
+</div>
+
+<div class="bg-white rounded-lg shadow-lg">
+    <div class="p-6">
+        <div class="overflow-x-auto">
+            <table class="w-full" id="medicalRecordsTable">
+                <thead>
+                    <tr class="border-b border-gray-200">
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Tiêu đề</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Bệnh nhân</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Bác sĩ</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Ngày</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Loại hồ sơ</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700 w-32">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
+                            <td class="py-3 px-4 text-gray-900 font-medium">
+                                @item.RecordTitle
+                            </td>
+                            <td class="py-3 px-4 text-gray-900">
+                                @if (item.Patient != null)
+                                {
+                                    <a asp-controller="Patients" asp-action="Details" asp-route-id="@item.PatientId" class="text-blue-600 hover:text-blue-800 hover:underline">
+                                        @item.Patient.FullName
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-gray-500">-</span>
+                                }
+                            </td>
+                            <td class="py-3 px-4 text-gray-900">
+                                @if (item.Doctor != null)
+                                {
+                                    <a asp-controller="Doctors" asp-action="Details" asp-route-id="@item.DoctorId" class="text-blue-600 hover:text-blue-800 hover:underline">
+                                        @item.Doctor.FullName
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-gray-500">-</span>
+                                }
+                            </td>
+                            <td class="py-3 px-4 text-gray-700">
+                                @item.RecordDate.ToString("dd/MM/yyyy")
+                            </td>
+                            <td class="py-3 px-4 text-gray-700">
+                                @item.RecordType
+                            </td>
+                            <td class="py-3 px-4">
+                                <div class="flex items-center space-x-1">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="bg-blue-100 text-blue-600 p-2 rounded hover:bg-blue-200 transition-colors duration-200" title="Chi tiết">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="bg-yellow-100 text-yellow-600 p-2 rounded hover:bg-yellow-200 transition-colors duration-200" title="Chỉnh sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <div class="relative">
+                                        <button type="button" class="bg-gray-100 text-gray-600 p-2 rounded hover:bg-gray-200 transition-colors duration-200 dropdown-toggle" onclick="toggleMedicalRecordDropdown('@item.Id')" title="Thêm tùy chọn">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50 hidden" id="dropdown-@item.Id">
+                                            <div class="py-1">
+                                                @if (!string.IsNullOrEmpty(item.AttachmentPath))
+                                                {
+                                                    <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-action="DownloadAttachment" asp-route-id="@item.Id">
+                                                        <i class="bi bi-download mr-3 w-4"></i> Tải tệp đính kèm
+                                                    </a>
+                                                }
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Treatments" asp-action="Index" asp-route-medicalRecordId="@item.Id">
+                                                    <i class="bi bi-clipboard2-pulse mr-3 w-4"></i> Điều trị liên quan
+                                                </a>
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="TestResults" asp-action="Index" asp-route-medicalRecordId="@item.Id">
+                                                    <i class="bi bi-clipboard-data mr-3 w-4"></i> Kết quả xét nghiệm
+                                                </a>
+                                                <hr class="border-gray-200 my-1">
+                                                <a class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50" asp-action="Delete" asp-route-id="@item.Id">
+                                                    <i class="bi bi-trash mr-3 w-4"></i> Xóa
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        function toggleMedicalRecordDropdown(recordId) {
+            const dropdown = document.getElementById('dropdown-' + recordId);
+            
+            // Hide all other dropdowns
+            document.querySelectorAll('[id^="dropdown-"]').forEach(function(menu) {
+                if (menu.id !== 'dropdown-' + recordId) {
+                    menu.classList.add('hidden');
+                }
+            });
+            
+            // Toggle current dropdown
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown-toggle') && !event.target.closest('[id^="dropdown-"]')) {
+                document.querySelectorAll('[id^="dropdown-"]').forEach(function(menu) {
+                    menu.classList.add('hidden');
+                });
+            }
+        });
+    </script>
+} 

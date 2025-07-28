@@ -4,43 +4,101 @@
     ViewData["Title"] = "Chi tiết người dùng";
 }
 
-<div class="container-fluid">
-    <h1 class="mt-4">Chi tiết người dùng</h1>
-    
-    <div class="card mb-4">
-        <div class="card-header">
-            <h4>@Model.FullName</h4>
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-gray-900">Chi tiết người dùng</h2>
+    <a asp-action="Index" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex items-center">
+        <i class="bi bi-arrow-left mr-2"></i> Quay lại
+    </a>
+</div>
+
+<div class="bg-white rounded-lg shadow-lg">
+    <div class="p-6">
+        <div class="flex items-center mb-6">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                <i class="bi bi-person-circle text-3xl text-blue-600"></i>
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold text-gray-900">@Model.FullName</h3>
+                <p class="text-gray-600">@Model.Username</p>
+            </div>
         </div>
-        <div class="card-body">
-            <dl class="row">
-                <dt class="col-sm-3">Tên đăng nhập:</dt>
-                <dd class="col-sm-9">@Model.Username</dd>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tên đăng nhập</label>
+                    <p class="text-gray-900 font-medium">@Model.Username</p>
+                </div>
                 
-                <dt class="col-sm-3">Họ và tên:</dt>
-                <dd class="col-sm-9">@Model.FullName</dd>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Họ và tên</label>
+                    <p class="text-gray-900 font-medium">@Model.FullName</p>
+                </div>
                 
-                <dt class="col-sm-3">Email:</dt>
-                <dd class="col-sm-9">@Model.Email</dd>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <p class="text-gray-900">@(Model.Email ?? "Chưa có email")</p>
+                </div>
                 
-                <dt class="col-sm-3">Vai trò:</dt>
-                <dd class="col-sm-9">@Model.Role</dd>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+                    <p class="text-gray-900">@(Model.PhoneNumber ?? "Chưa có số điện thoại")</p>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Vai trò</label>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                        @(Model.Role == "Admin" ? "bg-red-100 text-red-800" : 
+                          Model.Role == "Doctor" ? "bg-blue-100 text-blue-800" : 
+                          Model.Role == "Staff" ? "bg-green-100 text-green-800" : 
+                          "bg-gray-100 text-gray-800")">
+                        @(Model.Role == "Admin" ? "Quản trị viên" :
+                          Model.Role == "Doctor" ? "Bác sĩ" :
+                          Model.Role == "Staff" ? "Nhân viên" : Model.Role)
+                    </span>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium @(Model.IsActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800")">
+                        @(Model.IsActive ? "Hoạt động" : "Vô hiệu")
+                    </span>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Ngày tạo</label>
+                    <p class="text-gray-900">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Lần đăng nhập cuối</label>
+                    <p class="text-gray-900">@(Model.LastLogin?.ToString("dd/MM/yyyy HH:mm") ?? "Chưa đăng nhập")</p>
+                </div>
                 
                 @if (Model.Role == "Doctor" && Model.DoctorId.HasValue)
                 {
-                    <dt class="col-sm-3">Bác sĩ liên kết:</dt>
-                    <dd class="col-sm-9">
-                        <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Bác sĩ liên kết</label>
+                        <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId" class="text-blue-600 hover:text-blue-800 hover:underline">
                             @(Model.Doctor?.FullName ?? "Không có thông tin")
                         </a>
-                    </dd>
+                    </div>
                 }
-            </dl>
-            
-            <div class="mt-4">
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Sửa</a>
-                <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
-                <a asp-action="ResetPassword" asp-route-id="@Model.Id" class="btn btn-primary">Đặt lại mật khẩu</a>
             </div>
+        </div>
+        
+        <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+            <a asp-action="Index" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors duration-200">
+                Quay lại danh sách
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors duration-200 flex items-center">
+                <i class="bi bi-pencil mr-2"></i> Sửa
+            </a>
+            <a asp-action="ChangePassword" asp-route-id="@Model.Id" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
+                <i class="bi bi-key mr-2"></i> Đặt lại mật khẩu
+            </a>
         </div>
     </div>
 </div> 

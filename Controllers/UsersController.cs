@@ -8,16 +8,19 @@ using Microsoft.EntityFrameworkCore;
 using InfertilityApp.Models;
 using InfertilityApp.BusinessLogicLayer.Interfaces;
 using Microsoft.AspNetCore.Http;
+using static BCrypt.Net.BCrypt;
 
 namespace InfertilityApp.Controllers
 {
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IDoctorService _doctorService;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IDoctorService doctorService)
         {
             _userService = userService;
+            _doctorService = doctorService;
         }
 
         // GET: Users
@@ -78,13 +81,26 @@ namespace InfertilityApp.Controllers
         // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Username,PasswordHash,FullName,Email,PhoneNumber,Role,IsActive")] User user)
+        public async Task<IActionResult> Create([Bind("Id,Username,FullName,Email,PhoneNumber,Role,IsActive,DoctorId")] User user, string Password)
         {
+            ModelState.Remove("PasswordHash");
+            
+            if (string.IsNullOrEmpty(Password))
+            {
+                ModelState.AddModelError("Password", "Mật khẩu là bắt buộc.");
+            }
+            else if (!await _userService.ValidatePasswordComplexityAsync(Password))
+            {
+                ModelState.AddModelError("Password", "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
+            }
+            
             if (ModelState.IsValid)
             {
                 try
                 {
+                    user.PasswordHash = Password;
                     await _userService.CreateUserAsync(user);
+                    TempData["Success"] = "Tạo người dùng thành công!";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -95,6 +111,13 @@ namespace InfertilityApp.Controllers
 
             ViewData["Roles"] = new SelectList(
                 new[] { "Admin", "Doctor", "Nurse", "Receptionist" });
+            
+            if (user.Role == "Doctor")
+            {
+                var doctors = await _doctorService.GetAllDoctorsAsync();
+                ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName");
+            }
+            
             return View(user);
         }
 
@@ -122,18 +145,37 @@ namespace InfertilityApp.Controllers
         // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,PasswordHash,FullName,Email,PhoneNumber,Role,IsActive")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,FullName,Email,PhoneNumber,Role,IsActive,DoctorId")] User user, string Password)
         {
             if (id != user.Id)
             {
                 return NotFound();
             }
 
+            // Clear PasswordHash validation error since we'll set it manually
+            ModelState.Remove("PasswordHash");
+
+            if (!string.IsNullOrEmpty(Password) && !await _userService.ValidatePasswordComplexityAsync(Password))
+            {
+                ModelState.AddModelError("Password", "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    if (!string.IsNullOrEmpty(Password))
+                    {
+                        user.PasswordHash = Password;
+                    }
+                    else
+                    {
+                        var existingUser = await _userService.GetUserByIdAsync(id);
+                        user.PasswordHash = existingUser.PasswordHash;
+                    }
+                    
                     await _userService.UpdateUserAsync(user);
+                    TempData["Success"] = "Cập nhật người dùng thành công!";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -145,6 +187,14 @@ namespace InfertilityApp.Controllers
             ViewData["Roles"] = new SelectList(
                 new[] { "Admin", "Doctor", "Nurse", "Receptionist" },
                 user.Role);
+            
+            // Load doctors for dropdown if needed
+            if (user.Role == "Doctor")
+            {
+                var doctors = await _doctorService.GetAllDoctorsAsync();
+                ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName");
+            }
+            
             return View(user);
         }
 
@@ -172,14 +222,21 @@ namespace InfertilityApp.Controllers
         {
             try
             {
+                var user = await _userService.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    TempData["Error"] = "Không tìm thấy người dùng để xóa.";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 await _userService.DeleteUserAsync(id);
+                TempData["Success"] = $"Đã xóa người dùng '{user.FullName}' thành công!";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);
-                var user = await _userService.GetUserByIdAsync(id);
-                return View(user);
+                TempData["Error"] = $"Lỗi khi xóa người dùng: {ex.Message}";
+                return RedirectToAction(nameof(Index));
             }
         }
 
@@ -265,7 +322,8 @@ namespace InfertilityApp.Controllers
 
             try
             {
-                await _userService.ChangePasswordAsync(id, currentPassword, newPassword);
+                var hashedNewPassword = HashPassword(newPassword);
+                await _userService.ChangePasswordAsync(id, currentPassword, hashedNewPassword);
                 TempData["Success"] = "Đổi mật khẩu thành công!";
                 return RedirectToAction(nameof(Details), new { id });
             }
@@ -333,6 +391,39 @@ namespace InfertilityApp.Controllers
             {
                 // In case of error, redirect back with error message
                 TempData["Error"] = $"Có lỗi xảy ra: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPasswordForOldHash(string username, string newPassword)
+        {
+            try
+            {
+                await _userService.ResetPasswordForOldHashAsync(username, newPassword);
+                TempData["Success"] = "Đặt lại mật khẩu thành công!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        // GET: Users/ResetAdminPassword
+        public async Task<IActionResult> ResetAdminPassword()
+        {
+            try
+            {
+                await _userService.ResetPasswordForOldHashAsync("admin", "123");
+                TempData["Success"] = "Đã reset password cho admin thành công! Username: admin, Password: 123";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
                 return RedirectToAction(nameof(Index));
             }
         }
