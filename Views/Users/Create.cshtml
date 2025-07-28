@@ -4,22 +4,54 @@
     ViewData["Title"] = "Tạo người dùng mới";
 }
 
-<h1>Tạo người dùng mới</h1>
-
-<div class="row">
-    <div class="col-md-8">
-        <form asp-action="Create" method="post">
-            <div class="text-danger">
-                @if (ViewData.ModelState.ErrorCount > 0)
-                {
-                    <ul>
-                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                        {
-                            <li>@error.ErrorMessage</li>
-                        }
-                    </ul>
-                }
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-purple-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 text-white p-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                    <i class="bi bi-person-plus text-3xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">Tạo người dùng mới</h1>
+                    <p class="text-purple-100 text-lg">Thêm người dùng mới vào hệ thống</p>
+                </div>
             </div>
+        </div>
+        
+        <!-- Breadcrumb -->
+        <div class="p-4 bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-100">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a asp-action="Index" class="text-purple-600 hover:text-purple-700 transition-colors duration-200 flex items-center space-x-1">
+                    <i class="bi bi-house"></i>
+                    <span>Quản lý người dùng</span>
+                </a>
+                <i class="bi bi-chevron-right text-gray-400"></i>
+                <span class="text-gray-600 font-medium">Thêm mới</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-purple-200 overflow-hidden">
+        <div class="p-8">
+            <form asp-action="Create" method="post" class="space-y-6">
+                <!-- Validation Summary -->
+                <div class="text-red-600 bg-red-50 border border-red-200 rounded-xl p-4" style="@(ViewData.ModelState.ErrorCount > 0 ? "" : "display: none;")">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <i class="bi bi-exclamation-triangle-fill text-red-600"></i>
+                        <span class="font-medium">Vui lòng kiểm tra lại thông tin đã nhập:</span>
+                    </div>
+                    @if (ViewData.ModelState.ErrorCount > 0)
+                    {
+                        <ul class="list-disc list-inside space-y-1">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    }
+                </div>
             
             <div class="form-group mb-3">
                 <label for="Username" class="form-label">Tên đăng nhập</label>

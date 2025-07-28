@@ -4,48 +4,132 @@
     ViewData["Title"] = "Danh sách bác sĩ";
 }
 
-<div class="container-fluid">
-    <h1 class="mt-4">Danh sách bác sĩ</h1>
-    
-    <p>
-        <a asp-action="Create" class="btn btn-primary">Thêm bác sĩ mới</a>
-    </p>
-    
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Họ và tên</th>
-                            <th>Chuyên môn</th>
-                            <th>Email</th>
-                            <th>Số điện thoại</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>@item.FullName</td>
-                                <td>@item.Specialization</td>
-                                <td>@item.Email</td>
-                                <td>@item.PhoneNumber</td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Chi tiết</a>
-                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Xóa</a>
-                                        <a asp-action="Schedule" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Lịch làm việc</a>
-                                        <a asp-action="PatientStatistics" asp-route-id="@item.Id" class="btn btn-sm btn-success">Thống kê</a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="bg-white border-b border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                        <i class="bi bi-person-badge text-2xl text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-semibold text-gray-900">Danh sách bác sĩ</h1>
+                        <p class="text-gray-600">Quản lý thông tin đội ngũ y tế</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-3">
+                    <div class="bg-gray-50 rounded-lg px-4 py-2 border border-gray-200">
+                        <span class="text-sm font-medium text-gray-700">Tổng số: @Model.Count() bác sĩ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-6 bg-white">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                <div class="flex flex-wrap gap-3">
+                    <a asp-action="Create" class="bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors duration-200 flex items-center space-x-2">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Thêm bác sĩ mới</span>
+                    </a>
+                    <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200 flex items-center space-x-2 border border-gray-300">
+                        <i class="bi bi-funnel"></i>
+                        <span>Bộ lọc</span>
+                    </button>
+                    <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200 flex items-center space-x-2 border border-gray-300">
+                        <i class="bi bi-download"></i>
+                        <span>Xuất dữ liệu</span>
+                    </button>
+                </div>
+                
+                <div class="relative">
+                    <input type="text" placeholder="Tìm kiếm bác sĩ..." 
+                           class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors duration-200 bg-white w-full md:w-80">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="bi bi-search text-gray-400"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+        @foreach (var item in Model)
+        {
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
+                <!-- Doctor Info -->
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="bi bi-person text-blue-600"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-sm font-medium text-gray-900">@item.FullName</p>
+                                <p class="text-sm text-gray-500">Bác sĩ</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <div class="flex items-center space-x-2">
+                                <i class="bi bi-envelope text-gray-400 text-sm"></i>
+                                <span class="text-sm text-gray-600">@item.Email</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i class="bi bi-telephone text-gray-400 text-sm"></i>
+                                <span class="text-sm text-gray-600">@item.PhoneNumber</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <div class="flex justify-between items-center">
+                        <div class="flex space-x-2">
+                            <a asp-action="Details" asp-route-id="@item.Id" 
+                               class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center space-x-1">
+                                <i class="bi bi-eye"></i>
+                                <span>Chi tiết</span>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" 
+                               class="text-green-600 hover:text-green-800 text-sm font-medium flex items-center space-x-1">
+                                <i class="bi bi-pencil"></i>
+                                <span>Sửa</span>
+                            </a>
+                        </div>
+                        <div class="flex space-x-2">
+                            <a asp-action="Schedule" asp-route-id="@item.Id" 
+                               class="text-gray-600 hover:text-gray-800 text-sm font-medium flex items-center space-x-1">
+                                <i class="bi bi-calendar"></i>
+                                <span>Lịch</span>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" 
+                               class="text-red-600 hover:text-red-800 text-sm font-medium flex items-center space-x-1"
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa bác sĩ này?')">
+                                <i class="bi bi-trash"></i>
+                                <span>Xóa</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    
+    @if (!Model.Any())
+    {
+        <!-- Empty State -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-person-plus text-2xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Chưa có bác sĩ nào</h3>
+            <p class="text-gray-500 mb-6">Bắt đầu bằng cách thêm bác sĩ đầu tiên vào hệ thống</p>
+            <a asp-action="Create" class="bg-blue-600 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors duration-200 inline-flex items-center space-x-2">
+                <i class="bi bi-plus-circle"></i>
+                <span>Thêm bác sĩ đầu tiên</span>
+            </a>
+        </div>
+    }
 </div> 

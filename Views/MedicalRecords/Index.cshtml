@@ -4,108 +4,181 @@
     ViewData["Title"] = "Danh sách hồ sơ y tế";
 }
 
-<div class="container-fluid">
-    <h1 class="mt-4">Danh sách hồ sơ y tế</h1>
-    
-    <p>
-        <a asp-action="Create" class="btn btn-primary">Thêm hồ sơ mới</a>
-    </p>
-    
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5>Tìm kiếm và lọc</h5>
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="bg-white border-b border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center">
+                        <i class="bi bi-file-earmark-medical text-2xl text-indigo-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-semibold text-gray-900">Danh sách hồ sơ y tế</h1>
+                        <p class="text-gray-600">Quản lý hồ sơ y tế bệnh nhân</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-3">
+                    <div class="bg-gray-50 rounded-lg px-4 py-2 border border-gray-200">
+                        <span class="text-sm font-medium text-gray-700">Tổng số: @Model.Count() hồ sơ</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
+        
+        <div class="p-6 bg-white">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                <div class="flex flex-wrap gap-3">
+                    <a asp-action="Create" class="bg-indigo-600 text-white px-4 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors duration-200 flex items-center space-x-2">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Thêm hồ sơ mới</span>
+                    </a>
+                    <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200 flex items-center space-x-2 border border-gray-300">
+                        <i class="bi bi-download"></i>
+                        <span>Xuất dữ liệu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
+            <h3 class="text-lg font-medium text-gray-900">Tìm kiếm và lọc</h3>
+        </div>
+        <div class="p-6">
             <form asp-action="Index" method="get">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="searchString">Tìm kiếm:</label>
-                            <input type="text" id="searchString" name="searchString" class="form-control" value="@ViewData["CurrentSearch"]" placeholder="Tên, mô tả..." />
-                        </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                    <div class="lg:col-span-2">
+                        <label for="searchString" class="block text-sm font-medium text-gray-700 mb-1">Tìm kiếm:</label>
+                        <input type="text" id="searchString" name="searchString" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" value="@ViewData["CurrentSearch"]" placeholder="Tên, mô tả..." />
                     </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="fromDate">Từ ngày:</label>
-                            <input type="date" id="fromDate" name="fromDate" class="form-control" value="@ViewData["CurrentFromDate"]" />
-                        </div>
+                    <div>
+                        <label for="fromDate" class="block text-sm font-medium text-gray-700 mb-1">Từ ngày:</label>
+                        <input type="date" id="fromDate" name="fromDate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" value="@ViewData["CurrentFromDate"]" />
                     </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="toDate">Đến ngày:</label>
-                            <input type="date" id="toDate" name="toDate" class="form-control" value="@ViewData["CurrentToDate"]" />
-                        </div>
+                    <div>
+                        <label for="toDate" class="block text-sm font-medium text-gray-700 mb-1">Đến ngày:</label>
+                        <input type="date" id="toDate" name="toDate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" value="@ViewData["CurrentToDate"]" />
                     </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="patientId">Bệnh nhân:</label>
-                            <select id="patientId" name="patientId" class="form-control" asp-items="ViewBag.PatientId">
-                                <option value="">-- Tất cả --</option>
-                            </select>
-                        </div>
+                    <div>
+                        <label for="patientId" class="block text-sm font-medium text-gray-700 mb-1">Bệnh nhân:</label>
+                        <select id="patientId" name="patientId" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" asp-items="ViewBag.PatientId">
+                            <option value="">-- Tất cả --</option>
+                        </select>
                     </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="recordType">Loại hồ sơ:</label>
-                            <select id="recordType" name="recordType" class="form-control">
-                                <option value="">-- Tất cả --</option>
-                                @if (ViewData["RecordTypes"] != null)
+                    <div>
+                        <label for="recordType" class="block text-sm font-medium text-gray-700 mb-1">Loại hồ sơ:</label>
+                        <select id="recordType" name="recordType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                            <option value="">-- Tất cả --</option>
+                            @if (ViewData["RecordTypes"] != null)
+                            {
+                                @foreach (var type in (List<string>)ViewData["RecordTypes"])
                                 {
-                                    @foreach (var type in (List<string>)ViewData["RecordTypes"])
-                                    {
-                                        <option value="@type" selected="@(type == (string)ViewData["CurrentRecordType"])">@type</option>
-                                    }
+                                    <option value="@type" selected="@(type == (string)ViewData["CurrentRecordType"])">@type</option>
                                 }
-                            </select>
-                        </div>
+                            }
+                        </select>
                     </div>
-                    <div class="col-md-1 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary w-100">Lọc</button>
-                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors duration-200 flex items-center space-x-2">
+                        <i class="bi bi-funnel"></i>
+                        <span>Áp dụng bộ lọc</span>
+                    </button>
                 </div>
             </form>
         </div>
     </div>
-    
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Tiêu đề</th>
-                            <th>Bệnh nhân</th>
-                            <th>Bác sĩ</th>
-                            <th>Ngày</th>
-                            <th>Loại hồ sơ</th>
-                            <th>Thao tác</th>
+
+    <!-- Table Section -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full" id="dataTable">
+                <thead class="bg-gray-50">
+                    <tr class="border-b border-gray-200">
+                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">Tiêu đề</th>
+                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">Bệnh nhân</th>
+                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">Bác sĩ</th>
+                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">Ngày</th>
+                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">Loại hồ sơ</th>
+                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm w-48">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @foreach (var item in Model)
+                    {
+                        <tr class="hover:bg-gray-50 transition-colors duration-200">
+                            <td class="py-4 px-6 text-gray-900 font-medium">@item.RecordTitle</td>
+                            <td class="py-4 px-6">
+                                @if (item.Patient != null)
+                                {
+                                    <a asp-controller="Patients" asp-action="Details" asp-route-id="@item.Patient.Id" class="text-blue-600 hover:text-blue-800 font-medium">
+                                        @item.Patient.FullName
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-gray-500">Chưa xác định</span>
+                                }
+                            </td>
+                            <td class="py-4 px-6">
+                                @if (item.Doctor != null)
+                                {
+                                    <a asp-controller="Doctors" asp-action="Details" asp-route-id="@item.Doctor.Id" class="text-blue-600 hover:text-blue-800 font-medium">
+                                        @item.Doctor.FullName
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-gray-500">Chưa xác định</span>
+                                }
+                            </td>
+                            <td class="py-4 px-6 text-gray-700">@item.RecordDate.ToString("dd/MM/yyyy")</td>
+                            <td class="py-4 px-6">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                    @item.RecordType
+                                </span>
+                            </td>
+                            <td class="py-4 px-6">
+                                <div class="flex items-center space-x-2">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="text-blue-600 hover:text-blue-800 text-sm font-medium" title="Chi tiết">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="text-green-600 hover:text-green-800 text-sm font-medium" title="Sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    @if (!string.IsNullOrEmpty(item.AttachmentPath))
+                                    {
+                                        <a asp-action="DownloadAttachment" asp-route-id="@item.Id" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium" title="Tải tệp">
+                                            <i class="bi bi-download"></i>
+                                        </a>
+                                    }
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-600 hover:text-red-800 text-sm font-medium" title="Xóa">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>@item.RecordTitle</td>
-                                <td>@item.Patient?.FullName</td>
-                                <td>@item.Doctor?.FullName</td>
-                                <td>@item.RecordDate.ToString("dd/MM/yyyy")</td>
-                                <td>@item.RecordType</td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Chi tiết</a>
-                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Xóa</a>
-                                        @if (!string.IsNullOrEmpty(item.AttachmentPath))
-                                        {
-                                            <a asp-action="DownloadAttachment" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Tải tệp</a>
-                                        }
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
+
+    @if (!Model.Any())
+    {
+        <!-- Empty State -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-file-earmark-plus text-2xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Chưa có hồ sơ y tế nào</h3>
+            <p class="text-gray-500 mb-6">Bắt đầu bằng cách thêm hồ sơ y tế đầu tiên vào hệ thống</p>
+            <a asp-action="Create" class="bg-indigo-600 text-white px-6 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors duration-200 inline-flex items-center space-x-2">
+                <i class="bi bi-plus-circle"></i>
+                <span>Thêm hồ sơ đầu tiên</span>
+            </a>
+        </div>
+    }
 </div> 

@@ -2,108 +2,141 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="mb-6">
-    <div class="w-full">
-        <h2 class="text-3xl font-bold text-gray-900 mb-2">Dashboard</h2>
-        <p class="text-gray-600">Chào mừng đến với phần mềm quản lý và theo dõi quá trình điều trị hiếm muộn</p>
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                <i class="bi bi-house-heart text-2xl text-blue-600"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
+                <p class="text-gray-600">Hệ thống quản lý và theo dõi quá trình điều trị hiếm muộn</p>
+            </div>
+        </div>
     </div>
-</div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-blue-600 text-white rounded-lg shadow-lg h-full">
-        <div class="p-6 flex items-center">
-            <i class="bi bi-people text-5xl mr-4"></i>
-            <div>
-                <h5 class="text-lg font-semibold">Bệnh nhân</h5>
-                <h2 class="text-3xl font-bold">@ViewData["PatientCount"]</h2>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+                        <i class="bi bi-people text-2xl text-green-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Bệnh nhân</p>
+                        <p class="text-2xl font-semibold text-gray-900">@ViewData["PatientCount"]</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-6 py-3">
+                <a class="text-sm text-green-600 hover:text-green-800 font-medium flex items-center justify-between" asp-controller="Patients" asp-action="Index">
+                    Xem chi tiết
+                    <i class="bi bi-arrow-right text-xs"></i>
+                </a>
             </div>
         </div>
-        <div class="bg-blue-700 px-6 py-3 flex items-center justify-between rounded-b-lg">
-            <a class="text-white hover:text-blue-200 transition-colors duration-200" asp-controller="Patients" asp-action="Index">Xem chi tiết</a>
-            <i class="bi bi-chevron-right text-white"></i>
-        </div>
-    </div>
-    
-    <div class="bg-green-600 text-white rounded-lg shadow-lg h-full">
-        <div class="p-6 flex items-center">
-            <i class="bi bi-hospital text-5xl mr-4"></i>
-            <div>
-                <h5 class="text-lg font-semibold">Bác sĩ</h5>
-                <h2 class="text-3xl font-bold">@ViewData["DoctorCount"]</h2>
+        
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                        <i class="bi bi-person-badge text-2xl text-blue-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Bác sĩ</p>
+                        <p class="text-2xl font-semibold text-gray-900">@ViewData["DoctorCount"]</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-6 py-3">
+                <a class="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center justify-between" asp-controller="Doctors" asp-action="Index">
+                    Xem chi tiết
+                    <i class="bi bi-arrow-right text-xs"></i>
+                </a>
             </div>
         </div>
-        <div class="bg-green-700 px-6 py-3 flex items-center justify-between rounded-b-lg">
-            <a class="text-white hover:text-green-200 transition-colors duration-200" asp-controller="Doctors" asp-action="Index">Xem chi tiết</a>
-            <i class="bi bi-chevron-right text-white"></i>
-        </div>
-    </div>
-    
-    <div class="bg-yellow-600 text-white rounded-lg shadow-lg h-full">
-        <div class="p-6 flex items-center">
-            <i class="bi bi-clipboard2-pulse text-5xl mr-4"></i>
-            <div>
-                <h5 class="text-lg font-semibold">Điều trị</h5>
-                <h2 class="text-3xl font-bold">@ViewData["TreatmentCount"]</h2>
+        
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
+                        <i class="bi bi-clipboard2-pulse text-2xl text-purple-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Điều trị</p>
+                        <p class="text-2xl font-semibold text-gray-900">@ViewData["TreatmentCount"]</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-6 py-3">
+                <a class="text-sm text-purple-600 hover:text-purple-800 font-medium flex items-center justify-between" asp-controller="Treatments" asp-action="Index">
+                    Xem chi tiết
+                    <i class="bi bi-arrow-right text-xs"></i>
+                </a>
             </div>
         </div>
-        <div class="bg-yellow-700 px-6 py-3 flex items-center justify-between rounded-b-lg">
-            <a class="text-white hover:text-yellow-200 transition-colors duration-200" asp-controller="Treatments" asp-action="Index">Xem chi tiết</a>
-            <i class="bi bi-chevron-right text-white"></i>
-        </div>
-    </div>
-    
-    <div class="bg-red-600 text-white rounded-lg shadow-lg h-full">
-        <div class="p-6 flex items-center">
-            <i class="bi bi-calendar-check text-5xl mr-4"></i>
-            <div>
-                <h5 class="text-lg font-semibold">Lịch hẹn</h5>
-                <h2 class="text-3xl font-bold">@ViewData["AppointmentCount"]</h2>
+        
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center">
+                        <i class="bi bi-calendar-check text-2xl text-orange-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Lịch hẹn</p>
+                        <p class="text-2xl font-semibold text-gray-900">@ViewData["AppointmentCount"]</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-6 py-3">
+                <a class="text-sm text-orange-600 hover:text-orange-800 font-medium flex items-center justify-between" asp-controller="Appointments" asp-action="Index">
+                    Xem chi tiết
+                    <i class="bi bi-arrow-right text-xs"></i>
+                </a>
             </div>
         </div>
-        <div class="bg-red-700 px-6 py-3 flex items-center justify-between rounded-b-lg">
-            <a class="text-white hover:text-red-200 transition-colors duration-200" asp-controller="Appointments" asp-action="Index">Xem chi tiết</a>
-            <i class="bi bi-chevron-right text-white"></i>
-        </div>
     </div>
-</div>
 
-<div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-    <div class="bg-white rounded-lg shadow-lg h-full">
-        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
-            <h5 class="text-lg font-semibold">Lịch hẹn sắp tới</h5>
-            <a asp-controller="Appointments" asp-action="Index" class="bg-white text-blue-600 px-3 py-1 rounded text-sm font-medium hover:bg-gray-100 transition-colors duration-200">Xem tất cả</a>
-        </div>
-        <div class="p-6">
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="border-b border-gray-200">
-                            <th class="text-left py-3 px-2 font-semibold text-gray-700">Bệnh nhân</th>
-                            <th class="text-left py-3 px-2 font-semibold text-gray-700">Bác sĩ</th>
-                            <th class="text-left py-3 px-2 font-semibold text-gray-700">Ngày</th>
-                            <th class="text-left py-3 px-2 font-semibold text-gray-700">Giờ</th>
-                            <th class="text-left py-3 px-2 font-semibold text-gray-700">Trạng thái</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (ViewData["UpcomingAppointments"] != null)
-                        {
-                            foreach (var appointment in (IEnumerable<Appointment>)ViewData["UpcomingAppointments"])
+    <!-- Content Cards -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                <h3 class="text-lg font-medium text-gray-900">Lịch hẹn sắp tới</h3>
+                <a asp-controller="Appointments" asp-action="Index" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Xem tất cả</a>
+            </div>
+            <div class="p-6">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4 font-medium text-gray-700 text-sm">Bệnh nhân</th>
+                                <th class="text-left py-3 px-4 font-medium text-gray-700 text-sm">Bác sĩ</th>
+                                <th class="text-left py-3 px-4 font-medium text-gray-700 text-sm">Ngày</th>
+                                <th class="text-left py-3 px-4 font-medium text-gray-700 text-sm">Giờ</th>
+                                <th class="text-left py-3 px-4 font-medium text-gray-700 text-sm">Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            @if (ViewData["UpcomingAppointments"] != null)
                             {
-                                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
-                                    <td class="py-3 px-2">
-                                        <a asp-controller="Patients" asp-action="Details" asp-route-id="@appointment.PatientId" class="text-blue-600 hover:text-blue-800 font-medium">
-                                            @appointment.Patient.FullName
-                                        </a>
-                                    </td>
-                                    <td class="py-3 px-2">
-                                        <a asp-controller="Doctors" asp-action="Details" asp-route-id="@appointment.DoctorId" class="text-blue-600 hover:text-blue-800 font-medium">
-                                            @appointment.Doctor.FullName
-                                        </a>
-                                    </td>
-                                    <td class="py-3 px-2 text-gray-700">@appointment.AppointmentDate.ToString("dd/MM/yyyy")</td>
-                                    <td class="py-3 px-2 text-gray-700">@appointment.AppointmentTime.ToString(@"hh\:mm")</td>
-                                    <td class="py-3 px-2">
+                                foreach (var appointment in (IEnumerable<Appointment>)ViewData["UpcomingAppointments"])
+                                {
+                                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                        <td class="py-4 px-4">
+                                            <a asp-controller="Patients" asp-action="Details" asp-route-id="@appointment.PatientId" class="text-blue-600 hover:text-blue-800 font-medium">
+                                                @appointment.Patient.FullName
+                                            </a>
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            <a asp-controller="Doctors" asp-action="Details" asp-route-id="@appointment.DoctorId" class="text-blue-600 hover:text-blue-800 font-medium">
+                                                @appointment.Doctor.FullName
+                                            </a>
+                                        </td>
+                                        <td class="py-4 px-4 text-gray-700">@appointment.AppointmentDate.ToString("dd/MM/yyyy")</td>
+                                        <td class="py-4 px-4 text-gray-700">@appointment.AppointmentTime.ToString(@"hh\:mm")</td>
+                                        <td class="py-4 px-4">
                                         @switch (appointment.Status)
                                         {
                                             case "Scheduled":
@@ -124,83 +157,84 @@
                                         }
                                     </td>
                                 </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="5" class="text-center py-8 text-gray-500">Không có lịch hẹn nào</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="5" class="text-center py-8 text-gray-500">Không có lịch hẹn nào</td>
+                                            </tr>
+                                        }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <div class="bg-white rounded-lg shadow-lg h-full">
-        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
-            <h5 class="text-lg font-semibold">Điều trị gần đây</h5>
-            <a asp-controller="Treatments" asp-action="Index" class="bg-white text-blue-600 px-3 py-1 rounded text-sm font-medium hover:bg-gray-100 transition-colors duration-200">Xem tất cả</a>
-        </div>
-        <div class="p-6">
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="border-b border-gray-200">
-                            <th class="text-left py-3 px-2 font-semibold text-gray-700">Bệnh nhân</th>
-                            <th class="text-left py-3 px-2 font-semibold text-gray-700">Bác sĩ</th>
-                            <th class="text-left py-3 px-2 font-semibold text-gray-700">Loại điều trị</th>
-                            <th class="text-left py-3 px-2 font-semibold text-gray-700">Ngày bắt đầu</th>
-                            <th class="text-left py-3 px-2 font-semibold text-gray-700">Trạng thái</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (ViewData["RecentTreatments"] != null)
-                        {
-                            foreach (var treatment in (IEnumerable<Treatment>)ViewData["RecentTreatments"])
+        
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                <h3 class="text-lg font-medium text-gray-900">Điều trị gần đây</h3>
+                <a asp-controller="Treatments" asp-action="Index" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Xem tất cả</a>
+            </div>
+            <div class="p-6">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4 font-medium text-gray-700 text-sm">Bệnh nhân</th>
+                                <th class="text-left py-3 px-4 font-medium text-gray-700 text-sm">Bác sĩ</th>
+                                <th class="text-left py-3 px-4 font-medium text-gray-700 text-sm">Loại điều trị</th>
+                                <th class="text-left py-3 px-4 font-medium text-gray-700 text-sm">Ngày bắt đầu</th>
+                                <th class="text-left py-3 px-4 font-medium text-gray-700 text-sm">Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            @if (ViewData["RecentTreatments"] != null)
                             {
-                                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
-                                    <td class="py-3 px-2">
-                                        <a asp-controller="Patients" asp-action="Details" asp-route-id="@treatment.PatientId" class="text-blue-600 hover:text-blue-800 font-medium">
-                                            @treatment.Patient.FullName
-                                        </a>
-                                    </td>
-                                    <td class="py-3 px-2">
-                                        <a asp-controller="Doctors" asp-action="Details" asp-route-id="@treatment.DoctorId" class="text-blue-600 hover:text-blue-800 font-medium">
-                                            @treatment.Doctor.FullName
-                                        </a>
-                                    </td>
-                                    <td class="py-3 px-2 text-gray-700">@treatment.TreatmentType</td>
-                                    <td class="py-3 px-2 text-gray-700">@treatment.StartDate.ToString("dd/MM/yyyy")</td>
-                                    <td class="py-3 px-2">
-                                        @switch (treatment.Status)
-                                        {
-                                            case "In Progress":
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Đang tiến hành</span>
-                                                break;
-                                            case "Completed":
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Hoàn thành</span>
-                                                break;
-                                            case "Cancelled":
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Đã hủy</span>
-                                                break;
-                                            default:
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">@treatment.Status</span>
-                                                break;
-                                        }
-                                    </td>
+                                foreach (var treatment in (IEnumerable<Treatment>)ViewData["RecentTreatments"])
+                                {
+                                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                        <td class="py-4 px-4">
+                                            <a asp-controller="Patients" asp-action="Details" asp-route-id="@treatment.PatientId" class="text-blue-600 hover:text-blue-800 font-medium">
+                                                @treatment.Patient.FullName
+                                            </a>
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            <a asp-controller="Doctors" asp-action="Details" asp-route-id="@treatment.DoctorId" class="text-blue-600 hover:text-blue-800 font-medium">
+                                                @treatment.Doctor.FullName
+                                            </a>
+                                        </td>
+                                        <td class="py-4 px-4 text-gray-700">@treatment.TreatmentType</td>
+                                        <td class="py-4 px-4 text-gray-700">@treatment.StartDate.ToString("dd/MM/yyyy")</td>
+                                        <td class="py-4 px-4">
+                                            @switch (treatment.Status)
+                                            {
+                                                case "In Progress":
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Đang tiến hành</span>
+                                                    break;
+                                                case "Completed":
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Hoàn thành</span>
+                                                    break;
+                                                case "Cancelled":
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Đã hủy</span>
+                                                    break;
+                                                default:
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">@treatment.Status</span>
+                                                    break;
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-8 text-gray-500">Không có điều trị nào</td>
                                 </tr>
                             }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="5" class="text-center py-8 text-gray-500">Không có điều trị nào</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

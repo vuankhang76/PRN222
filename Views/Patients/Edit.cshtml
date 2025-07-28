@@ -4,88 +4,268 @@
     ViewData["Title"] = "Chỉnh sửa thông tin bệnh nhân";
 }
 
-<div class="container-fluid">
-    <h1 class="mt-4">Chỉnh sửa thông tin bệnh nhân</h1>
-    
-    <div class="card mb-4">
-        <div class="card-body">
-            <form asp-action="Edit">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-green-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 text-white p-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                    <i class="bi bi-person-gear text-3xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">Chỉnh sửa thông tin bệnh nhân</h1>
+                    <p class="text-green-100 text-lg">Cập nhật thông tin cá nhân và y tế</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Breadcrumb -->
+        <div class="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a asp-action="Index" class="text-green-600 hover:text-green-700 transition-colors duration-200 flex items-center space-x-1">
+                    <i class="bi bi-house"></i>
+                    <span>Danh sách bệnh nhân</span>
+                </a>
+                <i class="bi bi-chevron-right text-gray-400"></i>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="text-green-600 hover:text-green-700 transition-colors duration-200">
+                    @Model.FullName
+                </a>
+                <i class="bi bi-chevron-right text-gray-400"></i>
+                <span class="text-gray-600 font-medium">Chỉnh sửa</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-green-200 overflow-hidden">
+        <div class="p-8">
+            <form asp-action="Edit" class="space-y-6">
+                <!-- Validation Summary -->
+                <div asp-validation-summary="ModelOnly" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
+                    <div class="flex items-center space-x-2">
+                        <i class="bi bi-exclamation-triangle-fill text-red-600"></i>
+                        <span class="font-medium">Vui lòng kiểm tra lại thông tin đã nhập</span>
+                    </div>
+                </div>
                 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="FullName" class="control-label">Họ và tên</label>
-                            <input asp-for="FullName" class="form-control" />
-                            <span asp-validation-for="FullName" class="text-danger"></span>
+                
+                <!-- Personal Information Section -->
+                <div class="space-y-6">
+                    <div class="border-b border-gray-200 pb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="bi bi-person text-green-600"></i>
+                            </div>
+                            <span>Thông tin cá nhân</span>
+                        </h3>
+                        <p class="text-sm text-gray-600 mt-1">Cập nhật thông tin cơ bản của bệnh nhân</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label asp-for="FullName" class="block text-sm font-semibold text-gray-700">Họ và tên</label>
+                            <input asp-for="FullName" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 transition-all duration-300"
+                                   placeholder="Nhập họ và tên đầy đủ" />
+                            <span asp-validation-for="FullName" class="text-red-600 text-sm"></span>
                         </div>
                         
-                        <div class="form-group mb-3">
-                            <label asp-for="DateOfBirth" class="control-label">Ngày sinh</label>
-                            <input asp-for="DateOfBirth" type="date" class="form-control" />
-                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                        <div class="space-y-2">
+                            <label asp-for="DateOfBirth" class="block text-sm font-semibold text-gray-700">Ngày sinh</label>
+                            <input asp-for="DateOfBirth" type="date" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 transition-all duration-300" />
+                            <span asp-validation-for="DateOfBirth" class="text-red-600 text-sm"></span>
                         </div>
                         
-                        <div class="form-group mb-3">
-                            <label asp-for="Gender" class="control-label">Giới tính</label>
-                            <select asp-for="Gender" class="form-control">
+                        <div class="space-y-2">
+                            <label asp-for="Gender" class="block text-sm font-semibold text-gray-700">Giới tính</label>
+                            <select asp-for="Gender" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 transition-all duration-300">
                                 <option value="">-- Chọn giới tính --</option>
                                 <option value="Nam">Nam</option>
                                 <option value="Nữ">Nữ</option>
+                                <option value="Khác">Khác</option>
                             </select>
-                            <span asp-validation-for="Gender" class="text-danger"></span>
+                            <span asp-validation-for="Gender" class="text-red-600 text-sm"></span>
                         </div>
                         
-                        <div class="form-group mb-3">
-                            <label asp-for="PhoneNumber" class="control-label">Số điện thoại</label>
-                            <input asp-for="PhoneNumber" class="form-control" />
-                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="Email" class="control-label">Email</label>
-                            <input asp-for="Email" type="email" class="form-control" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
-                        
-                        <div class="form-group mb-3">
-                            <label asp-for="Address" class="control-label">Địa chỉ</label>
-                            <textarea asp-for="Address" class="form-control" rows="3"></textarea>
-                            <span asp-validation-for="Address" class="text-danger"></span>
-                        </div>
-                        
-                        <div class="form-group mb-3">
-                            <label asp-for="Occupation" class="control-label">Nghề nghiệp</label>
-                            <input asp-for="Occupation" class="form-control" />
-                            <span asp-validation-for="Occupation" class="text-danger"></span>
-                        </div>
-                        
-                        <div class="form-group mb-3">
-                            <label asp-for="MedicalHistory" class="control-label">Tiền sử bệnh</label>
-                            <textarea asp-for="MedicalHistory" class="form-control" rows="2"></textarea>
-                            <span asp-validation-for="MedicalHistory" class="text-danger"></span>
-                        </div>
-                        
-                        <div class="form-group mb-3">
-                            <label asp-for="AllergiesInfo" class="control-label">Thông tin dị ứng</label>
-                            <textarea asp-for="AllergiesInfo" class="form-control" rows="2"></textarea>
-                            <span asp-validation-for="AllergiesInfo" class="text-danger"></span>
+                        <div class="space-y-2">
+                            <label asp-for="PhoneNumber" class="block text-sm font-semibold text-gray-700">Số điện thoại</label>
+                            <input asp-for="PhoneNumber" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 transition-all duration-300"
+                                   placeholder="0123456789" />
+                            <span asp-validation-for="PhoneNumber" class="text-red-600 text-sm"></span>
                         </div>
                     </div>
                 </div>
                 
-                <div class="form-group mt-3">
-                    <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
-                    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+                <!-- Contact Information Section -->
+                <div class="space-y-6">
+                    <div class="border-b border-gray-200 pb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                <i class="bi bi-telephone text-emerald-600"></i>
+                            </div>
+                            <span>Thông tin liên hệ</span>
+                        </h3>
+                        <p class="text-sm text-gray-600 mt-1">Thông tin liên lạc và địa chỉ</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label asp-for="Email" class="block text-sm font-semibold text-gray-700">Email</label>
+                            <input asp-for="Email" type="email" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 transition-all duration-300"
+                                   placeholder="patient@example.com" />
+                            <span asp-validation-for="Email" class="text-red-600 text-sm"></span>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label asp-for="Occupation" class="block text-sm font-semibold text-gray-700">Nghề nghiệp</label>
+                            <input asp-for="Occupation" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 transition-all duration-300"
+                                   placeholder="Nhập nghề nghiệp" />
+                            <span asp-validation-for="Occupation" class="text-red-600 text-sm"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label asp-for="Address" class="block text-sm font-semibold text-gray-700">Địa chỉ</label>
+                        <textarea asp-for="Address" 
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 transition-all duration-300" 
+                                  rows="3" placeholder="Nhập địa chỉ đầy đủ"></textarea>
+                        <span asp-validation-for="Address" class="text-red-600 text-sm"></span>
+                    </div>
+                </div>
+                
+                <!-- Medical Information Section -->
+                <div class="space-y-6">
+                    <div class="border-b border-gray-200 pb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
+                                <i class="bi bi-file-earmark-medical text-teal-600"></i>
+                            </div>
+                            <span>Thông tin y tế</span>
+                        </h3>
+                        <p class="text-sm text-gray-600 mt-1">Tiền sử bệnh và thông tin dị ứng</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label asp-for="MedicalHistory" class="block text-sm font-semibold text-gray-700">Tiền sử bệnh</label>
+                            <textarea asp-for="MedicalHistory" 
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 transition-all duration-300" 
+                                      rows="4" placeholder="Mô tả tiền sử bệnh của bệnh nhân..."></textarea>
+                            <span asp-validation-for="MedicalHistory" class="text-red-600 text-sm"></span>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label asp-for="AllergiesInfo" class="block text-sm font-semibold text-gray-700">Thông tin dị ứng</label>
+                            <textarea asp-for="AllergiesInfo" 
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 transition-all duration-300" 
+                                      rows="4" placeholder="Ghi chú các loại dị ứng (thuốc, thức ăn, môi trường...)"></textarea>
+                            <span asp-validation-for="AllergiesInfo" class="text-red-600 text-sm"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                    <button type="submit" 
+                            class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-4 focus:ring-green-200 transform hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2">
+                        <i class="bi bi-check-circle"></i>
+                        <span>Lưu thay đổi</span>
+                    </button>
+                    
+                    <a asp-action="Details" asp-route-id="@Model.Id"
+                       class="flex-1 bg-white border-2 border-gray-300 text-gray-700 py-3 px-6 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 flex items-center justify-center space-x-2">
+                        <i class="bi bi-eye"></i>
+                        <span>Xem chi tiết</span>
+                    </a>
+                    
+                    <a asp-action="Index" 
+                       class="flex-1 bg-white border-2 border-gray-300 text-gray-700 py-3 px-6 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 flex items-center justify-center space-x-2">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>Quay lại danh sách</span>
+                    </a>
                 </div>
             </form>
+        </div>
+    </div>
+    
+    <!-- Help Section -->
+    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-100 p-6">
+        <div class="flex items-start space-x-4">
+            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <i class="bi bi-info-circle text-green-600 text-xl"></i>
+            </div>
+            <div>
+                <h4 class="font-semibold text-gray-800 mb-2">Lưu ý khi chỉnh sửa thông tin bệnh nhân</h4>
+                <ul class="text-sm text-gray-600 space-y-1">
+                    <li class="flex items-center space-x-2">
+                        <i class="bi bi-check-circle-fill text-green-500 text-xs"></i>
+                        <span>Đảm bảo thông tin chính xác và cập nhật</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <i class="bi bi-check-circle-fill text-green-500 text-xs"></i>
+                        <span>Tiền sử bệnh và thông tin dị ứng rất quan trọng cho điều trị</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <i class="bi bi-check-circle-fill text-green-500 text-xs"></i>
+                        <span>Thông tin liên hệ giúp liên lạc khi cần thiết</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <i class="bi bi-check-circle-fill text-green-500 text-xs"></i>
+                        <span>Mọi thay đổi sẽ được ghi lại trong hệ thống</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Add focus styling for form inputs
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.classList.add('ring-4', 'ring-green-100', 'border-green-500');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.classList.remove('ring-4', 'ring-green-100', 'border-green-500');
+                });
+            });
+            
+            // Form validation
+            $('form').submit(function(e) {
+                var isValid = true;
+                var errorMessages = [];
+                
+                if (!$('#FullName').val().trim()) {
+                    errorMessages.push('Vui lòng nhập họ và tên');
+                    isValid = false;
+                }
+                
+                if (!$('#DateOfBirth').val()) {
+                    errorMessages.push('Vui lòng chọn ngày sinh');
+                    isValid = false;
+                }
+                
+                if (!$('#Gender').val()) {
+                    errorMessages.push('Vui lòng chọn giới tính');
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    alert('Vui lòng điền đầy đủ thông tin bắt buộc:\n' + errorMessages.join('\n'));
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 } 

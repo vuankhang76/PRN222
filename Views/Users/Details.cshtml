@@ -4,42 +4,354 @@
     ViewData["Title"] = "Chi tiết người dùng";
 }
 
-<div class="container-fluid">
-    <h1 class="mt-4">Chi tiết người dùng</h1>
-    
-    <div class="card mb-4">
-        <div class="card-header">
-            <h4>@Model.FullName</h4>
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-purple-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-purple-600 via-indigo-500 to-blue-600 text-white p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="bi bi-person-gear text-3xl text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold mb-2">Chi tiết người dùng</h1>
+                        <p class="text-purple-100 text-lg">Tài khoản <span class="font-semibold">@Model.Username</span></p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" 
+                       class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center space-x-2">
+                        <i class="bi bi-pencil"></i>
+                        <span>Chỉnh sửa</span>
+                    </a>
+                    <a asp-action="ResetPassword" asp-route-id="@Model.Id" 
+                       class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center space-x-2">
+                        <i class="bi bi-key"></i>
+                        <span>Đặt lại mật khẩu</span>
+                    </a>
+                    <a asp-action="Index" 
+                       class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center space-x-2">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>Quay lại</span>
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <dl class="row">
-                <dt class="col-sm-3">Tên đăng nhập:</dt>
-                <dd class="col-sm-9">@Model.Username</dd>
+        
+        <!-- Breadcrumb -->
+        <div class="p-4 bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-100">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a asp-action="Index" class="text-purple-600 hover:text-purple-700 transition-colors duration-200 flex items-center space-x-1">
+                    <i class="bi bi-house"></i>
+                    <span>Danh sách người dùng</span>
+                </a>
+                <i class="bi bi-chevron-right text-gray-400"></i>
+                <span class="text-gray-600 font-medium">@Model.FullName</span>
+            </nav>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Information -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Account Information -->
+            <div class="bg-white rounded-2xl shadow-lg border border-purple-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-100 p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-person-circle text-purple-600"></i>
+                        </div>
+                        <span>Thông tin tài khoản</span>
+                    </h3>
+                </div>
                 
-                <dt class="col-sm-3">Họ và tên:</dt>
-                <dd class="col-sm-9">@Model.FullName</dd>
+                <div class="p-6">
+                    <div class="text-center mb-6">
+                        <div class="w-24 h-24 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="bi bi-person-circle text-5xl text-purple-600"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">@Model.FullName</h3>
+                        <p class="text-purple-600 font-medium">
+                            @switch (Model.Role)
+                            {
+                                case "Admin":
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                                        <i class="bi bi-shield-check mr-1"></i>Quản trị viên
+                                    </span>
+                                    break;
+                                case "Doctor":
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                        <i class="bi bi-person-badge mr-1"></i>Bác sĩ
+                                    </span>
+                                    break;
+                                case "Staff":
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                        <i class="bi bi-person-workspace mr-1"></i>Nhân viên
+                                    </span>
+                                    break;
+                                default:
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                        @Model.Role
+                                    </span>
+                                    break;
+                            }
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-person text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-500">Tên đăng nhập</div>
+                                    <div class="font-medium text-gray-800">@Model.Username</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-person-badge text-green-600"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-500">Họ và tên</div>
+                                    <div class="font-medium text-gray-800">@Model.FullName</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-envelope text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-500">Email</div>
+                                    <div class="font-medium text-gray-800">@Model.Email</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-shield text-amber-600"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-500">Vai trò</div>
+                                    <div class="font-medium text-gray-800">
+                                        @switch (Model.Role)
+                                        {
+                                            case "Admin":
+                                                <span class="text-red-700">Quản trị viên</span>
+                                                break;
+                                            case "Doctor":
+                                                <span class="text-blue-700">Bác sĩ</span>
+                                                break;
+                                            case "Staff":
+                                                <span class="text-green-700">Nhân viên</span>
+                                                break;
+                                            default:
+                                                <span class="text-gray-700">@Model.Role</span>
+                                                break;
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    @if (Model.Role == "Doctor" && Model.DoctorId.HasValue)
+                    {
+                        <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-hospital text-blue-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-sm text-blue-600 font-medium mb-1">Bác sĩ liên kết</div>
+                                    <div class="font-medium text-gray-800">
+                                        <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId" 
+                                           class="text-blue-600 hover:text-blue-700 hover:underline transition-colors duration-200 flex items-center space-x-2">
+                                            <span>@(Model.Doctor?.FullName ?? "Không có thông tin")</span>
+                                            <i class="bi bi-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-2xl shadow-lg border border-purple-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-100 p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-lightning text-purple-600"></i>
+                        </div>
+                        <span>Thao tác nhanh</span>
+                    </h3>
+                </div>
                 
-                <dt class="col-sm-3">Email:</dt>
-                <dd class="col-sm-9">@Model.Email</dd>
-                
-                <dt class="col-sm-3">Vai trò:</dt>
-                <dd class="col-sm-9">@Model.Role</dd>
-                
-                @if (Model.Role == "Doctor" && Model.DoctorId.HasValue)
-                {
-                    <dt class="col-sm-3">Bác sĩ liên kết:</dt>
-                    <dd class="col-sm-9">
-                        <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId">
-                            @(Model.Doctor?.FullName ?? "Không có thông tin")
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" 
+                           class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-4 rounded-xl hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                                <i class="bi bi-pencil-square text-2xl"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold">Chỉnh sửa thông tin</div>
+                                <div class="text-sm opacity-90">Cập nhật tài khoản</div>
+                            </div>
                         </a>
-                    </dd>
-                }
-            </dl>
-            
-            <div class="mt-4">
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Sửa</a>
-                <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
-                <a asp-action="ResetPassword" asp-route-id="@Model.Id" class="btn btn-primary">Đặt lại mật khẩu</a>
+                        
+                        <a asp-action="ResetPassword" asp-route-id="@Model.Id" 
+                           class="bg-gradient-to-r from-amber-500 to-orange-500 text-white p-4 rounded-xl hover:from-amber-600 hover:to-orange-600 transition-all duration-300 flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                                <i class="bi bi-key text-2xl"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold">Đặt lại mật khẩu</div>
+                                <div class="text-sm opacity-90">Reset password</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+            <!-- Account Status -->
+            <div class="bg-white rounded-2xl shadow-lg border border-purple-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-100 p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-info-circle text-purple-600"></i>
+                        </div>
+                        <span>Trạng thái tài khoản</span>
+                    </h3>
+                </div>
+                
+                <div class="p-6 space-y-4">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="bi bi-check-circle text-green-600 text-2xl"></i>
+                        </div>
+                        <div class="text-sm text-gray-500 mb-1">Trạng thái hoạt động</div>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                            <i class="bi bi-circle-fill mr-2 text-xs"></i>Đang hoạt động
+                        </span>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-2">
+                                <i class="bi bi-calendar3 text-gray-600"></i>
+                                <span class="text-sm text-gray-600">Ngày tạo</span>
+                            </div>
+                            <span class="text-sm font-medium text-gray-800">--/--/----</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-2">
+                                <i class="bi bi-clock text-gray-600"></i>
+                                <span class="text-sm text-gray-600">Lần đăng nhập cuối</span>
+                            </div>
+                            <span class="text-sm font-medium text-gray-800">--/--/----</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-2">
+                                <i class="bi bi-shield-check text-gray-600"></i>
+                                <span class="text-sm text-gray-600">Quyền truy cập</span>
+                            </div>
+                            <span class="text-sm font-medium text-purple-600">@Model.Role</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role Information -->
+            <div class="bg-white rounded-2xl shadow-lg border border-purple-200 overflow-hidden mt-6">
+                <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-100 p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-shield text-purple-600"></i>
+                        </div>
+                        <span>Phân quyền</span>
+                    </h3>
+                </div>
+                
+                <div class="p-6">
+                    @switch (Model.Role)
+                    {
+                        case "Admin":
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <i class="bi bi-check-circle text-green-600"></i>
+                                    <span>Quản lý người dùng</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <i class="bi bi-check-circle text-green-600"></i>
+                                    <span>Quản lý hệ thống</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <i class="bi bi-check-circle text-green-600"></i>
+                                    <span>Xem tất cả dữ liệu</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <i class="bi bi-check-circle text-green-600"></i>
+                                    <span>Cấu hình hệ thống</span>
+                                </div>
+                            </div>
+                            break;
+                        case "Doctor":
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <i class="bi bi-check-circle text-green-600"></i>
+                                    <span>Quản lý bệnh nhân</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <i class="bi bi-check-circle text-green-600"></i>
+                                    <span>Tạo điều trị</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <i class="bi bi-check-circle text-green-600"></i>
+                                    <span>Lập lịch hẹn</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <i class="bi bi-check-circle text-green-600"></i>
+                                    <span>Ghi hồ sơ y tế</span>
+                                </div>
+                            </div>
+                            break;
+                        case "Staff":
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <i class="bi bi-check-circle text-green-600"></i>
+                                    <span>Quản lý lịch hẹn</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <i class="bi bi-check-circle text-green-600"></i>
+                                    <span>Xem thông tin bệnh nhân</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <i class="bi bi-check-circle text-green-600"></i>
+                                    <span>Hỗ trợ kỹ thuật</span>
+                                </div>
+                            </div>
+                            break;
+                        default:
+                            <div class="text-center py-4">
+                                <i class="bi bi-question-circle text-gray-400 text-2xl mb-2"></i>
+                                <p class="text-gray-500 text-sm">Chưa xác định quyền</p>
+                            </div>
+                            break;
+                    }
+                </div>
             </div>
         </div>
     </div>

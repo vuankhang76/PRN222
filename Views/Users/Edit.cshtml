@@ -4,93 +4,294 @@
     ViewData["Title"] = "Chỉnh sửa người dùng";
 }
 
-<h1>Chỉnh sửa người dùng</h1>
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-purple-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-purple-600 via-indigo-500 to-blue-600 text-white p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="bi bi-person-gear text-3xl text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold mb-2">Chỉnh sửa người dùng</h1>
+                        <p class="text-purple-100 text-lg">Cập nhật thông tin cho <span class="font-semibold">@Model.Username</span></p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a asp-action="Details" asp-route-id="@Model.Id" 
+                       class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center space-x-2">
+                        <i class="bi bi-eye"></i>
+                        <span>Xem chi tiết</span>
+                    </a>
+                    <a asp-action="Index" 
+                       class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center space-x-2">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>Quay lại</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Breadcrumb -->
+        <div class="p-4 bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-100">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a asp-action="Index" class="text-purple-600 hover:text-purple-700 transition-colors duration-200 flex items-center space-x-1">
+                    <i class="bi bi-house"></i>
+                    <span>Danh sách người dùng</span>
+                </a>
+                <i class="bi bi-chevron-right text-gray-400"></i>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="text-purple-600 hover:text-purple-700 transition-colors duration-200">@Model.FullName</a>
+                <i class="bi bi-chevron-right text-gray-400"></i>
+                <span class="text-gray-600 font-medium">Chỉnh sửa</span>
+            </nav>
+        </div>
+    </div>
 
-<div class="row">
-    <div class="col-md-8">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" name="Id" value="@Model.Id" />
-            <input type="hidden" name="PasswordHash" value="@Model.PasswordHash" />
-            
-            <div class="form-group">
-                <label for="Username">Tên đăng nhập</label>
-                <input id="Username" name="Username" class="form-control" value="@Model.Username" readonly />
-                <small class="form-text text-muted">Tên đăng nhập không thể thay đổi</small>
-            </div>
-            
-            <div class="form-group">
-                <label for="FullName">Họ và tên</label>
-                <input id="FullName" name="FullName" class="form-control" value="@Model.FullName" />
-            </div>
-            
-            <div class="form-group">
-                <label for="Email">Email</label>
-                <input id="Email" name="Email" class="form-control" type="email" value="@Model.Email" />
-            </div>
-            
-            <div class="form-group">
-                <label for="Role">Vai trò</label>
-                <select id="Role" name="Role" class="form-control">
-                    @if (Model.Role == "Admin")
-                    {
-                        <option value="Admin" selected>Quản trị viên</option>
-                    }
-                    else
-                    {
-                        <option value="Admin">Quản trị viên</option>
-                    }
+    <!-- Form Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-purple-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-100 p-6">
+            <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <i class="bi bi-person-lines-fill text-purple-600"></i>
+                </div>
+                <span>Thông tin người dùng</span>
+            </h3>
+        </div>
+        
+        <div class="p-6">
+            <form asp-action="Edit" class="space-y-6">
+                <div asp-validation-summary="ModelOnly" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl"></div>
+                <input type="hidden" name="Id" value="@Model.Id" />
+                <input type="hidden" name="PasswordHash" value="@Model.PasswordHash" />
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Left Column -->
+                    <div class="space-y-6">
+                        <!-- Account Information Section -->
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+                                <i class="bi bi-person-circle text-blue-600"></i>
+                                <span>Thông tin tài khoản</span>
+                            </h4>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="Username" class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="bi bi-person text-blue-600 mr-2"></i>Tên đăng nhập
+                                    </label>
+                                    <input id="Username" name="Username" value="@Model.Username" readonly
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-500 cursor-not-allowed" />
+                                    <p class="text-xs text-gray-500 mt-1">Tên đăng nhập không thể thay đổi</p>
+                                </div>
+                                
+                                <div>
+                                    <label for="FullName" class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="bi bi-person-badge text-blue-600 mr-2"></i>Họ và tên *
+                                    </label>
+                                    <input id="FullName" name="FullName" value="@Model.FullName"
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200" 
+                                           placeholder="Nhập họ và tên đầy đủ" />
+                                    <span asp-validation-for="FullName" class="text-red-500 text-sm mt-1 block"></span>
+                                </div>
+                                
+                                <div>
+                                    <label for="Email" class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="bi bi-envelope text-blue-600 mr-2"></i>Email *
+                                    </label>
+                                    <input id="Email" name="Email" type="email" value="@Model.Email"
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200" 
+                                           placeholder="Nhập địa chỉ email" />
+                                    <span asp-validation-for="Email" class="text-red-500 text-sm mt-1 block"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
-                    @if (Model.Role == "Doctor")
-                    {
-                        <option value="Doctor" selected>Bác sĩ</option>
-                    }
-                    else
-                    {
-                        <option value="Doctor">Bác sĩ</option>
-                    }
+                    <!-- Right Column -->
+                    <div class="space-y-6">
+                        <!-- Role & Permissions Section -->
+                        <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-xl border border-purple-100">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+                                <i class="bi bi-shield text-purple-600"></i>
+                                <span>Vai trò & Quyền hạn</span>
+                            </h4>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="Role" class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="bi bi-award text-purple-600 mr-2"></i>Vai trò *
+                                    </label>
+                                    <select id="Role" name="Role" 
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200">
+                                        <option value="Admin" @(Model.Role == "Admin" ? "selected" : "")>
+                                            🛡️ Quản trị viên
+                                        </option>
+                                        <option value="Doctor" @(Model.Role == "Doctor" ? "selected" : "")>
+                                            👨‍⚕️ Bác sĩ
+                                        </option>
+                                        <option value="Staff" @(Model.Role == "Staff" ? "selected" : "")>
+                                            👥 Nhân viên
+                                        </option>
+                                    </select>
+                                    <span asp-validation-for="Role" class="text-red-500 text-sm mt-1 block"></span>
+                                </div>
+                                
+                                <div id="doctorIdGroup" style="display: none;" class="transition-all duration-300">
+                                    <label for="DoctorId" class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="bi bi-hospital text-purple-600 mr-2"></i>Liên kết với bác sĩ
+                                    </label>
+                                    <select id="DoctorId" name="DoctorId" 
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200"
+                                            asp-items="ViewBag.DoctorId">
+                                        <option value="">-- Chọn bác sĩ --</option>
+                                    </select>
+                                    <p class="text-xs text-gray-500 mt-1">Chọn bác sĩ để liên kết với tài khoản này</p>
+                                </div>
+                                
+                                <!-- Role Permissions Display -->
+                                <div id="rolePermissions" class="mt-4 p-4 bg-white rounded-lg border border-gray-200">
+                                    <div class="text-sm font-medium text-gray-700 mb-3">Quyền hạn của vai trò:</div>
+                                    <div id="permissionsList" class="space-y-2">
+                                        <!-- Permissions will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+                    <div class="text-sm text-gray-500">
+                        <i class="bi bi-info-circle mr-1"></i>
+                        Các trường có dấu (*) là bắt buộc
+                    </div>
                     
-                    @if (Model.Role == "Staff")
-                    {
-                        <option value="Staff" selected>Nhân viên</option>
-                    }
-                    else
-                    {
-                        <option value="Staff">Nhân viên</option>
-                    }
-                </select>
+                    <div class="flex items-center space-x-4">
+                        <a asp-action="Index" 
+                           class="bg-gray-100 text-gray-700 px-6 py-3 rounded-xl hover:bg-gray-200 transition-all duration-300 flex items-center space-x-2">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Hủy</span>
+                        </a>
+                        
+                        <a asp-action="Details" asp-route-id="@Model.Id"
+                           class="bg-purple-100 text-purple-700 px-6 py-3 rounded-xl hover:bg-purple-200 transition-all duration-300 flex items-center space-x-2">
+                            <i class="bi bi-eye"></i>
+                            <span>Xem chi tiết</span>
+                        </a>
+                        
+                        <button type="submit" 
+                                class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 flex items-center space-x-2">
+                            <i class="bi bi-check-circle"></i>
+                            <span>Lưu thay đổi</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Help Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-purple-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-100 p-6">
+            <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <i class="bi bi-question-circle text-purple-600"></i>
+                </div>
+                <span>Hướng dẫn phân quyền</span>
+            </h3>
+        </div>
+        
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center p-4 bg-red-50 rounded-xl border border-red-100">
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="bi bi-shield-check text-red-600 text-xl"></i>
+                    </div>
+                    <h4 class="font-semibold text-gray-800 mb-2">Quản trị viên</h4>
+                    <p class="text-sm text-gray-600">Toàn quyền quản lý hệ thống, người dùng và dữ liệu</p>
+                </div>
+                
+                <div class="text-center p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="bi bi-person-badge text-blue-600 text-xl"></i>
+                    </div>
+                    <h4 class="font-semibold text-gray-800 mb-2">Bác sĩ</h4>
+                    <p class="text-sm text-gray-600">Quản lý bệnh nhân, điều trị và hồ sơ y tế</p>
+                </div>
+                
+                <div class="text-center p-4 bg-green-50 rounded-xl border border-green-100">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="bi bi-person-workspace text-green-600 text-xl"></i>
+                    </div>
+                    <h4 class="font-semibold text-gray-800 mb-2">Nhân viên</h4>
+                    <p class="text-sm text-gray-600">Hỗ trợ lịch hẹn và thông tin bệnh nhân</p>
+                </div>
             </div>
-            
-            <div class="form-group" id="doctorIdGroup" style="display: none;">
-                <label for="DoctorId">Liên kết với bác sĩ</label>
-                <select id="DoctorId" name="DoctorId" class="form-control" asp-items="ViewBag.DoctorId">
-                    <option value="">-- Chọn bác sĩ --</option>
-                </select>
-            </div>
-            
-            <div class="form-group mt-3">
-                <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
         $(document).ready(function() {
+            const rolePermissions = {
+                'Admin': [
+                    { icon: 'bi-check-circle', text: 'Quản lý toàn bộ hệ thống', color: 'text-green-600' },
+                    { icon: 'bi-check-circle', text: 'Quản lý người dùng', color: 'text-green-600' },
+                    { icon: 'bi-check-circle', text: 'Xem tất cả dữ liệu', color: 'text-green-600' },
+                    { icon: 'bi-check-circle', text: 'Cấu hình hệ thống', color: 'text-green-600' }
+                ],
+                'Doctor': [
+                    { icon: 'bi-check-circle', text: 'Quản lý bệnh nhân', color: 'text-green-600' },
+                    { icon: 'bi-check-circle', text: 'Tạo và quản lý điều trị', color: 'text-green-600' },
+                    { icon: 'bi-check-circle', text: 'Lập lịch hẹn', color: 'text-green-600' },
+                    { icon: 'bi-check-circle', text: 'Ghi hồ sơ y tế', color: 'text-green-600' }
+                ],
+                'Staff': [
+                    { icon: 'bi-check-circle', text: 'Quản lý lịch hẹn', color: 'text-green-600' },
+                    { icon: 'bi-check-circle', text: 'Xem thông tin bệnh nhân', color: 'text-green-600' },
+                    { icon: 'bi-check-circle', text: 'Hỗ trợ kỹ thuật', color: 'text-green-600' },
+                    { icon: 'bi-x-circle', text: 'Không thể chỉnh sửa điều trị', color: 'text-red-600' }
+                ]
+            };
+
+            function updateRolePermissions(role) {
+                const permissionsList = $('#permissionsList');
+                permissionsList.empty();
+                
+                if (rolePermissions[role]) {
+                    rolePermissions[role].forEach(permission => {
+                        permissionsList.append(`
+                            <div class="flex items-center space-x-2 text-sm">
+                                <i class="bi ${permission.icon} ${permission.color}"></i>
+                                <span class="${permission.color}">${permission.text}</span>
+                            </div>
+                        `);
+                    });
+                }
+            }
+
             $("#Role").change(function() {
-                if ($(this).val() === "Doctor") {
-                    $("#doctorIdGroup").show();
+                const selectedRole = $(this).val();
+                
+                if (selectedRole === "Doctor") {
+                    $("#doctorIdGroup").slideDown(300);
                 } else {
-                    $("#doctorIdGroup").hide();
+                    $("#doctorIdGroup").slideUp(300);
                     $("#DoctorId").val("");
                 }
+                
+                updateRolePermissions(selectedRole);
             });
             
+            // Initialize on page load
             if ($("#Role").val() === "Doctor") {
                 $("#doctorIdGroup").show();
             }
+            
+            updateRolePermissions($("#Role").val());
         });
     </script>
 } 

@@ -4,100 +4,134 @@
     ViewData["Title"] = "Danh sách bệnh nhân";
 }
 
-<div class="flex justify-between items-center mb-6">
-    <h2 class="text-3xl font-bold text-gray-900">Danh sách bệnh nhân</h2>
-    <a asp-action="Create" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
-        <i class="bi bi-plus-circle mr-2"></i> Thêm bệnh nhân mới
-    </a>
-</div>
-
-<div class="bg-white rounded-lg shadow-lg">
-    <div class="p-6">
-        <div class="mb-6">
-            <div class="relative">
-                <input type="text" id="searchInput" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Tìm kiếm bệnh nhân...">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="bi bi-search text-gray-400"></i>
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="bg-white border-b border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+                        <i class="bi bi-person-heart text-2xl text-green-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-semibold text-gray-900">Danh sách bệnh nhân</h1>
+                        <p class="text-gray-600">Quản lý thông tin bệnh nhân</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-3">
+                    <div class="bg-gray-50 rounded-lg px-4 py-2 border border-gray-200">
+                        <span class="text-sm font-medium text-gray-700">Tổng số: @Model.Count() bệnh nhân</span>
+                    </div>
                 </div>
             </div>
         </div>
         
+        <div class="p-6 bg-white">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                <div class="flex flex-wrap gap-3">
+                    <a asp-action="Create" class="bg-green-600 text-white px-4 py-2 rounded-md font-medium hover:bg-green-700 transition-colors duration-200 flex items-center space-x-2">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Thêm bệnh nhân mới</span>
+                    </a>
+                    <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200 flex items-center space-x-2 border border-gray-300">
+                        <i class="bi bi-funnel"></i>
+                        <span>Bộ lọc</span>
+                    </button>
+                    <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200 flex items-center space-x-2 border border-gray-300">
+                        <i class="bi bi-download"></i>
+                        <span>Xuất dữ liệu</span>
+                    </button>
+                </div>
+                
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm bệnh nhân..." 
+                           class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 transition-colors duration-200 bg-white w-full md:w-80">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="bi bi-search text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full" id="patientsTable">
-                <thead>
+                <thead class="bg-gray-50">
                     <tr class="border-b border-gray-200">
-                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
+                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">
                             @Html.DisplayNameFor(model => model.FullName)
                         </th>
-                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
+                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">
                             @Html.DisplayNameFor(model => model.DateOfBirth)
                         </th>
-                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
+                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">
                             @Html.DisplayNameFor(model => model.Gender)
                         </th>
-                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
+                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">
                             @Html.DisplayNameFor(model => model.PhoneNumber)
                         </th>
-                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
+                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">
                             @Html.DisplayNameFor(model => model.Email)
                         </th>
-                        <th class="text-left py-3 px-4 font-semibold text-gray-700">
+                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">
                             @Html.DisplayNameFor(model => model.RegistrationDate)
                         </th>
-                        <th class="text-left py-3 px-4 font-semibold text-gray-700 w-32">Thao tác</th>
+                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm w-32">Thao tác</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-100">
                     @foreach (var item in Model)
                     {
-                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
-                            <td class="py-3 px-4 text-gray-900">
+                        <tr class="hover:bg-gray-50 transition-colors duration-200">
+                            <td class="py-4 px-6 text-gray-900 font-medium">
                                 @Html.DisplayFor(modelItem => item.FullName)
                             </td>
-                            <td class="py-3 px-4 text-gray-700">
+                            <td class="py-4 px-6 text-gray-700">
                                 @item.DateOfBirth.ToString("dd/MM/yyyy")
                             </td>
-                            <td class="py-3 px-4 text-gray-700">
-                                @Html.DisplayFor(modelItem => item.Gender)
+                            <td class="py-4 px-6 text-gray-700">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium @(item.Gender == "Nam" ? "bg-blue-100 text-blue-800" : "bg-pink-100 text-pink-800")">
+                                    @Html.DisplayFor(modelItem => item.Gender)
+                                </span>
                             </td>
-                            <td class="py-3 px-4 text-gray-700">
+                            <td class="py-4 px-6 text-gray-700">
                                 @Html.DisplayFor(modelItem => item.PhoneNumber)
                             </td>
-                            <td class="py-3 px-4 text-gray-700">
+                            <td class="py-4 px-6 text-gray-700">
                                 @Html.DisplayFor(modelItem => item.Email)
                             </td>
-                            <td class="py-3 px-4 text-gray-700">
+                            <td class="py-4 px-6 text-gray-700">
                                 @item.RegistrationDate.ToString("dd/MM/yyyy")
                             </td>
-                            <td class="py-3 px-4">
-                                <div class="flex items-center space-x-1">
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="bg-blue-100 text-blue-600 p-2 rounded hover:bg-blue-200 transition-colors duration-200" title="Chi tiết">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center space-x-2">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="text-blue-600 hover:text-blue-800 text-sm font-medium" title="Chi tiết">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="bg-yellow-100 text-yellow-600 p-2 rounded hover:bg-yellow-200 transition-colors duration-200" title="Chỉnh sửa">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="text-green-600 hover:text-green-800 text-sm font-medium" title="Chỉnh sửa">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                     <div class="relative">
-                                        <button type="button" class="bg-gray-100 text-gray-600 p-2 rounded hover:bg-gray-200 transition-colors duration-200 dropdown-toggle" onclick="togglePatientDropdown('@item.Id')" title="Thêm tùy chọn">
+                                        <button type="button" class="text-gray-600 hover:text-gray-800 text-sm font-medium dropdown-toggle" onclick="togglePatientDropdown('@item.Id')" title="Thêm tùy chọn">
                                             <i class="bi bi-three-dots-vertical"></i>
                                         </button>
-                                        <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50 hidden" id="dropdown-@item.Id">
+                                        <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50 hidden border border-gray-200" id="dropdown-@item.Id">
                                             <div class="py-1">
                                                 <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Partners" asp-action="ByPatient" asp-route-id="@item.Id">
-                                                    <i class="bi bi-people mr-3 w-4"></i> Người phối ngẫu
+                                                    <i class="bi bi-people mr-3 w-4 text-gray-400"></i> Người phối ngẫu
                                                 </a>
                                                 <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="MedicalRecords" asp-action="PatientHistory" asp-route-id="@item.Id">
-                                                    <i class="bi bi-file-earmark-medical mr-3 w-4"></i> Hồ sơ y tế
+                                                    <i class="bi bi-file-earmark-medical mr-3 w-4 text-gray-400"></i> Hồ sơ y tế
                                                 </a>
                                                 <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Treatments" asp-action="Index" asp-route-patientId="@item.Id">
-                                                    <i class="bi bi-clipboard2-pulse mr-3 w-4"></i> Điều trị
+                                                    <i class="bi bi-clipboard2-pulse mr-3 w-4 text-gray-400"></i> Điều trị
                                                 </a>
                                                 <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Appointments" asp-action="Index" asp-route-patientId="@item.Id">
-                                                    <i class="bi bi-calendar-check mr-3 w-4"></i> Lịch hẹn
+                                                    <i class="bi bi-calendar-check mr-3 w-4 text-gray-400"></i> Lịch hẹn
                                                 </a>
                                                 <hr class="border-gray-200 my-1">
                                                 <a class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50" asp-action="Delete" asp-route-id="@item.Id">
-                                                    <i class="bi bi-trash mr-3 w-4"></i> Xóa
+                                                    <i class="bi bi-trash mr-3 w-4 text-red-400"></i> Xóa
                                                 </a>
                                             </div>
                                         </div>
@@ -110,6 +144,22 @@
             </table>
         </div>
     </div>
+
+    @if (!Model.Any())
+    {
+        <!-- Empty State -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-person-plus text-2xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Chưa có bệnh nhân nào</h3>
+            <p class="text-gray-500 mb-6">Bắt đầu bằng cách thêm bệnh nhân đầu tiên vào hệ thống</p>
+            <a asp-action="Create" class="bg-green-600 text-white px-6 py-2 rounded-md font-medium hover:bg-green-700 transition-colors duration-200 inline-flex items-center space-x-2">
+                <i class="bi bi-plus-circle"></i>
+                <span>Thêm bệnh nhân đầu tiên</span>
+            </a>
+        </div>
+    }
 </div>
 
 @section Scripts {

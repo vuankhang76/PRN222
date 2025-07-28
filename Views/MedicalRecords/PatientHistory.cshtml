@@ -6,72 +6,181 @@
     int patientId = ViewData["PatientId"] as int? ?? 0;
 }
 
-<div class="container-fluid">
-    <h1 class="mt-4">Lịch sử hồ sơ y tế - @patientName</h1>
-    
-    <div class="mb-3">
-        <a asp-controller="Patients" asp-action="Details" asp-route-id="@patientId" class="btn btn-info">
-            <i class="fas fa-user"></i> Xem hồ sơ bệnh nhân
-        </a>
-        <a asp-action="Create" asp-route-patientId="@patientId" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Thêm hồ sơ mới
-        </a>
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-indigo-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 text-white p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="bi bi-file-earmark-medical text-3xl text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold mb-2">Lịch sử hồ sơ y tế</h1>
+                        <p class="text-indigo-100 text-lg">Hồ sơ y tế của bệnh nhân: <span class="font-semibold">@patientName</span></p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a asp-controller="Patients" asp-action="Details" asp-route-id="@patientId" 
+                       class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center space-x-2">
+                        <i class="bi bi-person-check"></i>
+                        <span>Xem bệnh nhân</span>
+                    </a>
+                    <a asp-action="Create" asp-route-patientId="@patientId" 
+                       class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center space-x-2">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Thêm hồ sơ mới</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Breadcrumb -->
+        <div class="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a asp-action="Index" class="text-indigo-600 hover:text-indigo-700 transition-colors duration-200 flex items-center space-x-1">
+                    <i class="bi bi-house"></i>
+                    <span>Hồ sơ y tế</span>
+                </a>
+                <i class="bi bi-chevron-right text-gray-400"></i>
+                <a asp-controller="Patients" asp-action="Details" asp-route-id="@patientId" class="text-indigo-600 hover:text-indigo-700 transition-colors duration-200">
+                    @patientName
+                </a>
+                <i class="bi bi-chevron-right text-gray-400"></i>
+                <span class="text-gray-600 font-medium">Lịch sử</span>
+            </nav>
+        </div>
     </div>
-    
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Ngày</th>
-                            <th>Loại hồ sơ</th>
-                            <th>Tiêu đề</th>
-                            <th>Bác sĩ</th>
-                            <th>Tệp đính kèm</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model != null)
-                        {
-                            @foreach (var item in Model)
+
+    <!-- Medical Records Table -->
+    <div class="bg-white rounded-2xl shadow-lg border border-indigo-200 overflow-hidden">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-folder-open text-indigo-600"></i>
+                        </div>
+                        <span>Danh sách hồ sơ y tế</span>
+                    </h3>
+                    <p class="text-gray-600 mt-1">Tổng số: @(Model?.Count() ?? 0) hồ sơ</p>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Tìm kiếm hồ sơ..." 
+                               class="pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-colors duration-200 bg-white w-80">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="bi bi-search text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="overflow-x-auto">
+                    <table class="w-full" id="medicalRecordsTable">
+                        <thead class="bg-gray-50">
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-4 px-6 font-medium text-gray-700 text-sm">Ngày ghi nhận</th>
+                                <th class="text-left py-4 px-6 font-medium text-gray-700 text-sm">Loại hồ sơ</th>
+                                <th class="text-left py-4 px-6 font-medium text-gray-700 text-sm">Tiêu đề</th>
+                                <th class="text-left py-4 px-6 font-medium text-gray-700 text-sm">Bác sĩ</th>
+                                <th class="text-left py-4 px-6 font-medium text-gray-700 text-sm">Tệp đính kèm</th>
+                                <th class="text-left py-4 px-6 font-medium text-gray-700 text-sm w-32">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            @foreach (var item in Model.OrderByDescending(x => x.RecordDate))
                             {
-                                <tr>
-                                    <td>@item.RecordDate.ToString("dd/MM/yyyy")</td>
-                                    <td>@item.RecordType</td>
-                                    <td>@item.RecordTitle</td>
-                                    <td>@(item.Doctor?.FullName ?? "Không có")</td>
-                                    <td>
+                                <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                    <td class="py-4 px-6">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
+                                                <i class="bi bi-calendar3 text-indigo-600"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-gray-800">@item.RecordDate.ToString("dd/MM/yyyy")</div>
+                                                <div class="text-sm text-gray-500">@item.RecordDate.ToString("HH:mm")</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                            @item.RecordType
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <div class="font-medium text-gray-800">@item.RecordTitle</div>
+                                        @if (!string.IsNullOrEmpty(item.Description))
+                                        {
+                                            <div class="text-sm text-gray-500 mt-1 line-clamp-2">@item.Description</div>
+                                        }
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        @if (item.Doctor != null)
+                                        {
+                                            <div class="flex items-center space-x-2">
+                                                <div class="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center">
+                                                    <i class="bi bi-person text-blue-600 text-sm"></i>
+                                                </div>
+                                                <span class="text-gray-800">@item.Doctor.FullName</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-gray-400">Không có</span>
+                                        }
+                                    </td>
+                                    <td class="py-4 px-6">
                                         @if (!string.IsNullOrEmpty(item.AttachmentPath))
                                         {
-                                            <a asp-action="DownloadAttachment" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
-                                                <i class="fas fa-download"></i> Tải xuống
+                                            <a asp-action="DownloadAttachment" asp-route-id="@item.Id" 
+                                               class="inline-flex items-center space-x-2 bg-green-100 text-green-700 px-3 py-1 rounded-lg hover:bg-green-200 transition-colors duration-200">
+                                                <i class="bi bi-download text-sm"></i>
+                                                <span class="text-sm font-medium">Tải xuống</span>
                                             </a>
                                         }
                                         else
                                         {
-                                            <span>Không có</span>
+                                            <span class="text-gray-400 text-sm">Không có</span>
                                         }
                                     </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Chi tiết</a>
-                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
+                                    <td class="py-4 px-6">
+                                        <div class="flex items-center space-x-2">
+                                            <a asp-action="Details" asp-route-id="@item.Id" 
+                                               class="text-indigo-600 hover:text-indigo-800 text-sm font-medium" title="Chi tiết">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" 
+                                               class="text-amber-600 hover:text-amber-800 text-sm font-medium" title="Chỉnh sửa">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
                             }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="6" class="text-center">Chưa có hồ sơ y tế nào</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <!-- Empty State -->
+                <div class="text-center py-12">
+                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="bi bi-file-earmark-plus text-3xl text-gray-400"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Chưa có hồ sơ y tế</h3>
+                    <p class="text-gray-500 mb-6">Bệnh nhân chưa có hồ sơ y tế nào trong hệ thống</p>
+                    <a asp-action="Create" asp-route-patientId="@patientId" 
+                       class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-indigo-700 transition-colors duration-200 inline-flex items-center space-x-2">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Tạo hồ sơ đầu tiên</span>
+                    </a>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -79,8 +188,55 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            $('#dataTable').DataTable({
-                "order": [[0, "desc"]]
+            // Search functionality
+            $("#searchInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#medicalRecordsTable tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+            
+            // Add hover effects
+            $('tr').hover(
+                function() {
+                    $(this).addClass('shadow-sm');
+                },
+                function() {
+                    $(this).removeClass('shadow-sm');
+                }
+            );
+            
+            // Tooltip for actions
+            $('[title]').tooltip();
+            
+            // Enhanced table functionality without DataTables dependency
+            function sortTable(columnIndex) {
+                var table = document.getElementById("medicalRecordsTable");
+                var rows = Array.from(table.rows).slice(1);
+                var ascending = true;
+                
+                rows.sort(function(a, b) {
+                    var aText = a.cells[columnIndex].textContent.trim();
+                    var bText = b.cells[columnIndex].textContent.trim();
+                    
+                    if (columnIndex === 0) { // Date column
+                        aText = new Date(aText.split('/').reverse().join('-'));
+                        bText = new Date(bText.split('/').reverse().join('-'));
+                    }
+                    
+                    if (aText < bText) return ascending ? -1 : 1;
+                    if (aText > bText) return ascending ? 1 : -1;
+                    return 0;
+                });
+                
+                var tbody = table.querySelector('tbody');
+                rows.forEach(row => tbody.appendChild(row));
+            }
+            
+            // Add click handlers for sortable headers
+            $('#medicalRecordsTable th').click(function() {
+                var columnIndex = $(this).index();
+                sortTable(columnIndex);
             });
         });
     </script>

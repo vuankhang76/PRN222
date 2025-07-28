@@ -4,86 +4,235 @@
     ViewData["Title"] = "Tạo lịch hẹn mới";
 }
 
-<div class="container-fluid">
-    <h1 class="mt-4">Tạo lịch hẹn mới</h1>
-    
-    <div class="card mb-4">
-        <div class="card-body">
-            <form asp-action="Create">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-orange-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-orange-600 via-amber-600 to-yellow-600 text-white p-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                    <i class="bi bi-calendar-plus text-3xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">Tạo lịch hẹn mới</h1>
+                    <p class="text-orange-100 text-lg">Lên lịch cuộc hẹn khám bệnh cho bệnh nhân</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Breadcrumb -->
+        <div class="p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a asp-action="Index" class="text-orange-600 hover:text-orange-700 transition-colors duration-200 flex items-center space-x-1">
+                    <i class="bi bi-house"></i>
+                    <span>Danh sách lịch hẹn</span>
+                </a>
+                <i class="bi bi-chevron-right text-gray-400"></i>
+                <span class="text-gray-600 font-medium">Thêm mới</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-orange-200 overflow-hidden">
+        <div class="p-8">
+            <form asp-action="Create" class="space-y-6">
+                <!-- Validation Summary -->
+                <div asp-validation-summary="ModelOnly" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
+                    <div class="flex items-center space-x-2">
+                        <i class="bi bi-exclamation-triangle-fill text-red-600"></i>
+                        <span class="font-medium">Vui lòng kiểm tra lại thông tin đã nhập</span>
+                    </div>
+                </div>
                 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="PatientId" class="control-label">Bệnh nhân</label>
-                            <select asp-for="PatientId" class="form-control" asp-items="ViewBag.PatientId"></select>
-                            <span asp-validation-for="PatientId" class="text-danger"></span>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label asp-for="DoctorId" class="control-label">Bác sĩ</label>
-                            <select asp-for="DoctorId" class="form-control" asp-items="ViewBag.DoctorId"></select>
-                            <span asp-validation-for="DoctorId" class="text-danger"></span>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label asp-for="TreatmentId" class="control-label">Điều trị liên quan</label>
-                            <select asp-for="TreatmentId" class="form-control" asp-items="ViewBag.TreatmentId">
-                                <option value="">-- Không có --</option>
-                            </select>
-                            <span asp-validation-for="TreatmentId" class="text-danger"></span>
-                        </div>
+                <!-- Patient and Doctor Information Section -->
+                <div class="space-y-6">
+                    <div class="border-b border-gray-200 pb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="bi bi-people text-orange-600"></i>
+                            </div>
+                            <span>Thông tin cơ bản</span>
+                        </h3>
+                        <p class="text-sm text-gray-600 mt-1">Chọn bệnh nhân và bác sĩ cho cuộc hẹn</p>
                     </div>
                     
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="AppointmentDate" class="control-label">Ngày hẹn</label>
-                            <input asp-for="AppointmentDate" class="form-control" type="date" />
-                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="space-y-2">
+                            <label asp-for="PatientId" class="block text-sm font-semibold text-gray-700">Bệnh nhân</label>
+                            <select asp-for="PatientId" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-orange-100 focus:border-orange-500 transition-all duration-300" 
+                                    asp-items="ViewBag.PatientId">
+                                <option value="">-- Chọn bệnh nhân --</option>
+                            </select>
+                            <span asp-validation-for="PatientId" class="text-red-600 text-sm"></span>
                         </div>
                         
-                        <div class="form-group">
-                            <label asp-for="AppointmentTime" class="control-label">Giờ hẹn</label>
-                            <input asp-for="AppointmentTime" class="form-control" type="time" />
-                            <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+                        <div class="space-y-2">
+                            <label asp-for="DoctorId" class="block text-sm font-semibold text-gray-700">Bác sĩ</label>
+                            <select asp-for="DoctorId" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-orange-100 focus:border-orange-500 transition-all duration-300" 
+                                    asp-items="ViewBag.DoctorId">
+                                <option value="">-- Chọn bác sĩ --</option>
+                            </select>
+                            <span asp-validation-for="DoctorId" class="text-red-600 text-sm"></span>
                         </div>
                         
-                        <div class="form-group">
-                            <label asp-for="Duration" class="control-label">Thời lượng (phút)</label>
-                            <input asp-for="Duration" class="form-control" type="number" min="15" step="15" value="30" />
-                            <span asp-validation-for="Duration" class="text-danger"></span>
+                        <div class="space-y-2">
+                            <label asp-for="TreatmentId" class="block text-sm font-semibold text-gray-700">Điều trị liên quan</label>
+                            <select asp-for="TreatmentId" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-orange-100 focus:border-orange-500 transition-all duration-300" 
+                                    asp-items="ViewBag.TreatmentId">
+                                <option value="">-- Không có --</option>
+                            </select>
+                            <span asp-validation-for="TreatmentId" class="text-red-600 text-sm"></span>
                         </div>
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label asp-for="Purpose" class="control-label">Mục đích cuộc hẹn</label>
-                    <textarea asp-for="Purpose" class="form-control" rows="3"></textarea>
-                    <span asp-validation-for="Purpose" class="text-danger"></span>
+                <!-- Date and Time Section -->
+                <div class="space-y-6">
+                    <div class="border-b border-gray-200 pb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                                <i class="bi bi-clock text-amber-600"></i>
+                            </div>
+                            <span>Thời gian cuộc hẹn</span>
+                        </h3>
+                        <p class="text-sm text-gray-600 mt-1">Chọn ngày giờ và thời lượng cho cuộc hẹn</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="space-y-2">
+                            <label asp-for="AppointmentDate" class="block text-sm font-semibold text-gray-700">Ngày hẹn</label>
+                            <input asp-for="AppointmentDate" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-orange-100 focus:border-orange-500 transition-all duration-300" 
+                                   type="date" />
+                            <span asp-validation-for="AppointmentDate" class="text-red-600 text-sm"></span>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label asp-for="AppointmentTime" class="block text-sm font-semibold text-gray-700">Giờ hẹn</label>
+                            <input asp-for="AppointmentTime" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-orange-100 focus:border-orange-500 transition-all duration-300" 
+                                   type="time" />
+                            <span asp-validation-for="AppointmentTime" class="text-red-600 text-sm"></span>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label asp-for="Duration" class="block text-sm font-semibold text-gray-700">Thời lượng (phút)</label>
+                            <input asp-for="Duration" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-orange-100 focus:border-orange-500 transition-all duration-300" 
+                                   type="number" min="15" step="15" value="30" />
+                            <span asp-validation-for="Duration" class="text-red-600 text-sm"></span>
+                            <p class="text-xs text-gray-500 flex items-center space-x-1">
+                                <i class="bi bi-info-circle"></i>
+                                <span>Thời lượng mặc định là 30 phút</span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label asp-for="Status" class="control-label">Trạng thái</label>
-                    <select asp-for="Status" class="form-control">
-                        <option value="Scheduled">Đã lên lịch</option>
-                        <option value="Completed">Đã hoàn thành</option>
-                        <option value="Cancelled">Đã hủy</option>
-                        <option value="No-show">Không đến</option>
-                    </select>
-                    <span asp-validation-for="Status" class="text-danger"></span>
+                <!-- Purpose and Status Section -->
+                <div class="space-y-6">
+                    <div class="border-b border-gray-200 pb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <i class="bi bi-clipboard-check text-yellow-600"></i>
+                            </div>
+                            <span>Chi tiết cuộc hẹn</span>
+                        </h3>
+                        <p class="text-sm text-gray-600 mt-1">Mô tả mục đích và trạng thái cuộc hẹn</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label asp-for="Purpose" class="block text-sm font-semibold text-gray-700">Mục đích cuộc hẹn</label>
+                            <textarea asp-for="Purpose" 
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-orange-100 focus:border-orange-500 transition-all duration-300" 
+                                      rows="3" placeholder="Mô tả mục đích của cuộc hẹn..."></textarea>
+                            <span asp-validation-for="Purpose" class="text-red-600 text-sm"></span>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label asp-for="Status" class="block text-sm font-semibold text-gray-700">Trạng thái</label>
+                            <select asp-for="Status" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-orange-100 focus:border-orange-500 transition-all duration-300">
+                                <option value="Scheduled" selected>Đã lên lịch</option>
+                                <option value="Completed">Đã hoàn thành</option>
+                                <option value="Cancelled">Đã hủy</option>
+                                <option value="No-show">Không đến</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-red-600 text-sm"></span>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label asp-for="Notes" class="control-label">Ghi chú</label>
-                    <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
-                    <span asp-validation-for="Notes" class="text-danger"></span>
+                <!-- Notes Section -->
+                <div class="space-y-6">
+                    <div class="border-b border-gray-200 pb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="bi bi-journal-text text-green-600"></i>
+                            </div>
+                            <span>Ghi chú bổ sung</span>
+                        </h3>
+                        <p class="text-sm text-gray-600 mt-1">Thông tin thêm về cuộc hẹn (tùy chọn)</p>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label asp-for="Notes" class="block text-sm font-semibold text-gray-700">Ghi chú</label>
+                        <textarea asp-for="Notes" 
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-orange-100 focus:border-orange-500 transition-all duration-300" 
+                                  rows="3" placeholder="Ghi chú thêm về cuộc hẹn..."></textarea>
+                        <span asp-validation-for="Notes" class="text-red-600 text-sm"></span>
+                    </div>
                 </div>
                 
-                <div class="form-group mt-3">
-                    <input type="submit" value="Tạo lịch hẹn" class="btn btn-primary" />
-                    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                    <button type="submit" 
+                            class="flex-1 bg-gradient-to-r from-orange-600 to-amber-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-orange-700 hover:to-amber-700 focus:outline-none focus:ring-4 focus:ring-orange-200 transform hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Tạo lịch hẹn</span>
+                    </button>
+                    
+                    <a asp-action="Index" 
+                       class="flex-1 bg-white border-2 border-gray-300 text-gray-700 py-3 px-6 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 flex items-center justify-center space-x-2">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>Quay lại danh sách</span>
+                    </a>
                 </div>
             </form>
+        </div>
+    </div>
+    
+    <!-- Help Section -->
+    <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl border border-orange-100 p-6">
+        <div class="flex items-start space-x-4">
+            <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <i class="bi bi-lightbulb text-orange-600 text-xl"></i>
+            </div>
+            <div>
+                <h4 class="font-semibold text-gray-800 mb-2">Lưu ý khi tạo lịch hẹn</h4>
+                <ul class="text-sm text-gray-600 space-y-1">
+                    <li class="flex items-center space-x-2">
+                        <i class="bi bi-check-circle-fill text-green-500 text-xs"></i>
+                        <span>Kiểm tra lịch trống của bác sĩ trước khi đặt hẹn</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <i class="bi bi-check-circle-fill text-green-500 text-xs"></i>
+                        <span>Thời lượng mặc định là 30 phút, có thể điều chỉnh theo nhu cầu</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <i class="bi bi-check-circle-fill text-green-500 text-xs"></i>
+                        <span>Liên kết với điều trị giúp theo dõi tiến trình</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <i class="bi bi-check-circle-fill text-green-500 text-xs"></i>
+                        <span>Mô tả rõ mục đích để chuẩn bị tốt hơn</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -92,8 +241,8 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     
     <script>
-        // Cập nhật danh sách điều trị khi chọn bệnh nhân
         $(document).ready(function() {
+            // Update treatment list when patient is selected
             $('#PatientId').change(function() {
                 var patientId = $(this).val();
                 if (patientId) {
@@ -108,8 +257,61 @@
                             $.each(data, function(i, item) {
                                 treatmentDropdown.append($('<option></option>').val(item.id).text(item.treatmentName));
                             });
+                        },
+                        error: function() {
+                            console.log('Không thể tải danh sách điều trị');
                         }
                     });
+                } else {
+                    $('#TreatmentId').empty();
+                    $('#TreatmentId').append($('<option></option>').val('').text('-- Không có --'));
+                }
+            });
+            
+            // Set minimum date to today
+            var today = new Date().toISOString().split('T')[0];
+            $('#AppointmentDate').attr('min', today);
+            
+            // Add focus styling for form inputs
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.classList.add('ring-4', 'ring-orange-100', 'border-orange-500');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.classList.remove('ring-4', 'ring-orange-100', 'border-orange-500');
+                });
+            });
+            
+            // Form validation
+            $('form').submit(function(e) {
+                var isValid = true;
+                var errorMessages = [];
+                
+                if (!$('#PatientId').val()) {
+                    errorMessages.push('Vui lòng chọn bệnh nhân');
+                    isValid = false;
+                }
+                
+                if (!$('#DoctorId').val()) {
+                    errorMessages.push('Vui lòng chọn bác sĩ');
+                    isValid = false;
+                }
+                
+                if (!$('#AppointmentDate').val()) {
+                    errorMessages.push('Vui lòng chọn ngày hẹn');
+                    isValid = false;
+                }
+                
+                if (!$('#AppointmentTime').val()) {
+                    errorMessages.push('Vui lòng chọn giờ hẹn');
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    alert('Vui lòng điền đầy đủ thông tin:\n' + errorMessages.join('\n'));
+                    e.preventDefault();
                 }
             });
         });
