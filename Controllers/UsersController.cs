@@ -30,7 +30,7 @@ namespace InfertilityApp.Controllers
             {
                 users = users.Where(u =>
                     u.FullName.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-                    u.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                    (u.Email != null && u.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase)) ||
                     u.Username.Contains(searchString, StringComparison.OrdinalIgnoreCase));
             }
 

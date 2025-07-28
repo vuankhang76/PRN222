@@ -51,7 +51,7 @@ namespace InfertilityApp.BusinessLogicLayer.Services
                 throw new InvalidOperationException("Tên đăng nhập đã tồn tại");
             }
 
-            if (!await IsEmailUniqueAsync(user.Email))
+            if (!await IsEmailUniqueAsync(user.Email ?? ""))
             {
                 throw new InvalidOperationException("Email đã được sử dụng");
             }
@@ -78,7 +78,7 @@ namespace InfertilityApp.BusinessLogicLayer.Services
                 throw new InvalidOperationException("Tên đăng nhập đã tồn tại");
             }
 
-            if (!await IsEmailUniqueAsync(user.Email, user.Id))
+            if (!await IsEmailUniqueAsync(user.Email ?? "", user.Id))
             {
                 throw new InvalidOperationException("Email đã được sử dụng");
             }

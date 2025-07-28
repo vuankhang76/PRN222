@@ -38,9 +38,12 @@
                             <label asp-for="RecordType" class="control-label">Loại hồ sơ</label>
                             <select asp-for="RecordType" class="form-control">
                                 <option value="">-- Chọn loại hồ sơ --</option>
-                                @foreach (var type in (List<string>)ViewData["RecordTypes"])
+                                @if (ViewData["RecordTypes"] is List<string> recordTypes)
                                 {
-                                    <option value="@type">@type</option>
+                                    foreach (var type in recordTypes)
+                                    {
+                                        <option value="@type">@type</option>
+                                    }
                                 }
                             </select>
                             <span asp-validation-for="RecordType" class="text-danger"></span>

@@ -29,7 +29,7 @@ namespace InfertilityApp.Controllers
                 doctors = doctors.Where(d =>
                     d.FullName.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
                     d.Specialization.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-                    d.LicenseNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+                    (d.LicenseNumber != null && d.LicenseNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase)));
             }
 
             if (!string.IsNullOrEmpty(specialization))

@@ -119,19 +119,19 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            @if (ViewData["UpcomingAppointments"] != null)
+                            @if (ViewData["UpcomingAppointments"] is IEnumerable<Appointment> upcomingAppointments)
                             {
-                                foreach (var appointment in (IEnumerable<Appointment>)ViewData["UpcomingAppointments"])
+                                foreach (var appointment in upcomingAppointments)
                                 {
                                     <tr class="hover:bg-gray-50 transition-colors duration-200">
                                         <td class="py-4 px-4">
                                             <a asp-controller="Patients" asp-action="Details" asp-route-id="@appointment.PatientId" class="text-blue-600 hover:text-blue-800 font-medium">
-                                                @appointment.Patient.FullName
+                                                @(appointment.Patient?.FullName ?? "N/A")
                                             </a>
                                         </td>
                                         <td class="py-4 px-4">
                                             <a asp-controller="Doctors" asp-action="Details" asp-route-id="@appointment.DoctorId" class="text-blue-600 hover:text-blue-800 font-medium">
-                                                @appointment.Doctor.FullName
+                                                @(appointment.Doctor?.FullName ?? "N/A")
                                             </a>
                                         </td>
                                         <td class="py-4 px-4 text-gray-700">@appointment.AppointmentDate.ToString("dd/MM/yyyy")</td>
@@ -189,19 +189,19 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            @if (ViewData["RecentTreatments"] != null)
+                            @if (ViewData["RecentTreatments"] is IEnumerable<Treatment> recentTreatments)
                             {
-                                foreach (var treatment in (IEnumerable<Treatment>)ViewData["RecentTreatments"])
+                                foreach (var treatment in recentTreatments)
                                 {
                                     <tr class="hover:bg-gray-50 transition-colors duration-200">
                                         <td class="py-4 px-4">
                                             <a asp-controller="Patients" asp-action="Details" asp-route-id="@treatment.PatientId" class="text-blue-600 hover:text-blue-800 font-medium">
-                                                @treatment.Patient.FullName
+                                                @(treatment.Patient?.FullName ?? "N/A")
                                             </a>
                                         </td>
                                         <td class="py-4 px-4">
                                             <a asp-controller="Doctors" asp-action="Details" asp-route-id="@treatment.DoctorId" class="text-blue-600 hover:text-blue-800 font-medium">
-                                                @treatment.Doctor.FullName
+                                                @(treatment.Doctor?.FullName ?? "N/A")
                                             </a>
                                         </td>
                                         <td class="py-4 px-4 text-gray-700">@treatment.TreatmentType</td>

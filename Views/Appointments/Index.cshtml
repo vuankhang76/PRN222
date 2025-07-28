@@ -85,12 +85,12 @@
                         <tr class="hover:bg-gray-50 transition-colors duration-200">
                             <td class="py-4 px-6">
                                 <a asp-controller="Patients" asp-action="Details" asp-route-id="@item.PatientId" class="text-blue-600 hover:text-blue-800 font-medium">
-                                    @item.Patient.FullName
+                                    @(item.Patient?.FullName ?? "N/A")
                                 </a>
                             </td>
                             <td class="py-4 px-6">
                                 <a asp-controller="Doctors" asp-action="Details" asp-route-id="@item.DoctorId" class="text-blue-600 hover:text-blue-800 font-medium">
-                                    @item.Doctor.FullName
+                                    @(item.Doctor?.FullName ?? "N/A")
                                 </a>
                             </td>
                             <td class="py-4 px-6 text-gray-700">

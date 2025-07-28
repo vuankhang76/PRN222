@@ -72,7 +72,7 @@
                                     <div class="font-medium text-gray-800">
                                         <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.PatientId" 
                                            class="text-green-600 hover:text-green-700 hover:underline transition-colors duration-200">
-                                            @Model.Patient.FullName
+                                            @(Model.Patient?.FullName ?? "N/A")
                                         </a>
                                     </div>
                                 </div>
@@ -87,7 +87,7 @@
                                     <div class="font-medium text-gray-800">
                                         <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId" 
                                            class="text-blue-600 hover:text-blue-700 hover:underline transition-colors duration-200">
-                                            @Model.Doctor.FullName
+                                            @(Model.Doctor?.FullName ?? "N/A")
                                         </a>
                                     </div>
                                 </div>
