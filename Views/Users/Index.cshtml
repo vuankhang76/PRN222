@@ -4,26 +4,10 @@
     ViewData["Title"] = "Quản lý người dùng";
 }
 
-<style>
-    /* Action buttons styling */
-    .btn-group .btn {
-        margin-right: 2px;
-    }
-    
-    .btn-group .btn:last-child {
-        margin-right: 0;
-    }
-    
-    /* Ensure buttons don't wrap */
-    .btn-group {
-        white-space: nowrap;
-    }
-</style>
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Quản lý người dùng</h2>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Thêm người dùng mới
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-gray-900"><i class="bi bi-people-fill mr-2"></i> Quản lý người dùng</h2>
+    <a asp-action="Create" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center">
+        <i class="bi bi-plus-circle mr-2"></i> Thêm người dùng mới
     </a>
 </div>
 
@@ -43,108 +27,98 @@
     </div>
 }
 
-<div class="card">
-    <div class="card-body">
-        <div class="mb-3">
-            <div class="input-group">
-                <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm người dùng...">
-                <button class="btn btn-outline-secondary" type="button">
-                    <i class="bi bi-search"></i>
-                </button>
+<div class="bg-white rounded-lg shadow-lg">
+    <div class="p-6">
+        <div class="mb-6">
+            <div class="relative">
+                <input type="text" id="searchUser" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Tìm kiếm người dùng...">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="bi bi-search text-gray-400"></i>
+                </div>
             </div>
         </div>
-        
-        <div class="table-responsive" style="overflow: visible !important;">
-            <table class="table table-hover" id="usersTable">
+
+        <div class="overflow-x-auto">
+            <table class="w-full" id="usersTable">
                 <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Username)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FullName)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Email)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Role)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.IsActive)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.LastLogin)
-                        </th>
-                        <th>Thao tác</th>
+                    <tr class="border-b border-gray-200">
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Tài khoản</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Họ tên</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Email</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Vai trò</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Trạng thái</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Lần đăng nhập gần nhất</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700 w-40">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var user in Model)
                     {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Username)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.FullName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Email)
-                            </td>
-                            <td>
-                                @switch (item.Role)
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
+                            <td class="py-3 px-4 text-gray-900">@user.Username</td>
+                            <td class="py-3 px-4 text-gray-700">@user.FullName</td>
+                            <td class="py-3 px-4 text-gray-700">@user.Email</td>
+                            <td class="py-3 px-4">
+                                @switch (user.Role)
                                 {
                                     case "Admin":
-                                        <span class="badge bg-danger">Quản trị viên</span>
+                                        <span class="bg-red-100 text-red-600 text-sm font-medium px-2 py-1 rounded">Quản trị viên</span>
                                         break;
                                     case "Doctor":
-                                        <span class="badge bg-primary">Bác sĩ</span>
+                                        <span class="bg-blue-100 text-blue-600 text-sm font-medium px-2 py-1 rounded">Bác sĩ</span>
                                         break;
                                     case "Staff":
-                                        <span class="badge bg-success">Nhân viên</span>
+                                        <span class="bg-green-100 text-green-600 text-sm font-medium px-2 py-1 rounded">Nhân viên</span>
                                         break;
                                     default:
-                                        <span class="badge bg-secondary">@item.Role</span>
+                                        <span class="bg-gray-100 text-gray-600 text-sm font-medium px-2 py-1 rounded">@user.Role</span>
                                         break;
                                 }
                             </td>
-                            <td>
-                                @if (item.IsActive)
+                            <td class="py-3 px-4">
+                                @if (user.IsActive)
                                 {
-                                    <span class="badge bg-success">Hoạt động</span>
+                                    <span class="bg-green-100 text-green-600 text-sm font-medium px-2 py-1 rounded">Hoạt động</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-danger">Vô hiệu</span>
+                                    <span class="bg-red-100 text-red-600 text-sm font-medium px-2 py-1 rounded">Vô hiệu</span>
                                 }
                             </td>
-                            <td>
-                                @(item.LastLogin.HasValue ? item.LastLogin.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa đăng nhập")
-                            </td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info" title="Chi tiết">
+                            <td class="py-3 px-4">@((user.LastLogin.HasValue) ? user.LastLogin.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa đăng nhập")</td>
+                            <td class="py-3 px-4">
+                                <div class="flex items-center space-x-1">
+                                    <a asp-action="Details" asp-route-id="@user.Id" class="bg-blue-100 text-blue-600 p-2 rounded hover:bg-blue-200" title="Chi tiết">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                    <a asp-action="Edit" asp-route-id="@user.Id" class="bg-yellow-100 text-yellow-600 p-2 rounded hover:bg-yellow-200" title="Chỉnh sửa">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    @if (item.IsActive)
-                                    {
-                                        <button class="btn btn-sm btn-outline-warning" onclick="confirmDeactivate(@item.Id)" title="Vô hiệu hóa">
-                                            <i class="bi bi-slash-circle"></i>
+                                    <div class="relative">
+                                        <button type="button" class="bg-gray-100 text-gray-600 p-2 rounded hover:bg-gray-200 dropdown-toggle" onclick="toggleUserDropdown('@user.Id')" title="Thêm tùy chọn">
+                                            <i class="bi bi-three-dots-vertical"></i>
                                         </button>
-                                    }
-                                    else
-                                    {
-                                        <button class="btn btn-sm btn-outline-success" onclick="confirmActivate(@item.Id)" title="Kích hoạt">
-                                            <i class="bi bi-check-circle"></i>
-                                        </button>
-                                    }
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Xóa">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
+                                        <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50 hidden" id="dropdown-user-@user.Id">
+                                            <div class="py-1">
+                                                @if (user.IsActive)
+                                                {
+                                                    <a class="flex items-center px-4 py-2 text-sm text-yellow-700 hover:bg-yellow-100" href="javascript:void(0);" onclick="confirmDeactivate(@user.Id)">
+                                                        <i class="bi bi-slash-circle mr-3 w-4"></i> Vô hiệu hóa
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="flex items-center px-4 py-2 text-sm text-green-700 hover:bg-green-100" href="javascript:void(0);" onclick="confirmActivate(@user.Id)">
+                                                        <i class="bi bi-check-circle mr-3 w-4"></i> Kích hoạt
+                                                    </a>
+                                                }
+                                                <hr class="border-gray-200 my-1" />
+                                                <a class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50" asp-action="Delete" asp-route-id="@user.Id">
+                                                    <i class="bi bi-trash mr-3 w-4"></i> Xóa
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -158,26 +132,42 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $("#searchInput").on("keyup", function () {
+            $("#searchUser").on("keyup", function () {
                 var value = $(this).val().toLowerCase();
                 $("#usersTable tbody tr").filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
                 });
             });
-
-
         });
-        
+
+        function toggleUserDropdown(id) {
+            const dropdown = document.getElementById('dropdown-user-' + id);
+            document.querySelectorAll('[id^="dropdown-user-"]').forEach(function (menu) {
+                if (menu.id !== 'dropdown-user-' + id) {
+                    menu.classList.add('hidden');
+                }
+            });
+            dropdown.classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.dropdown-toggle') && !event.target.closest('[id^="dropdown-user-"]')) {
+                document.querySelectorAll('[id^="dropdown-user-"]').forEach(function (menu) {
+                    menu.classList.add('hidden');
+                });
+            }
+        });
+
         function confirmDeactivate(id) {
             if (confirm("Bạn có chắc chắn muốn vô hiệu hóa người dùng này?")) {
                 window.location.href = "/Users/ToggleActive/" + id;
             }
         }
-        
+
         function confirmActivate(id) {
             if (confirm("Bạn có chắc chắn muốn kích hoạt người dùng này?")) {
                 window.location.href = "/Users/ToggleActive/" + id;
             }
         }
     </script>
-} 
+}

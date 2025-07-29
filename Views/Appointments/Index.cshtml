@@ -4,103 +4,89 @@
     ViewData["Title"] = "Danh sách lịch hẹn";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Danh sách lịch hẹn</h2>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Thêm lịch hẹn mới
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-gray-900">Danh sách lịch hẹn</h2>
+    <a asp-action="Create" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center">
+        <i class="bi bi-plus-circle mr-2"></i> Thêm lịch hẹn mới
     </a>
 </div>
 
-<div class="card">
-    <div class="card-body">
-        <div class="mb-3">
-            <div class="input-group">
-                <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm lịch hẹn...">
-                <button class="btn btn-outline-secondary" type="button">
-                    <i class="bi bi-search"></i>
-                </button>
+<div class="bg-white rounded-lg shadow-lg">
+    <div class="p-6">
+        <div class="mb-6">
+            <div class="relative">
+                <input type="text" id="searchInput" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Tìm kiếm lịch hẹn...">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="bi bi-search text-gray-400"></i>
+                </div>
             </div>
         </div>
-        
-        <div class="table-responsive">
-            <table class="table table-hover" id="appointmentsTable">
+
+        <div class="overflow-x-auto">
+            <table class="w-full" id="appointmentsTable">
                 <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Patient)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Doctor)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.AppointmentDate)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.AppointmentTime)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.AppointmentType)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Status)
-                        </th>
-                        <th>Thao tác</th>
+                    <tr class="border-b border-gray-200">
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Bệnh nhân</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Bác sĩ</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Ngày</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Giờ</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Loại lịch hẹn</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Trạng thái</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700 w-32">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr>
-                            <td>
-                                <a asp-controller="Patients" asp-action="Details" asp-route-id="@item.PatientId">
-                                    @item.Patient.FullName
-                                </a>
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
+                            <td class="py-3 px-4 text-blue-600">
+                                <a asp-controller="Patients" asp-action="Details" asp-route-id="@item.PatientId" class="hover:underline">@item.Patient.FullName</a>
                             </td>
-                            <td>
-                                <a asp-controller="Doctors" asp-action="Details" asp-route-id="@item.DoctorId">
-                                    @item.Doctor.FullName
-                                </a>
+                            <td class="py-3 px-4 text-blue-600">
+                                <a asp-controller="Doctors" asp-action="Details" asp-route-id="@item.DoctorId" class="hover:underline">@item.Doctor.FullName</a>
                             </td>
-                            <td>
-                                @item.AppointmentDate.ToString("dd/MM/yyyy")
-                            </td>
-                            <td>
-                                @item.AppointmentTime.ToString(@"hh\:mm")
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.AppointmentType)
-                            </td>
-                            <td>
+                            <td class="py-3 px-4 text-gray-700">@item.AppointmentDate.ToString("dd/MM/yyyy")</td>
+                            <td class="py-3 px-4 text-gray-700">@item.AppointmentTime.ToString(@"hh\:mm")</td>
+                            <td class="py-3 px-4 text-gray-700">@Html.DisplayFor(modelItem => item.AppointmentType)</td>
+                            <td class="py-3 px-4">
                                 @switch (item.Status)
                                 {
                                     case "Scheduled":
-                                        <span class="badge bg-primary">Đã lên lịch</span>
+                                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">Đã lên lịch</span>
                                         break;
                                     case "Completed":
-                                        <span class="badge bg-success">Hoàn thành</span>
+                                        <span class="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">Hoàn thành</span>
                                         break;
                                     case "Cancelled":
-                                        <span class="badge bg-danger">Đã hủy</span>
+                                        <span class="bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded-full">Đã hủy</span>
                                         break;
                                     case "Rescheduled":
-                                        <span class="badge bg-warning">Đổi lịch</span>
+                                        <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-3 py-1 rounded-full">Đổi lịch</span>
                                         break;
                                     default:
-                                        <span class="badge bg-secondary">@item.Status</span>
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-3 py-1 rounded-full">@item.Status</span>
                                         break;
                                 }
                             </td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                        Thao tác
+                            <td class="py-3 px-4">
+                                <div class="relative">
+                                    <button type="button" class="bg-gray-100 text-gray-600 p-2 rounded hover:bg-gray-200 transition-colors duration-200 dropdown-toggle" onclick="toggleAppointmentDropdown('@item.Id')" title="Thêm tùy chọn">
+                                        <i class="bi bi-three-dots-vertical"></i>
                                     </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-eye"></i> Chi tiết</a></li>
-                                        <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil"></i> Chỉnh sửa</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash"></i> Xóa</a></li>
-                                    </ul>
+                                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 hidden" id="dropdown-@item.Id">
+                                        <div class="py-1">
+                                            <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-action="Details" asp-route-id="@item.Id">
+                                                <i class="bi bi-eye mr-2"></i> Chi tiết
+                                            </a>
+                                            <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-action="Edit" asp-route-id="@item.Id">
+                                                <i class="bi bi-pencil mr-2"></i> Chỉnh sửa
+                                            </a>
+                                            <hr class="border-gray-200 my-1">
+                                            <a class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50" asp-action="Delete" asp-route-id="@item.Id">
+                                                <i class="bi bi-trash mr-2"></i> Xóa
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -117,9 +103,27 @@
             $("#searchInput").on("keyup", function () {
                 var value = $(this).val().toLowerCase();
                 $("#appointmentsTable tbody tr").filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
                 });
             });
         });
+
+        function toggleAppointmentDropdown(id) {
+            const dropdown = document.getElementById('dropdown-' + id);
+            document.querySelectorAll('[id^="dropdown-"]').forEach(function (menu) {
+                if (menu.id !== 'dropdown-' + id) {
+                    menu.classList.add('hidden');
+                }
+            });
+            dropdown.classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.dropdown-toggle') && !event.target.closest('[id^="dropdown-"]')) {
+                document.querySelectorAll('[id^="dropdown-"]').forEach(function (menu) {
+                    menu.classList.add('hidden');
+                });
+            }
+        });
     </script>
-} 
+}

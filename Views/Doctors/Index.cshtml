@@ -4,48 +4,109 @@
     ViewData["Title"] = "Danh sách bác sĩ";
 }
 
-<div class="container-fluid">
-    <h1 class="mt-4">Danh sách bác sĩ</h1>
-    
-    <p>
-        <a asp-action="Create" class="btn btn-primary">Thêm bác sĩ mới</a>
-    </p>
-    
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Họ và tên</th>
-                            <th>Chuyên môn</th>
-                            <th>Email</th>
-                            <th>Số điện thoại</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>@item.FullName</td>
-                                <td>@item.Specialization</td>
-                                <td>@item.Email</td>
-                                <td>@item.PhoneNumber</td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Chi tiết</a>
-                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Xóa</a>
-                                        <a asp-action="Schedule" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Lịch làm việc</a>
-                                        <a asp-action="PatientStatistics" asp-route-id="@item.Id" class="btn btn-sm btn-success">Thống kê</a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-gray-900">Danh sách bác sĩ</h2>
+    <a asp-action="Create" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center">
+        <i class="bi bi-plus-circle mr-2"></i> Thêm bác sĩ mới
+    </a>
+</div>
+
+<div class="bg-white rounded-lg shadow-lg">
+    <div class="p-6">
+        <div class="mb-6">
+            <div class="relative">
+                <input type="text" id="searchDoctor" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Tìm kiếm bác sĩ...">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="bi bi-search text-gray-400"></i>
+                </div>
             </div>
         </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full" id="doctorsTable">
+                <thead>
+                    <tr class="border-b border-gray-200">
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">@Html.DisplayNameFor(model => model.First().FullName)</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">@Html.DisplayNameFor(model => model.First().Specialization)</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">@Html.DisplayNameFor(model => model.First().Email)</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">@Html.DisplayNameFor(model => model.First().PhoneNumber)</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700 w-40">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var doctor in Model)
+                    {
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
+                            <td class="py-3 px-4 text-gray-900">@doctor.FullName</td>
+                            <td class="py-3 px-4 text-gray-700">@doctor.Specialization</td>
+                            <td class="py-3 px-4 text-gray-700">@doctor.Email</td>
+                            <td class="py-3 px-4 text-gray-700">@doctor.PhoneNumber</td>
+                            <td class="py-3 px-4">
+                                <div class="flex items-center space-x-1">
+                                    <a asp-action="Details" asp-route-id="@doctor.Id" class="bg-blue-100 text-blue-600 p-2 rounded hover:bg-blue-200 transition-colors duration-200" title="Chi tiết">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@doctor.Id" class="bg-yellow-100 text-yellow-600 p-2 rounded hover:bg-yellow-200 transition-colors duration-200" title="Chỉnh sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <div class="relative">
+                                        <button type="button" class="bg-gray-100 text-gray-600 p-2 rounded hover:bg-gray-200 transition-colors duration-200 dropdown-toggle" onclick="toggleDoctorDropdown('@doctor.Id')" title="Thêm tùy chọn">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50 hidden" id="dropdown-doctor-@doctor.Id">
+                                            <div class="py-1">
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-action="Schedule" asp-route-id="@doctor.Id">
+                                                    <i class="bi bi-calendar-check mr-3 w-4"></i> Lịch làm việc
+                                                </a>
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-action="PatientStatistics" asp-route-id="@doctor.Id">
+                                                    <i class="bi bi-bar-chart mr-3 w-4"></i> Thống kê
+                                                </a>
+                                                <hr class="border-gray-200 my-1">
+                                                <a class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50" asp-action="Delete" asp-route-id="@doctor.Id">
+                                                    <i class="bi bi-trash mr-3 w-4"></i> Xóa
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#searchDoctor").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#doctorsTable tbody tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+        });
+
+        function toggleDoctorDropdown(id) {
+            const dropdown = document.getElementById('dropdown-doctor-' + id);
+
+            document.querySelectorAll('[id^="dropdown-doctor-"]').forEach(function (menu) {
+                if (menu.id !== 'dropdown-doctor-' + id) {
+                    menu.classList.add('hidden');
+                }
+            });
+
+            dropdown.classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.dropdown-toggle') && !event.target.closest('[id^="dropdown-doctor-"]')) {
+                document.querySelectorAll('[id^="dropdown-doctor-"]').forEach(function (menu) {
+                    menu.classList.add('hidden');
+                });
+            }
+        });
+    </script>
+}
