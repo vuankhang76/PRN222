@@ -26,11 +26,7 @@ namespace InfertilityApp.BusinessLogicLayer.Services
 
         public async Task<Patient?> GetPatientWithDetailsAsync(int id)
         {
-            return await _unitOfWork.Patients.GetByIdWithIncludeAsync(id,
-                p => p.Partner!,
-                p => p.Treatments!,
-                p => p.MedicalRecords!,
-                p => p.Appointments!);
+            return await _unitOfWork.Patients.GetPatientFullDetailsAsync(id);
         }
 
         public async Task<Patient> CreatePatientAsync(Patient patient)

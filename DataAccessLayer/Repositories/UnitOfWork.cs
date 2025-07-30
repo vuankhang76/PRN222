@@ -11,7 +11,7 @@ namespace InfertilityApp.DataAccessLayer.Repositories
         private bool _disposed = false;
 
         // Lazy loading cho các repositories
-        private IRepository<Patient>? _patients;
+        private IPatientRepository? _patients;
         private IRepository<Partner>? _partners;
         private IRepository<Doctor>? _doctors;
         private IRepository<Treatment>? _treatments;
@@ -30,8 +30,8 @@ namespace InfertilityApp.DataAccessLayer.Repositories
             _context = context;
         }
 
-        public IRepository<Patient> Patients => 
-            _patients ??= new Repository<Patient>(_context);
+        public IPatientRepository Patients =>
+    _patients ??= new PatientRepository(_context);
 
         public IRepository<Partner> Partners => 
             _partners ??= new Repository<Partner>(_context);
