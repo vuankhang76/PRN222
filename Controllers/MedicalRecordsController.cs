@@ -14,11 +14,13 @@ namespace InfertilityApp.Controllers
     {
         private readonly IMedicalRecordService _medicalRecordService;
         private readonly IPatientService _patientService;
+        private readonly IDoctorService _doctorService;
 
-        public MedicalRecordsController(IMedicalRecordService medicalRecordService, IPatientService patientService)
+        public MedicalRecordsController(IMedicalRecordService medicalRecordService, IPatientService patientService, IDoctorService doctorService)
         {
             _medicalRecordService = medicalRecordService;
             _patientService = patientService;
+            _doctorService = doctorService;
         }
 
         // GET: MedicalRecords
@@ -97,6 +99,29 @@ namespace InfertilityApp.Controllers
         {
             var patients = await _patientService.GetAllPatientsAsync();
             ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", patientId);
+            
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName");
+            
+            // Thêm danh sách các loại hồ sơ
+            var recordTypes = new List<string> 
+            { 
+                "Khám ban đầu", 
+                "Khám theo dõi", 
+                "Xét nghiệm", 
+                "Siêu âm", 
+                "Tư vấn", 
+                "Điều trị",
+                "Kết quả điều trị"
+            };
+            ViewData["RecordTypes"] = recordTypes;
+
+            // Thêm thông tin bệnh nhân nếu có
+            if (patientId.HasValue)
+            {
+                var patient = patients.FirstOrDefault(p => p.Id == patientId.Value);
+                ViewData["PatientName"] = patient?.FullName;
+            }
 
             var medicalRecord = new MedicalRecord
             {
@@ -110,7 +135,7 @@ namespace InfertilityApp.Controllers
         // POST: MedicalRecords/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PatientId,RecordDate,Diagnosis,Treatment,Notes,DoctorName")] MedicalRecord medicalRecord)
+        public async Task<IActionResult> Create([Bind("Id,PatientId,DoctorId,RecordDate,RecordType,RecordTitle,Description,Results,Diagnosis,Recommendations,Notes")] MedicalRecord medicalRecord)
         {
             if (ModelState.IsValid)
             {
@@ -127,6 +152,22 @@ namespace InfertilityApp.Controllers
 
             var patients = await _patientService.GetAllPatientsAsync();
             ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", medicalRecord.PatientId);
+            
+            var doctors = await _doctorService.GetAllDoctorsAsync();
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName", medicalRecord.DoctorId);
+            
+            var recordTypes = new List<string> 
+            { 
+                "Khám ban đầu", 
+                "Khám theo dõi", 
+                "Xét nghiệm", 
+                "Siêu âm", 
+                "Tư vấn", 
+                "Điều trị",
+                "Kết quả điều trị"
+            };
+            ViewData["RecordTypes"] = recordTypes;
+            
             return View(medicalRecord);
         }
 

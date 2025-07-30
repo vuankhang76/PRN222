@@ -5,7 +5,6 @@
 }
 
 <div class="p-6 space-y-6 bg-gray-50 min-h-screen">
-    <!-- Header Section -->
     <div class="bg-white rounded-2xl shadow-lg border border-orange-200 overflow-hidden">
         <div class="bg-gradient-to-r from-orange-600 via-red-500 to-pink-600 text-white p-6">
             <div class="flex items-center justify-between">
@@ -33,7 +32,6 @@
             </div>
         </div>
         
-        <!-- Breadcrumb -->
         <div class="p-4 bg-gradient-to-r from-orange-50 to-red-50 border-b border-orange-100">
             <nav class="flex items-center space-x-2 text-sm">
                 <a asp-action="Index" class="text-orange-600 hover:text-orange-700 transition-colors duration-200 flex items-center space-x-1">
@@ -47,9 +45,7 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Main Information -->
         <div class="lg:col-span-2 space-y-6">
-            <!-- Appointment Information -->
             <div class="bg-white rounded-2xl shadow-lg border border-orange-200 overflow-hidden">
                 <div class="bg-gradient-to-r from-orange-50 to-red-50 border-b border-orange-100 p-6">
                     <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
@@ -157,7 +153,6 @@
                 </div>
             </div>
 
-            <!-- Treatment Information -->
             @if (Model.TreatmentId.HasValue)
             {
                 <div class="bg-white rounded-2xl shadow-lg border border-orange-200 overflow-hidden">
@@ -248,9 +243,7 @@
             }
         </div>
 
-        <!-- Sidebar -->
         <div class="lg:col-span-1 space-y-6">
-            <!-- Status & Quick Actions -->
             <div class="bg-white rounded-2xl shadow-lg border border-orange-200 overflow-hidden">
                 <div class="bg-gradient-to-r from-orange-50 to-red-50 border-b border-orange-100 p-6">
                     <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">

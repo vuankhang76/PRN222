@@ -32,10 +32,6 @@
                         <i class="bi bi-plus-circle"></i>
                         <span>Thêm hồ sơ mới</span>
                     </a>
-                    <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200 flex items-center space-x-2 border border-gray-300">
-                        <i class="bi bi-download"></i>
-                        <span>Xuất dữ liệu</span>
-                    </button>
                 </div>
             </div>
         </div>
@@ -102,7 +98,7 @@
                         <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">Bác sĩ</th>
                         <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">Ngày</th>
                         <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">Loại hồ sơ</th>
-                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm w-48">Thao tác</th>
+                        <th class="text-left py-3 px-6 font-medium text-gray-700 text-sm">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -148,12 +144,6 @@
                                     <a asp-action="Edit" asp-route-id="@item.Id" class="text-green-600 hover:text-green-800 text-sm font-medium" title="Sửa">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    @if (!string.IsNullOrEmpty(item.AttachmentPath))
-                                    {
-                                        <a asp-action="DownloadAttachment" asp-route-id="@item.Id" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium" title="Tải tệp">
-                                            <i class="bi bi-download"></i>
-                                        </a>
-                                    }
                                     <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-600 hover:text-red-800 text-sm font-medium" title="Xóa">
                                         <i class="bi bi-trash"></i>
                                     </a>

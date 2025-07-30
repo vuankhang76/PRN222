@@ -5,7 +5,6 @@
 }
 
 <div class="p-6 space-y-6 bg-gray-50 min-h-screen">
-    <!-- Header Section -->
     <div class="bg-white rounded-2xl shadow-lg border border-indigo-200 overflow-hidden">
         <div class="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 text-white p-6">
             <div class="flex items-center justify-between">
@@ -17,23 +16,6 @@
                         <h1 class="text-3xl font-bold mb-2">Chi tiết hồ sơ y tế</h1>
                         <p class="text-indigo-100 text-lg">@Model.RecordTitle</p>
                     </div>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <a asp-action="Edit" asp-route-id="@Model.Id" 
-                       class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center space-x-2">
-                        <i class="bi bi-pencil"></i>
-                        <span>Chỉnh sửa</span>
-                    </a>
-                    <a asp-action="PatientHistory" asp-route-id="@Model.PatientId" 
-                       class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center space-x-2">
-                        <i class="bi bi-clock-history"></i>
-                        <span>Lịch sử</span>
-                    </a>
-                    <a asp-action="Index" 
-                       class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center space-x-2">
-                        <i class="bi bi-arrow-left"></i>
-                        <span>Quay lại</span>
-                    </a>
                 </div>
             </div>
         </div>
@@ -56,13 +38,13 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Main Information -->
+        <!-- Main Content -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Basic Information -->
             <div class="bg-white rounded-2xl shadow-lg border border-indigo-200 overflow-hidden">
                 <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100 p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
-                        <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <h3 class="text-xl font-semibold text-gray-800 flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
                             <i class="bi bi-info-circle text-indigo-600"></i>
                         </div>
                         <span>Thông tin cơ bản</span>
@@ -72,48 +54,57 @@
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
-                                    <i class="bi bi-person text-green-600"></i>
-                                </div>
-                                <div>
-                                    <div class="text-sm text-gray-500">Bệnh nhân</div>
-                                    <div class="font-medium text-gray-800">@Model.Patient?.FullName</div>
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                                        <i class="bi bi-person text-green-600 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-green-600 font-medium">Bệnh nhân</div>
+                                        <div class="font-semibold text-gray-800">@(Model.Patient?.FullName ?? "N/A")</div>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                                    <i class="bi bi-person-badge text-blue-600"></i>
-                                </div>
-                                <div>
-                                    <div class="text-sm text-gray-500">Bác sĩ phụ trách</div>
-                                    <div class="font-medium text-gray-800">@(Model.Doctor?.FullName ?? "Không có")</div>
+                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                                        <i class="bi bi-person-badge text-blue-600 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-blue-600 font-medium">Bác sĩ phụ trách</div>
+                                        <div class="font-semibold text-gray-800">@(Model.Doctor?.FullName ?? "Chưa phân công")</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="space-y-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
-                                    <i class="bi bi-calendar3 text-purple-600"></i>
-                                </div>
-                                <div>
-                                    <div class="text-sm text-gray-500">Ngày ghi nhận</div>
-                                    <div class="font-medium text-gray-800">@Model.RecordDate.ToString("dd/MM/yyyy")</div>
+                            <div class="bg-gradient-to-r from-purple-50 to-violet-50 p-4 rounded-xl border border-purple-100">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                                        <i class="bi bi-calendar3 text-purple-600 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-purple-600 font-medium">Ngày ghi nhận</div>
+                                        <div class="font-semibold text-gray-800">@Model.RecordDate.ToString("dd/MM/yyyy")</div>
+                                        <div class="text-sm text-gray-500">@Model.RecordDate.ToString("HH:mm")</div>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
-                                    <i class="bi bi-tag text-amber-600"></i>
-                                </div>
-                                <div>
-                                    <div class="text-sm text-gray-500">Loại hồ sơ</div>
-                                    <div class="font-medium text-gray-800">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
-                                            @Model.RecordType
-                                        </span>
+                            <div class="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-xl border border-amber-100">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+                                        <i class="bi bi-tag text-amber-600 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm text-amber-600 font-medium">Loại hồ sơ</div>
+                                        <div class="mt-1">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                                                @Model.RecordType
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -125,8 +116,8 @@
             <!-- Description -->
             <div class="bg-white rounded-2xl shadow-lg border border-indigo-200 overflow-hidden">
                 <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100 p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
-                        <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <h3 class="text-xl font-semibold text-gray-800 flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
                             <i class="bi bi-journal-text text-indigo-600"></i>
                         </div>
                         <span>Mô tả chi tiết</span>
@@ -136,17 +127,20 @@
                 <div class="p-6">
                     @if (!string.IsNullOrEmpty(Model.Description))
                     {
-                        <div class="prose max-w-none">
-                            <p class="text-gray-700 leading-relaxed">@Model.Description</p>
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                            <div class="prose max-w-none">
+                                <p class="text-gray-700 leading-relaxed whitespace-pre-line">@Model.Description</p>
+                            </div>
                         </div>
                     }
                     else
                     {
-                        <div class="text-center py-8">
-                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="bi bi-journal-x text-2xl text-gray-400"></i>
+                        <div class="text-center py-12">
+                            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="bi bi-journal-x text-3xl text-gray-400"></i>
                             </div>
-                            <p class="text-gray-500">Chưa có mô tả cho hồ sơ này</p>
+                            <h4 class="text-lg font-medium text-gray-900 mb-2">Chưa có mô tả</h4>
+                            <p class="text-gray-500">Chưa có mô tả chi tiết cho hồ sơ này</p>
                         </div>
                     }
                 </div>
@@ -155,8 +149,8 @@
             <!-- Results -->
             <div class="bg-white rounded-2xl shadow-lg border border-indigo-200 overflow-hidden">
                 <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100 p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
-                        <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <h3 class="text-xl font-semibold text-gray-800 flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
                             <i class="bi bi-clipboard-data text-indigo-600"></i>
                         </div>
                         <span>Kết quả và nhận định</span>
@@ -166,17 +160,20 @@
                 <div class="p-6">
                     @if (!string.IsNullOrEmpty(Model.Results))
                     {
-                        <div class="prose max-w-none">
-                            <p class="text-gray-700 leading-relaxed">@Model.Results</p>
+                        <div class="bg-green-50 p-6 rounded-xl border border-green-200">
+                            <div class="prose max-w-none">
+                                <p class="text-gray-700 leading-relaxed whitespace-pre-line">@Model.Results</p>
+                            </div>
                         </div>
                     }
                     else
                     {
-                        <div class="text-center py-8">
-                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="bi bi-clipboard-x text-2xl text-gray-400"></i>
+                        <div class="text-center py-12">
+                            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="bi bi-clipboard-x text-3xl text-gray-400"></i>
                             </div>
-                            <p class="text-gray-500">Chưa có kết quả cho hồ sơ này</p>
+                            <h4 class="text-lg font-medium text-gray-900 mb-2">Chưa có kết quả</h4>
+                            <p class="text-gray-500">Chưa có kết quả và nhận định cho hồ sơ này</p>
                         </div>
                     }
                 </div>
@@ -184,54 +181,101 @@
         </div>
 
         <!-- Sidebar -->
-        <div class="lg:col-span-1">
-            <!-- Attachment -->
+        <div class="lg:col-span-1 space-y-6">
+            <!-- Quick Actions -->
             <div class="bg-white rounded-2xl shadow-lg border border-indigo-200 overflow-hidden">
                 <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100 p-6">
                     <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
                         <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-                            <i class="bi bi-paperclip text-indigo-600"></i>
+                            <i class="bi bi-lightning text-indigo-600"></i>
                         </div>
-                        <span>Tệp đính kèm</span>
+                        <span>Thao tác nhanh</span>
                     </h3>
                 </div>
                 
-                <div class="p-6">
-                    @if (!string.IsNullOrEmpty(Model.AttachmentPath))
-                    {
-                        <div class="space-y-4">
-                            <a asp-action="DownloadAttachment" asp-route-id="@Model.Id" 
-                               class="w-full bg-green-600 text-white py-3 px-4 rounded-xl font-medium hover:bg-green-700 transition-colors duration-200 flex items-center justify-center space-x-2">
-                                <i class="bi bi-download"></i>
-                                <span>Tải xuống tệp đính kèm</span>
-                            </a>
-                            
-                            @if (Model.AttachmentPath.EndsWith(".jpg") || Model.AttachmentPath.EndsWith(".jpeg") || Model.AttachmentPath.EndsWith(".png"))
-                            {
-                                <div class="border rounded-xl overflow-hidden">
-                                    <img src="@Model.AttachmentPath" class="w-full h-auto" alt="Hình ảnh đính kèm" />
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="bg-gray-50 rounded-xl p-6 text-center">
-                                    <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3">
-                                        <i class="bi bi-file-earmark text-2xl text-gray-500"></i>
-                                    </div>
-                                    <p class="text-gray-600 text-sm">Tệp đính kèm có sẵn</p>
-                                </div>
-                            }
+                <div class="p-6 space-y-3">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" 
+                       class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-3 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center space-x-3 shadow-lg">
+                        <i class="bi bi-pencil"></i>
+                        <span class="font-medium">Chỉnh sửa hồ sơ</span>
+                    </a>
+                    
+                    <a asp-action="PatientHistory" asp-route-id="@Model.PatientId" 
+                       class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 flex items-center space-x-3 shadow-lg">
+                        <i class="bi bi-clock-history"></i>
+                        <span class="font-medium">Xem lịch sử</span>
+                    </a>
+                    
+                    <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.PatientId" 
+                       class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-3 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-300 flex items-center space-x-3 shadow-lg">
+                        <i class="bi bi-person-check"></i>
+                        <span class="font-medium">Thông tin bệnh nhân</span>
+                    </a>
+                    
+                    <a asp-action="Index" 
+                       class="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white px-4 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 flex items-center space-x-3 shadow-lg">
+                        <i class="bi bi-arrow-left"></i>
+                        <span class="font-medium">Quay lại danh sách</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Record Summary -->
+            <div class="bg-white rounded-2xl shadow-lg border border-indigo-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100 p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-file-earmark-text text-indigo-600"></i>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-8">
-                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="bi bi-file-earmark-plus text-2xl text-gray-400"></i>
-                            </div>
-                            <p class="text-gray-500">Không có tệp đính kèm</p>
-                        </div>
-                    }
+                        <span>Tóm tắt hồ sơ</span>
+                    </h3>
+                </div>
+                
+                <div class="p-6 space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="font-medium text-gray-700">Mã hồ sơ:</span>
+                        <span class="font-mono text-gray-600">#@Model.Id.ToString("D6")</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="font-medium text-gray-700">Trạng thái:</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="bi bi-check-circle mr-1"></i>
+                            Hoàn thành
+                        </span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="font-medium text-gray-700">Có mô tả:</span>
+                        @if (!string.IsNullOrEmpty(Model.Description))
+                        {
+                            <span class="text-green-600">
+                                <i class="bi bi-check-circle"></i>
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-red-600">
+                                <i class="bi bi-x-circle"></i>
+                            </span>
+                        }
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="font-medium text-gray-700">Có kết quả:</span>
+                        @if (!string.IsNullOrEmpty(Model.Results))
+                        {
+                            <span class="text-green-600">
+                                <i class="bi bi-check-circle"></i>
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-red-600">
+                                <i class="bi bi-x-circle"></i>
+                            </span>
+                        }
+                    </div>
                 </div>
             </div>
         </div>

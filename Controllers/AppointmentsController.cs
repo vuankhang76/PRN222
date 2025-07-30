@@ -110,7 +110,6 @@ namespace InfertilityApp.Controllers
             {
                 try
                 {
-                    // Kiểm tra xung đột lịch hẹn
                     var appointmentDateTime = appointment.AppointmentDate.Add(appointment.AppointmentTime);
                     if (!await _appointmentService.IsDoctorAvailableAsync(appointment.DoctorId, appointmentDateTime))
                     {
@@ -225,7 +224,6 @@ namespace InfertilityApp.Controllers
             }
         }
 
-        // Action methods cho quản lý lịch hẹn
         [HttpPost]
         public async Task<IActionResult> ConfirmAppointment(int id)
         {

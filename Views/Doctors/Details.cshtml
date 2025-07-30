@@ -6,31 +6,31 @@
 
 <div class="p-6 space-y-6 bg-gray-50 min-h-screen">
     <!-- Header Section -->
-    <div class="bg-white rounded-2xl shadow-lg border border-blue-200 overflow-hidden">
-        <div class="bg-gradient-to-r from-blue-600 via-purple-500 to-green-600 text-white p-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-8">
             <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="bi bi-person-badge text-3xl text-white"></i>
+                <div class="flex items-center space-x-6">
+                    <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <i class="bi bi-person-badge text-4xl text-white"></i>
                     </div>
                     <div>
-                        <h1 class="text-3xl font-bold mb-2">Chi tiết bác sĩ</h1>
-                        <p class="text-blue-100 text-lg">Bác sĩ <span class="font-semibold">@Model.FullName</span></p>
+                        <h1 class="text-3xl font-bold mb-2">@Model.FullName</h1>
+                        <div class="flex items-center space-x-4">
+                            <span class="bg-white/20 px-4 py-2 rounded-full text-sm font-medium">
+                                @Model.Specialization
+                            </span>
+                            <span class="text-blue-100">Giấy phép: @Model.LicenseNumber</span>
+                        </div>
                     </div>
                 </div>
                 <div class="flex items-center space-x-3">
                     <a asp-action="Edit" asp-route-id="@Model.Id" 
-                       class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center space-x-2">
+                       class="bg-white/20 backdrop-blur-sm text-white px-5 py-3 rounded-lg hover:bg-white/30 transition-all duration-300 flex items-center space-x-2">
                         <i class="bi bi-pencil"></i>
                         <span>Chỉnh sửa</span>
                     </a>
-                    <a asp-action="Schedule" asp-route-id="@Model.Id" 
-                       class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center space-x-2">
-                        <i class="bi bi-calendar3"></i>
-                        <span>Lịch làm việc</span>
-                    </a>
                     <a asp-action="Index" 
-                       class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center space-x-2">
+                       class="bg-white/10 backdrop-blur-sm text-white px-5 py-3 rounded-lg hover:bg-white/20 transition-all duration-300 flex items-center space-x-2 border border-white/20">
                         <i class="bi bi-arrow-left"></i>
                         <span>Quay lại</span>
                     </a>
@@ -39,14 +39,16 @@
         </div>
         
         <!-- Breadcrumb -->
-        <div class="p-4 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-100">
+        <div class="px-8 py-4 bg-gray-50 border-b border-gray-200">
             <nav class="flex items-center space-x-2 text-sm">
                 <a asp-action="Index" class="text-blue-600 hover:text-blue-700 transition-colors duration-200 flex items-center space-x-1">
                     <i class="bi bi-house"></i>
                     <span>Danh sách bác sĩ</span>
                 </a>
                 <i class="bi bi-chevron-right text-gray-400"></i>
-                <span class="text-gray-600 font-medium">@Model.FullName</span>
+                <span class="text-gray-600 font-medium">Chi tiết bác sĩ</span>
+                <i class="bi bi-chevron-right text-gray-400"></i>
+                <span class="text-gray-800 font-semibold">@Model.FullName</span>
             </nav>
         </div>
     </div>
@@ -54,68 +56,61 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Main Information -->
         <div class="lg:col-span-2 space-y-6">
-            <!-- Basic Information -->
-            <div class="bg-white rounded-2xl shadow-lg border border-blue-200 overflow-hidden">
-                <div class="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-100 p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
-                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+            <!-- Personal Information -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                             <i class="bi bi-person text-blue-600"></i>
                         </div>
-                        <span>Thông tin cá nhân</span>
+                        <span>Thông tin liên hệ</span>
                     </h3>
                 </div>
                 
                 <div class="p-6">
-                    <div class="text-center mb-6">
-                        <div class="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="bi bi-person-circle text-5xl text-blue-600"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold text-gray-800">@Model.FullName</h3>
-                        <p class="text-blue-600 font-medium">@Model.Specialization</p>
-                    </div>
-                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
-                                    <i class="bi bi-telephone text-green-600"></i>
+                            <div class="flex items-center space-x-4 p-4 bg-green-50 rounded-lg border border-green-100">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-telephone text-green-600 text-lg"></i>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-gray-500">Số điện thoại</div>
-                                    <div class="font-medium text-gray-800">@Model.PhoneNumber</div>
+                                    <div class="text-sm text-green-600 font-medium">Số điện thoại</div>
+                                    <div class="text-lg font-semibold text-gray-800">@Model.PhoneNumber</div>
                                 </div>
                             </div>
                             
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
-                                    <i class="bi bi-envelope text-purple-600"></i>
+                            <div class="flex items-center space-x-4 p-4 bg-purple-50 rounded-lg border border-purple-100">
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-envelope text-purple-600 text-lg"></i>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-gray-500">Email</div>
-                                    <div class="font-medium text-gray-800">@Model.Email</div>
+                                    <div class="text-sm text-purple-600 font-medium">Email</div>
+                                    <div class="text-lg font-semibold text-gray-800 break-all">@Model.Email</div>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="space-y-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
-                                    <i class="bi bi-award text-amber-600"></i>
+                            <div class="flex items-center space-x-4 p-4 bg-amber-50 rounded-lg border border-amber-100">
+                                <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-award text-amber-600 text-lg"></i>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-gray-500">Số giấy phép hành nghề</div>
-                                    <div class="font-medium text-gray-800">@Model.LicenseNumber</div>
+                                    <div class="text-sm text-amber-600 font-medium">Giấy phép hành nghề</div>
+                                    <div class="text-lg font-semibold text-gray-800">@Model.LicenseNumber</div>
                                 </div>
                             </div>
                             
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
-                                    <i class="bi bi-mortarboard text-indigo-600"></i>
+                            <div class="flex items-center space-x-4 p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                                <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-mortarboard text-indigo-600 text-lg"></i>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-gray-500">Chuyên môn</div>
-                                    <div class="font-medium text-gray-800">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    <div class="text-sm text-indigo-600 font-medium">Chuyên môn</div>
+                                    <div class="mt-1">
+                                        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                                            <i class="bi bi-star-fill mr-2"></i>
                                             @Model.Specialization
                                         </span>
                                     </div>
@@ -123,135 +118,108 @@
                             </div>
                         </div>
                     </div>
-                    
-                    @if (!string.IsNullOrEmpty(Model.Qualifications))
-                    {
-                        <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                            <div class="flex items-start space-x-3">
-                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mt-1">
-                                    <i class="bi bi-award text-blue-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="text-sm text-blue-600 font-medium mb-2">Bằng cấp & Chứng chỉ</div>
-                                    <div class="text-gray-700 leading-relaxed">@Model.Qualifications</div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    
-                    @if (!string.IsNullOrEmpty(Model.Biography))
-                    {
-                        <div class="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
-                            <div class="flex items-start space-x-3">
-                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mt-1">
-                                    <i class="bi bi-person-lines-fill text-green-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="text-sm text-green-600 font-medium mb-2">Tiểu sử nghề nghiệp</div>
-                                    <div class="text-gray-700 leading-relaxed">@Model.Biography</div>
-                                </div>
-                            </div>
-                        </div>
-                    }
                 </div>
             </div>
 
-            <!-- Quick Actions -->
-            <div class="bg-white rounded-2xl shadow-lg border border-blue-200 overflow-hidden">
-                <div class="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-100 p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
-                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <i class="bi bi-lightning text-blue-600"></i>
+            <!-- Qualifications & Biography -->
+            <div class="space-y-6">
+                @if (!string.IsNullOrEmpty(Model.Qualifications))
+                {
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-gray-200 p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-award text-blue-600"></i>
+                                </div>
+                                <span>Bằng cấp & Chứng chỉ</span>
+                            </h3>
                         </div>
-                        <span>Thao tác nhanh</span>
-                    </h3>
-                </div>
-                
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a asp-action="PatientStatistics" asp-route-id="@Model.Id" 
-                           class="bg-gradient-to-r from-green-500 to-emerald-500 text-white p-4 rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                                <i class="bi bi-bar-chart text-2xl"></i>
+                        <div class="p-6">
+                            <div class="bg-gradient-to-r from-blue-50 to-cyan-50 p-6 rounded-lg border border-blue-100">
+                                <div class="text-gray-700 leading-relaxed whitespace-pre-line">@Model.Qualifications</div>
                             </div>
-                            <div>
-                                <div class="font-semibold">Thống kê bệnh nhân</div>
-                                <div class="text-sm opacity-90">Xem báo cáo chi tiết</div>
-                            </div>
-                        </a>
-                        
-                        <a asp-action="Schedule" asp-route-id="@Model.Id" 
-                           class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white p-4 rounded-xl hover:from-purple-600 hover:to-indigo-600 transition-all duration-300 flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                                <i class="bi bi-calendar-week text-2xl"></i>
-                            </div>
-                            <div>
-                                <div class="font-semibold">Lịch làm việc</div>
-                                <div class="text-sm opacity-90">Quản lý thời gian biểu</div>
-                            </div>
-                        </a>
+                        </div>
                     </div>
-                </div>
+                }
+                
+                @if (!string.IsNullOrEmpty(Model.Biography))
+                {
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-gray-200 p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-person-lines-fill text-green-600"></i>
+                                </div>
+                                <span>Tiểu sử nghề nghiệp</span>
+                            </h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg border border-green-100">
+                                <div class="text-gray-700 leading-relaxed whitespace-pre-line">@Model.Biography</div>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
 
-        <!-- Sidebar -->
-        <div class="lg:col-span-1">
-            <!-- Statistics -->
-            <div class="bg-white rounded-2xl shadow-lg border border-blue-200 overflow-hidden">
-                <div class="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-100 p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
-                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <i class="bi bi-graph-up text-blue-600"></i>
+        <!-- Statistics Sidebar -->
+        <div class="lg:col-span-1 space-y-6">
+            <!-- Quick Stats -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-gray-200 p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-graph-up text-purple-600"></i>
                         </div>
-                        <span>Thống kê</span>
+                        <span>Thống kê tổng quan</span>
                     </h3>
                 </div>
                 
                 <div class="p-6 space-y-4">
-                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100">
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-5 rounded-xl border-l-4 border-green-400">
                         <div class="flex items-center justify-between">
                             <div>
-                                <div class="text-sm text-green-600 font-medium">Bệnh nhân đang điều trị</div>
-                                <div class="text-2xl font-bold text-green-700">@(Model.Treatments?.Count(t => t.Status == "In Progress") ?? 0)</div>
+                                <div class="text-sm text-green-600 font-medium mb-1">Bệnh nhân đang điều trị</div>
+                                <div class="text-3xl font-bold text-green-700">@(Model.Treatments?.Count(t => t.Status == "Active" || t.Status == "In Progress") ?? 0)</div>
                             </div>
-                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
                                 <i class="bi bi-people text-green-600 text-xl"></i>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="bg-gradient-to-r from-orange-50 to-amber-50 p-4 rounded-xl border border-orange-100">
+                    <div class="bg-gradient-to-r from-orange-50 to-amber-50 p-5 rounded-xl border-l-4 border-orange-400">
                         <div class="flex items-center justify-between">
                             <div>
-                                <div class="text-sm text-orange-600 font-medium">Cuộc hẹn sắp tới</div>
-                                <div class="text-2xl font-bold text-orange-700">@(Model.Appointments?.Count(a => a.AppointmentDate >= DateTime.Today && a.Status == "Scheduled") ?? 0)</div>
+                                <div class="text-sm text-orange-600 font-medium mb-1">Lịch hẹn sắp tới</div>
+                                <div class="text-3xl font-bold text-orange-700">@(Model.Appointments?.Count(a => a.AppointmentDate >= DateTime.Today && (a.Status == "Scheduled" || a.Status == "Đã đặt")) ?? 0)</div>
                             </div>
-                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <div class="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center">
                                 <i class="bi bi-calendar-check text-orange-600 text-xl"></i>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-xl border border-purple-100">
+                    <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-5 rounded-xl border-l-4 border-purple-400">
                         <div class="flex items-center justify-between">
                             <div>
-                                <div class="text-sm text-purple-600 font-medium">Tổng số điều trị</div>
-                                <div class="text-2xl font-bold text-purple-700">@(Model.Treatments?.Count() ?? 0)</div>
+                                <div class="text-sm text-purple-600 font-medium mb-1">Tổng số điều trị</div>
+                                <div class="text-3xl font-bold text-purple-700">@(Model.Treatments?.Count() ?? 0)</div>
                             </div>
-                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
                                 <i class="bi bi-clipboard2-pulse text-purple-600 text-xl"></i>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-xl border-l-4 border-blue-400">
                         <div class="flex items-center justify-between">
                             <div>
-                                <div class="text-sm text-blue-600 font-medium">Tổng số lịch hẹn</div>
-                                <div class="text-2xl font-bold text-blue-700">@(Model.Appointments?.Count() ?? 0)</div>
+                                <div class="text-sm text-blue-600 font-medium mb-1">Tổng số lịch hẹn</div>
+                                <div class="text-3xl font-bold text-blue-700">@(Model.Appointments?.Count() ?? 0)</div>
                             </div>
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
                                 <i class="bi bi-calendar3 text-blue-600 text-xl"></i>
                             </div>
                         </div>

@@ -43,7 +43,6 @@ namespace InfertilityApp.BusinessLogicLayer.Services
             }
 
             procedure.Status = "Scheduled";
-            // CreatedAt property không tồn tại trong Procedure model
 
             var result = await _unitOfWork.Procedures.AddAsync(procedure);
             await _unitOfWork.SaveChangesAsync();
@@ -230,13 +229,11 @@ namespace InfertilityApp.BusinessLogicLayer.Services
 
         public async Task<bool> CanScheduleProcedureAsync(int treatmentStageId, DateTime scheduledDate)
         {
-            // Kiểm tra xem có thủ thuật nào khác đã được lên lịch cùng ngày không
             var existingProcedures = await _unitOfWork.Procedures.FindAsync(p => 
                 p.TreatmentStageId == treatmentStageId && 
                 p.ScheduledDate.Date == scheduledDate.Date &&
                 p.Status != "Cancelled");
 
-            // Chỉ cho phép tối đa 2 thủ thuật trong 1 ngày
             return existingProcedures.Count() < 2;
         }
 
