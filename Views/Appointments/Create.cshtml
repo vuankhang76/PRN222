@@ -56,9 +56,11 @@
 
                     <div>
                         <label asp-for="Duration" class="block text-sm font-medium text-gray-700 mb-2">Thời lượng (phút)</label>
-                        <input asp-for="Duration" type="number" min="15" step="15" value="30" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                        <input asp-for="Duration" type="number" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                         <span asp-validation-for="Duration" class="text-red-500 text-sm"></span>
                     </div>
+
                 </div>
 
                 <div class="mt-6">
@@ -77,6 +79,15 @@
                         <option value="Đổi lịch">Đổi lịch</option>
                     </select>
                     <span asp-validation-for="Status" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div class="mt-6">
+                    <label asp-for="AppointmentType" class="block text-sm font-medium text-gray-700 mb-2">Loại hẹn</label>
+                    <select asp-for="AppointmentType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" style="min-width: 200px;">
+                        <option value="Procedure">Procedure</option>
+                        <option value="Follow-up">Follow-up</option>
+                    </select>
+                    <span asp-validation-for="AppointmentType" class="text-red-500 text-sm"></span>
                 </div>
 
                 <div class="mt-6">

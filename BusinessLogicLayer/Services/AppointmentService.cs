@@ -34,9 +34,11 @@ namespace InfertilityApp.BusinessLogicLayer.Services
         public async Task<Appointment> CreateAppointmentAsync(Appointment appointment)
         {
             var appointmentDateTime = appointment.AppointmentDate.Add(appointment.AppointmentTime);
+
+            // ✅ Bác sĩ có trống lịch không
             if (!await IsDoctorAvailableAsync(appointment.DoctorId, appointmentDateTime))
             {
-                throw new InvalidOperationException("Bác sĩ không có lịch trống vào thời gian này");
+                throw new InvalidOperationException("Bác sĩ không có lịch trống vào thời gian này.");
             }
 
             appointment.Status = "Đã đặt";
@@ -45,6 +47,9 @@ namespace InfertilityApp.BusinessLogicLayer.Services
             await _unitOfWork.SaveChangesAsync();
             return result;
         }
+
+
+
 
         public async Task<Appointment> UpdateAppointmentAsync(Appointment appointment)
         {
@@ -276,5 +281,34 @@ namespace InfertilityApp.BusinessLogicLayer.Services
                 a.DoctorId == doctorId && 
                 a.AppointmentDate.Date == today);
         }
+
+        public async Task<bool> IsDoctorAvailableAsync(int doctorId, DateTime appointmentDateTime, int? excludeAppointmentId)
+        {
+            var existingAppointments = await _unitOfWork.Appointments.FindAsync(a =>
+                a.DoctorId == doctorId &&
+                a.AppointmentDate.Date == appointmentDateTime.Date &&
+                (!excludeAppointmentId.HasValue || a.Id != excludeAppointmentId.Value));
+
+            return !existingAppointments.Any(a =>
+            {
+                var existingDateTime = a.AppointmentDate.Add(a.AppointmentTime);
+                return Math.Abs((existingDateTime - appointmentDateTime).TotalMinutes) < 60;
+            });
+        }
+
+        public async Task<bool> IsPatientAvailableAsync(int patientId, DateTime appointmentDateTime, int? excludeAppointmentId)
+        {
+            var existingAppointments = await _unitOfWork.Appointments.FindAsync(a =>
+                a.PatientId == patientId &&
+                a.AppointmentDate.Date == appointmentDateTime.Date &&
+                (!excludeAppointmentId.HasValue || a.Id != excludeAppointmentId.Value));
+
+            return !existingAppointments.Any(a =>
+            {
+                var existingDateTime = a.AppointmentDate.Add(a.AppointmentTime);
+                return Math.Abs((existingDateTime - appointmentDateTime).TotalMinutes) < 60;
+            });
+        }
     }
+
 } 

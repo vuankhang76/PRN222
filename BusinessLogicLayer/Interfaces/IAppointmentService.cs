@@ -11,6 +11,9 @@ namespace InfertilityApp.BusinessLogicLayer.Interfaces
         Task<Appointment> CreateAppointmentAsync(Appointment appointment);
         Task<Appointment> UpdateAppointmentAsync(Appointment appointment);
         Task<bool> DeleteAppointmentAsync(int id);
+        Task<bool> IsDoctorAvailableAsync(int doctorId, DateTime appointmentDateTime, int? excludeAppointmentId = null);
+        Task<bool> IsPatientAvailableAsync(int patientId, DateTime appointmentDateTime, int? excludeAppointmentId = null);
+
 
         // Business logic đặc biệt cho quản lý lịch hẹn
         Task<IEnumerable<Appointment>> GetAppointmentsByPatientAsync(int patientId);

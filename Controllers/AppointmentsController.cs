@@ -104,18 +104,43 @@ namespace InfertilityApp.Controllers
         // POST: Appointments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PatientId,DoctorId,AppointmentDate,AppointmentTime,Purpose,Status,Notes")] Appointment appointment)
+        public async Task<IActionResult> Create([Bind("Id,PatientId,DoctorId,AppointmentDate,AppointmentTime,AppointmentType,Duration,Purpose,Status,Notes")] Appointment appointment)
         {
+            var appointmentDateTime = appointment.AppointmentDate.Add(appointment.AppointmentTime);
+
+            // ✅ Kiểm tra thời gian trong quá khứ
+            if (appointmentDateTime < DateTime.Now)
+            {
+                ModelState.AddModelError("", "Không thể đặt lịch trong quá khứ.");
+            }
+
+            // ✅ Kiểm tra ngoài khung giờ 08:00 - 17:00
+            var startHour = new TimeSpan(8, 0, 0);
+            var endHour = new TimeSpan(17, 0, 0);
+            if (appointment.AppointmentTime < startHour || appointment.AppointmentTime > endHour)
+            {
+                ModelState.AddModelError("", "Thời gian hẹn phải trong khoảng từ 08:00 đến 17:00.");
+            }
+
+            // ✅ Kiểm tra thời lượng hợp lệ (15–60 phút)
+            var minDuration = TimeSpan.FromMinutes(15);
+            var maxDuration = TimeSpan.FromMinutes(60);
+            if (appointment.Duration < 15 || appointment.Duration > 60)
+            {
+                ModelState.AddModelError(nameof(appointment.Duration), "Thời lượng hẹn phải từ 15 đến 60 phút.");
+            }
+
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Kiểm tra xung đột lịch hẹn
-                    var appointmentDateTime = appointment.AppointmentDate.Add(appointment.AppointmentTime);
+                    // ✅ Kiểm tra bác sĩ trống lịch
                     if (!await _appointmentService.IsDoctorAvailableAsync(appointment.DoctorId, appointmentDateTime))
                     {
                         ModelState.AddModelError("", "Bác sĩ không có sẵn vào thời gian này.");
                     }
+                    // ✅ Kiểm tra bệnh nhân trống lịch
                     else if (!await _appointmentService.IsPatientAvailableAsync(appointment.PatientId, appointmentDateTime))
                     {
                         ModelState.AddModelError("", "Bệnh nhân đã có lịch hẹn khác vào thời gian này.");
@@ -129,11 +154,11 @@ namespace InfertilityApp.Controllers
                 }
                 catch (Exception ex)
                 {
-                    TempData["Error"] = $"Lỗi khi tạo lịch hẹn: {ex.Message}";
-                    return RedirectToAction(nameof(Index));
+                    ModelState.AddModelError("", $"Đã xảy ra lỗi: {ex.Message}");
                 }
             }
 
+            // ✅ Load lại dropdown khi có lỗi
             var patients = await _patientService.GetAllPatientsAsync();
             var doctors = await _doctorService.GetAllDoctorsAsync();
             ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName", appointment.DoctorId);
@@ -141,6 +166,9 @@ namespace InfertilityApp.Controllers
             return View(appointment);
         }
 
+
+
+        // GET: Appointments/Edit/5
         // GET: Appointments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -162,28 +190,64 @@ namespace InfertilityApp.Controllers
             return View(appointment);
         }
 
+
         // POST: Appointments/Edit/5
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,DoctorId,AppointmentDate,AppointmentTime,Purpose,Status,Notes")] Appointment appointment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,DoctorId,AppointmentDate,AppointmentTime,AppointmentType,Duration,Purpose,Status,Notes")] Appointment appointment)
         {
             if (id != appointment.Id)
             {
                 return NotFound();
             }
 
+            var appointmentDateTime = appointment.AppointmentDate.Add(appointment.AppointmentTime);
+
+            // ✅ Kiểm tra thời gian trong quá khứ
+            if (appointmentDateTime < DateTime.Now)
+            {
+                ModelState.AddModelError("", "Không thể đặt lịch trong quá khứ.");
+            }
+
+            // ✅ Kiểm tra ngoài khung giờ 08:00 - 17:00
+            var startHour = new TimeSpan(8, 0, 0);
+            var endHour = new TimeSpan(17, 0, 0);
+            if (appointment.AppointmentTime < startHour || appointment.AppointmentTime > endHour)
+            {
+                ModelState.AddModelError("", "Thời gian hẹn phải trong khoảng từ 08:00 đến 17:00.");
+            }
+
+            // ✅ Kiểm tra thời lượng hợp lệ
+            if (appointment.Duration < 15 || appointment.Duration > 60)
+            {
+                ModelState.AddModelError(nameof(appointment.Duration), "Thời lượng hẹn phải từ 15 đến 60 phút.");
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    await _appointmentService.UpdateAppointmentAsync(appointment);
-                    TempData["Success"] = "Lịch hẹn đã được cập nhật thành công!";
-                    return RedirectToAction(nameof(Index));
+                    // ✅ Kiểm tra bác sĩ có trống (bỏ qua lịch hiện tại)
+                    if (!await _appointmentService.IsDoctorAvailableAsync(appointment.DoctorId, appointmentDateTime, appointment.Id))
+                    {
+                        ModelState.AddModelError("", "Bác sĩ không có sẵn vào thời gian này.");
+                    }
+                    // ✅ Kiểm tra bệnh nhân có trống (bỏ qua lịch hiện tại)
+                    else if (!await _appointmentService.IsPatientAvailableAsync(appointment.PatientId, appointmentDateTime, appointment.Id))
+                    {
+                        ModelState.AddModelError("", "Bệnh nhân đã có lịch hẹn khác vào thời gian này.");
+                    }
+                    else
+                    {
+                        await _appointmentService.UpdateAppointmentAsync(appointment);
+                        TempData["Success"] = "Lịch hẹn đã được cập nhật thành công!";
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
                 catch (Exception ex)
                 {
-                    TempData["Error"] = $"Lỗi khi cập nhật lịch hẹn: {ex.Message}";
-                    return RedirectToAction(nameof(Index));
+                    ModelState.AddModelError("", $"Lỗi khi cập nhật lịch hẹn: {ex.Message}");
                 }
             }
 
@@ -193,6 +257,7 @@ namespace InfertilityApp.Controllers
             ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", appointment.PatientId);
             return View(appointment);
         }
+
 
         // GET: Appointments/Delete/5
         public async Task<IActionResult> Delete(int? id)
