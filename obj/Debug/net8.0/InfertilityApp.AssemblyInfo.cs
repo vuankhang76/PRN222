@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("InfertilityApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f881874801bb10fe3ce7b11d67db5091f0e7facb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2c6f0f50af505a2d88adb52f36e1c94b2b342e02")]
 [assembly: System.Reflection.AssemblyProductAttribute("InfertilityApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("InfertilityApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
