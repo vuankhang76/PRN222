@@ -33,17 +33,22 @@ bld/
 # Node.js dependencies (for frontend)
 node_modules/
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
 
+# ASP.NET Core specific
 appsettings.json
 appsettings.Development.json
 
+# macOS
 .DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
+
+# Windows
 ehthumbs.db
 Thumbs.db
-
-node_modules/
 

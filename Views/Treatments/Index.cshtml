@@ -121,12 +121,12 @@
                                         break;
                                 }
                             </td>
-                            <td class="py-4 px-6">
-                                <div class="relative">
+                            <td class="py-4 px-6 relative">
+                                <div class="flex items-center justify-end">
                                     <button type="button" class="text-gray-600 hover:text-gray-800 text-sm font-medium dropdown-toggle" onclick="toggleTreatmentDropdown('@item.Id')" title="Thao tác">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </button>
-                                    <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50 hidden border border-gray-200" id="dropdown-@item.Id">
+                                    <div class="absolute right-0 top-8 w-56 bg-white rounded-md shadow-lg z-50 hidden border border-gray-200" id="dropdown-@item.Id">
                                         <div class="py-1">
                                             <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-action="Details" asp-route-id="@item.Id">
                                                 <i class="bi bi-eye mr-3 w-4 text-gray-400"></i> Chi tiết
@@ -184,25 +184,37 @@
         });
 
         function toggleTreatmentDropdown(treatmentId) {
-            const dropdown = document.getElementById('dropdown-' + treatmentId);
+            var dropdown = document.getElementById('dropdown-' + treatmentId);
+            var button = event.target.closest('button');
             
             // Hide all other dropdowns
-            document.querySelectorAll('[id^="dropdown-"]').forEach(function(menu) {
-                if (menu.id !== 'dropdown-' + treatmentId) {
-                    menu.classList.add('hidden');
+            var dropdowns = document.querySelectorAll('[id^="dropdown-"]');
+            for (var i = 0; i < dropdowns.length; i++) {
+                if (dropdowns[i].id !== 'dropdown-' + treatmentId) {
+                    dropdowns[i].classList.add('hidden');
                 }
-            });
+            }
             
-            // Toggle current dropdown
-            dropdown.classList.toggle('hidden');
+            // Calculate position for fixed dropdown
+            if (!dropdown.classList.contains('hidden')) {
+                dropdown.classList.add('hidden');
+            } else {
+                var rect = button.getBoundingClientRect();
+                dropdown.style.position = 'fixed';
+                dropdown.style.top = (rect.bottom + 5) + 'px';
+                dropdown.style.right = (window.innerWidth - rect.right) + 'px';
+                dropdown.style.left = 'auto';
+                dropdown.classList.remove('hidden');
+            }
         }
 
         // Close dropdown when clicking outside
         document.addEventListener('click', function(event) {
             if (!event.target.closest('.dropdown-toggle') && !event.target.closest('[id^="dropdown-"]')) {
-                document.querySelectorAll('[id^="dropdown-"]').forEach(function(menu) {
-                    menu.classList.add('hidden');
-                });
+                var dropdowns = document.querySelectorAll('[id^="dropdown-"]');
+                for (var i = 0; i < dropdowns.length; i++) {
+                    dropdowns[i].classList.add('hidden');
+                }
             }
         });
     </script>
