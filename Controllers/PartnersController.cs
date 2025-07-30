@@ -227,7 +227,8 @@ namespace InfertilityApp.Controllers
                 return View("NoPartner");
             }
 
-            return View(partner);
+            // Redirect đến Details với ID của partner
+            return RedirectToAction("Details", new { id = partner.Id });
         }
     }
 } 
