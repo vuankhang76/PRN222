@@ -24,25 +24,26 @@ namespace InfertilityApp.Controllers
         {
             var doctors = await _doctorService.GetAllDoctorsAsync();
 
+            // Tìm kiếm theo tên, email, số điện thoại, chuyên khoa
             if (!string.IsNullOrEmpty(searchString))
             {
                 doctors = doctors.Where(d =>
                     d.FullName.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-                    d.Specialization.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-                    (d.LicenseNumber != null && d.LicenseNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase)));
+                    (d.Email != null && d.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase)) ||
+                    (d.PhoneNumber != null && d.PhoneNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase)) ||
+                    (d.Specialization != null && d.Specialization.Contains(searchString, StringComparison.OrdinalIgnoreCase)));
             }
 
+            // Lọc theo chuyên khoa
             if (!string.IsNullOrEmpty(specialization))
             {
-                doctors = await _doctorService.GetDoctorsBySpecializationAsync(specialization);
+                doctors = doctors.Where(d => d.Specialization == specialization);
             }
 
             ViewData["SearchString"] = searchString;
-            ViewData["Specializations"] = new SelectList(
-                new[] { "Reproductive Endocrinology", "Obstetrics and Gynecology", "Urology", "Andrology" },
-                specialization);
+            ViewData["Specialization"] = specialization;
 
-            return View(doctors);
+            return View(doctors.OrderBy(d => d.FullName));
         }
 
         // GET: Doctors/Details/5
@@ -71,7 +72,7 @@ namespace InfertilityApp.Controllers
         // POST: Doctors/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FullName,DateOfBirth,Gender,Email,PhoneNumber,Address,Specialization,LicenseNumber,YearsOfExperience")] Doctor doctor)
+        public async Task<IActionResult> Create([Bind("Id,FullName,PhoneNumber,Email,Specialization,LicenseNumber,Qualifications,Biography")] Doctor doctor)
         {
             if (ModelState.IsValid)
             {
@@ -107,7 +108,7 @@ namespace InfertilityApp.Controllers
         // POST: Doctors/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,DateOfBirth,Gender,Email,PhoneNumber,Address,Specialization,LicenseNumber,YearsOfExperience")] Doctor doctor)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,PhoneNumber,Email,Specialization,LicenseNumber,Qualifications,Biography")] Doctor doctor)
         {
             if (id != doctor.Id)
             {

@@ -20,10 +20,30 @@ namespace InfertilityApp.Controllers
         }
 
         // GET: Patients
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string gender)
         {
             var patients = await _patientService.GetAllPatientsAsync();
-            return View(patients);
+
+            // Tìm kiếm theo tên, email, số điện thoại
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                patients = patients.Where(p =>
+                    p.FullName.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                    (p.Email != null && p.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase)) ||
+                    p.PhoneNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                    (p.Address != null && p.Address.Contains(searchString, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            // Lọc theo giới tính
+            if (!string.IsNullOrEmpty(gender))
+            {
+                patients = patients.Where(p => p.Gender == gender);
+            }
+
+            ViewData["SearchString"] = searchString;
+            ViewData["Gender"] = gender;
+
+            return View(patients.OrderByDescending(p => p.RegistrationDate));
         }
 
         // GET: Patients/Details/5

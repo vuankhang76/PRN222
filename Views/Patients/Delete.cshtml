@@ -1,7 +1,7 @@
-@model InfertilityApp.Models.Doctor
+@model InfertilityApp.Models.Patient
 
 @{
-    ViewData["Title"] = "Xóa bác sĩ";
+    ViewData["Title"] = "Xóa bệnh nhân";
 }
 
 <div class="p-6 space-y-6 bg-gray-50 min-h-screen">
@@ -14,7 +14,7 @@
                         <i class="bi bi-person-x text-2xl text-red-600"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-semibold text-gray-900">Xóa bác sĩ</h1>
+                        <h1 class="text-2xl font-semibold text-gray-900">Xóa bệnh nhân</h1>
                         <p class="text-gray-600">Xác nhận thông tin trước khi xóa</p>
                     </div>
                 </div>
@@ -22,10 +22,10 @@
                 <nav class="hidden md:flex items-center space-x-2 text-sm">
                     <a asp-action="Index" class="text-blue-600 hover:text-blue-700 transition-colors duration-200 flex items-center space-x-1">
                         <i class="bi bi-list"></i>
-                        <span>Danh sách bác sĩ</span>
+                        <span>Danh sách bệnh nhân</span>
                     </a>
                     <i class="bi bi-chevron-right text-gray-400"></i>
-                    <span class="text-gray-600 font-medium">Xóa bác sĩ</span>
+                    <span class="text-gray-600 font-medium">Xóa bệnh nhân</span>
                 </nav>
             </div>
         </div>
@@ -33,26 +33,36 @@
         <!-- Warning Header -->
         <div class="bg-red-600 text-white px-6 py-4">
             <div class="flex items-center">
-                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                </svg>
-                <h2 class="text-xl font-semibold">Bạn có chắc chắn muốn xóa bác sĩ này?</h2>
+                <i class="bi bi-exclamation-triangle text-white mr-3 text-xl"></i>
+                <h2 class="text-xl font-semibold">Bạn có chắc chắn muốn xóa bệnh nhân này?</h2>
             </div>
         </div>
 
-        <!-- Doctor Information -->
+        <!-- Patient Information -->
         <div class="p-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Personal Information -->
                 <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <i class="bi bi-person text-blue-600 mr-2"></i>
+                        <i class="bi bi-person text-green-600 mr-2"></i>
                         Thông tin cá nhân
                     </h3>
                     <div class="space-y-3">
                         <div>
                             <label class="text-sm font-medium text-gray-600">Họ và tên</label>
                             <p class="text-gray-900 font-medium">@(Model.FullName ?? "Chưa cập nhật")</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Ngày sinh</label>
+                            <p class="text-gray-900">@Model.DateOfBirth.ToString("dd/MM/yyyy")</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Giới tính</label>
+                            <div class="mt-1">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium @(Model.Gender == "Nam" ? "bg-blue-100 text-blue-800" : "bg-pink-100 text-pink-800")">
+                                    @Model.Gender
+                                </span>
+                            </div>
                         </div>
                         <div>
                             <label class="text-sm font-medium text-gray-600">Số điện thoại</label>
@@ -65,41 +75,57 @@
                     </div>
                 </div>
 
-                <!-- Professional Information -->
+                <!-- Contact & Registration Information -->
                 <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <i class="bi bi-clipboard-check text-green-600 mr-2"></i>
-                        Thông tin chuyên môn
+                        <i class="bi bi-geo-alt text-blue-600 mr-2"></i>
+                        Thông tin liên hệ & Đăng ký
                     </h3>
                     <div class="space-y-3">
                         <div>
-                            <label class="text-sm font-medium text-gray-600">Chuyên môn</label>
-                            <p class="text-gray-900 font-medium">@(Model.Specialization ?? "Chưa cập nhật")</p>
+                            <label class="text-sm font-medium text-gray-600">Địa chỉ</label>
+                            <p class="text-gray-900">@(Model.Address ?? "Chưa cập nhật")</p>
                         </div>
                         <div>
-                            <label class="text-sm font-medium text-gray-600">Số giấy phép</label>
-                            <p class="text-gray-900">@(Model.LicenseNumber ?? "Chưa cập nhật")</p>
+                            <label class="text-sm font-medium text-gray-600">Nghề nghiệp</label>
+                            <p class="text-gray-900">@(Model.Occupation ?? "Chưa cập nhật")</p>
                         </div>
-                        @if (!string.IsNullOrEmpty(Model.Qualifications))
-                        {
-                            <div>
-                                <label class="text-sm font-medium text-gray-600">Trình độ chuyên môn</label>
-                                <p class="text-gray-900">@Model.Qualifications</p>
-                            </div>
-                        }
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Ngày đăng ký</label>
+                            <p class="text-gray-900">@Model.RegistrationDate.ToString("dd/MM/yyyy")</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-600">Ngày tạo hồ sơ</label>
+                            <p class="text-gray-900">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Biography Section -->
-            @if (!string.IsNullOrEmpty(Model.Biography))
+            <!-- Medical Information -->
+            @if (!string.IsNullOrEmpty(Model.MedicalHistory) || !string.IsNullOrEmpty(Model.AllergiesInfo))
             {
                 <div class="mt-6 bg-blue-50 rounded-lg p-4 border border-blue-200">
                     <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                        <i class="bi bi-info-circle text-blue-600 mr-2"></i>
-                        Tiểu sử
+                        <i class="bi bi-clipboard2-pulse text-blue-600 mr-2"></i>
+                        Thông tin y tế
                     </h3>
-                    <p class="text-gray-700 leading-relaxed">@Model.Biography</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        @if (!string.IsNullOrEmpty(Model.MedicalHistory))
+                        {
+                            <div>
+                                <label class="text-sm font-medium text-gray-600">Tiền sử bệnh</label>
+                                <p class="text-gray-700 leading-relaxed">@Model.MedicalHistory</p>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.AllergiesInfo))
+                        {
+                            <div>
+                                <label class="text-sm font-medium text-gray-600">Thông tin dị ứng</label>
+                                <p class="text-gray-700 leading-relaxed">@Model.AllergiesInfo</p>
+                            </div>
+                        }
+                    </div>
                 </div>
             }
 
@@ -110,13 +136,15 @@
                     <div>
                         <h4 class="text-sm font-medium text-yellow-800 mb-1">Cảnh báo quan trọng</h4>
                         <p class="text-sm text-yellow-700">
-                            Việc xóa bác sĩ sẽ ảnh hưởng đến tất cả dữ liệu liên quan bao gồm:
+                            Việc xóa bệnh nhân sẽ ảnh hưởng đến tất cả dữ liệu liên quan bao gồm:
                         </p>
                         <ul class="text-sm text-yellow-700 mt-2 ml-4 list-disc">
-                            <li>Lịch hẹn đã đặt</li>
-                            <li>Hồ sơ điều trị</li>
-                            <li>Kết quả xét nghiệm</li>
-                            <li>Đơn thuốc đã kê</li>
+                            <li>Hồ sơ y tế và tiền sử bệnh</li>
+                            <li>Lịch hẹn đã đặt và sắp tới</li>
+                            <li>Kết quả xét nghiệm và chẩn đoán</li>
+                            <li>Kế hoạch điều trị và theo dõi</li>
+                            <li>Thông tin người phối ngẫu liên quan</li>
+                            <li>Đơn thuốc và toa thuốc</li>
                         </ul>
                         <p class="text-sm text-yellow-700 mt-2 font-medium">
                             Hành động này không thể hoàn tác!
@@ -131,7 +159,7 @@
                     <input type="hidden" asp-for="Id" />
                     <button type="submit" 
                             class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-8 rounded-lg transition duration-200 flex items-center justify-center shadow-sm"
-                            onclick="return confirm('Bạn có chắc chắn muốn xóa bác sĩ này? Hành động này không thể hoàn tác!');">
+                            onclick="return confirm('Bạn có chắc chắn muốn xóa bệnh nhân này? Hành động này không thể hoàn tác!');">
                         <i class="bi bi-trash mr-2"></i>
                         Xác nhận xóa
                     </button>
@@ -144,4 +172,4 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
