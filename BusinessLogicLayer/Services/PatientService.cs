@@ -48,7 +48,7 @@ namespace InfertilityApp.BusinessLogicLayer.Services
             }
 
             patient.RegistrationDate = DateTime.Now;
-            patient.CreatedAt = DateTime.Now;
+            
 
             var result = await _unitOfWork.Patients.AddAsync(patient);
             await _unitOfWork.SaveChangesAsync();

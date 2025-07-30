@@ -170,7 +170,7 @@ public class HomeController : Controller
         ViewData["TodayAppointments"] = todayAppointments.OrderBy(a => a.AppointmentTime);
         
         // Lấy các bệnh nhân mới nhất
-        var recentPatients = allPatients.OrderByDescending(p => p.CreatedAt).Take(5);
+        var recentPatients = allPatients.OrderByDescending(p => p.RegistrationDate).Take(5);
         ViewData["RecentPatients"] = recentPatients;
         
         // Nếu là bác sĩ, lấy thêm thông tin về bệnh nhân của họ

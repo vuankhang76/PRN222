@@ -59,6 +59,8 @@ namespace InfertilityApp.Controllers
             {
                 try
                 {
+                    // Set registration date to current date
+                    patient.RegistrationDate = DateTime.Now;
                     await _patientService.CreatePatientAsync(patient);
                     return RedirectToAction(nameof(Index));
                 }

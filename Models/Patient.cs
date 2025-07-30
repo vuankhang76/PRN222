@@ -41,9 +41,7 @@ namespace InfertilityApp.Models
         public string? AllergiesInfo { get; set; }
 
         [Required]
-        public DateTime RegistrationDate { get; set; }
-
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime RegistrationDate { get; set; } = DateTime.Now;
 
         // Navigation properties
         public virtual Partner? Partner { get; set; }
