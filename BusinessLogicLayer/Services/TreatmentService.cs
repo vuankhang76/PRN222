@@ -48,11 +48,22 @@ namespace InfertilityApp.BusinessLogicLayer.Services
 
             treatment.StartDate = DateTime.Now;
             treatment.Status = "Đang điều trị";
-            // CreatedAt property không tồn tại trong Treatment model
-            // treatment.CreatedAt = DateTime.Now;
 
             var result = await _unitOfWork.Treatments.AddAsync(treatment);
             await _unitOfWork.SaveChangesAsync();
+
+            // Cập nhật TreatmentId cho Appointment nếu có
+            if (treatment.AppointmentId.HasValue)
+            {
+                var appointment = await _unitOfWork.Appointments.GetByIdAsync(treatment.AppointmentId.Value);
+                if (appointment != null)
+                {
+                    appointment.TreatmentId = result.Id;
+                    await _unitOfWork.Appointments.UpdateAsync(appointment);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+            }
+
             return result;
         }
 

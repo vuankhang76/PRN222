@@ -112,9 +112,10 @@ namespace InfertilityApp.Controllers
             {
                 AppointmentDate = date ?? DateTime.Today.AddDays(1),
                 AppointmentTime = new TimeSpan(9, 0, 0),
-                Status = "Đã lên lịch",
+                Status = "Scheduled",
                 PatientId = patientId ?? 0,
-                DoctorId = doctorId ?? 0
+                DoctorId = doctorId ?? 0,
+                Duration = 30 // Thời lượng mặc định 30 phút
             };
 
             return View(appointment);
@@ -123,7 +124,7 @@ namespace InfertilityApp.Controllers
         // POST: Appointments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PatientId,DoctorId,AppointmentDate,AppointmentTime,Purpose,Status,Notes")] Appointment appointment)
+        public async Task<IActionResult> Create([Bind("Id,PatientId,DoctorId,AppointmentDate,AppointmentTime,AppointmentType,Purpose,Status,Notes,Duration")] Appointment appointment)
         {
             if (ModelState.IsValid)
             {
@@ -184,7 +185,7 @@ namespace InfertilityApp.Controllers
         // POST: Appointments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,DoctorId,AppointmentDate,AppointmentTime,Purpose,Status,Notes")] Appointment appointment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,DoctorId,AppointmentDate,AppointmentTime,AppointmentType,Purpose,Status,Notes,Duration")] Appointment appointment)
         {
             if (id != appointment.Id)
             {

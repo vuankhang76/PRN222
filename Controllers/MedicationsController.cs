@@ -78,15 +78,25 @@ namespace InfertilityApp.Controllers
         // GET: Medications/Create
         public async Task<IActionResult> Create(int? treatmentId)
         {
-            var treatments = await _treatmentService.GetAllTreatmentsAsync();
+            if (treatmentId == null)
+            {
+                return NotFound("Vui lòng chọn điều trị trước khi kê đơn thuốc");
+            }
 
-            ViewData["TreatmentId"] = new SelectList(treatments, "Id", "TreatmentName", treatmentId);
+            var treatment = await _treatmentService.GetTreatmentByIdAsync(treatmentId.Value);
+            if (treatment == null)
+            {
+                return NotFound("Không tìm thấy điều trị");
+            }
 
             var medication = new Medication
             {
                 StartDate = DateTime.Today,
-                TreatmentId = treatmentId ?? 0
+                TreatmentId = treatmentId.Value,
+                Status = "Active"
             };
+
+            ViewBag.TreatmentId = treatmentId.Value;
 
             return View(medication);
         }
@@ -101,11 +111,13 @@ namespace InfertilityApp.Controllers
                 try
                 {
                     await _medicationService.CreateMedicationAsync(medication);
-                    return RedirectToAction(nameof(Index));
+                    TempData["Success"] = "Đã kê đơn thuốc thành công!";
+                    return RedirectToAction("Index", "Appointments");
                 }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
+                    TempData["Error"] = ex.Message;
                 }
             }
 
@@ -148,6 +160,7 @@ namespace InfertilityApp.Controllers
                 try
                 {
                     await _medicationService.UpdateMedicationAsync(medication);
+                    TempData["Success"] = "Cập nhật đơn thuốc thành công!";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -186,6 +199,7 @@ namespace InfertilityApp.Controllers
             try
             {
                 await _medicationService.DeleteMedicationAsync(id);
+                TempData["Success"] = "Xóa đơn thuốc thành công!";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

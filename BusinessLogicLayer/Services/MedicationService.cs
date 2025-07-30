@@ -37,9 +37,15 @@ namespace InfertilityApp.BusinessLogicLayer.Services
                 throw new ArgumentException("Dữ liệu thuốc không hợp lệ");
             }
 
-            if (!await CanAddMedicationToTreatmentAsync(medication.TreatmentId, medication.MedicationName!))
+            var treatment = await _unitOfWork.Treatments.GetByIdAsync(medication.TreatmentId);
+            if (treatment == null)
             {
-                throw new InvalidOperationException("Không thể thêm thuốc này vào điều trị (có thể bị xung đột)");
+                throw new InvalidOperationException("Không tìm thấy điều trị");
+            }
+
+            if (treatment.Status != "Đang điều trị")
+            {
+                throw new InvalidOperationException("Chỉ có thể thêm thuốc cho điều trị đang tiến hành");
             }
 
             medication.StartDate = DateTime.Now;

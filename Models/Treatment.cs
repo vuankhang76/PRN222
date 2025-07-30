@@ -21,6 +21,11 @@ namespace InfertilityApp.Models
         [ForeignKey("DoctorId")]
         public virtual Doctor? Doctor { get; set; }
 
+        public int? AppointmentId { get; set; }
+
+        [ForeignKey("AppointmentId")]
+        public virtual Appointment? Appointment { get; set; }
+
         [Required]
         public DateTime StartDate { get; set; }
 
@@ -38,7 +43,16 @@ namespace InfertilityApp.Models
         public string? Description { get; set; }
 
         [StringLength(50)]
-        public string? Status { get; set; } // In Progress, Completed, Cancelled
+        public string? Status { get; set; } // Possible values: In Progress, Completed, Paused, Cancelled
+
+        // Định nghĩa các trạng thái chuẩn
+        public static class TreatmentStatus
+        {
+            public const string InProgress = "In Progress";
+            public const string Completed = "Completed";
+            public const string Paused = "Paused";
+            public const string Cancelled = "Cancelled";
+        }
 
         [StringLength(50)]
         public string? Outcome { get; set; } // Successful, Unsuccessful, Ongoing

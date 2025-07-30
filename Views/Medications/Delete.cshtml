@@ -1,0 +1,92 @@
+@model InfertilityApp.Models.Medication
+
+@{
+    ViewData["Title"] = "Xóa đơn thuốc";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold text-gray-900">Xác nhận xóa đơn thuốc</h2>
+        <a asp-action="Index" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex items-center">
+            <i class="bi bi-arrow-left mr-2"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+            <h3 class="text-red-800 text-lg font-semibold mb-2">Bạn có chắc chắn muốn xóa đơn thuốc này?</h3>
+            <p class="text-red-700">Hành động này không thể hoàn tác. Vui lòng kiểm tra kỹ thông tin trước khi xóa.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+                <h4 class="text-lg font-semibold mb-4">Thông tin đơn thuốc</h4>
+                <dl class="space-y-4">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Tên thuốc</dt>
+                        <dd class="mt-1 text-lg text-gray-900">@Model.MedicationName</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Liều lượng</dt>
+                        <dd class="mt-1 text-gray-900">@Model.Dosage</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Tần suất sử dụng</dt>
+                        <dd class="mt-1 text-gray-900">@Model.Frequency</dd>
+                    </div>
+                </dl>
+            </div>
+            <div>
+                <h4 class="text-lg font-semibold mb-4">Thời gian sử dụng</h4>
+                <dl class="space-y-4">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Trạng thái</dt>
+                        <dd class="mt-1">
+                            @switch (Model.Status)
+                            {
+                                case "Active":
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                        Đang sử dụng
+                                    </span>
+                                    break;
+                                case "Completed":
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                        Đã hoàn thành
+                                    </span>
+                                    break;
+                                case "Discontinued":
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                                        Đã ngưng
+                                    </span>
+                                    break;
+                                default:
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                        @Model.Status
+                                    </span>
+                                    break;
+                            }
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Ngày bắt đầu</dt>
+                        <dd class="mt-1 text-gray-900">@Model.StartDate.ToString("dd/MM/yyyy")</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Ngày kết thúc</dt>
+                        <dd class="mt-1 text-gray-900">@(Model.EndDate.HasValue ? Model.EndDate.Value.ToString("dd/MM/yyyy") : "Chưa xác định")</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <form asp-action="Delete" class="flex justify-end space-x-4 mt-8">
+            <input type="hidden" asp-for="Id" />
+            <a asp-action="Index" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors duration-200">
+                Hủy
+            </a>
+            <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 flex items-center">
+                <i class="bi bi-trash mr-2"></i> Xác nhận xóa
+            </button>
+        </form>
+    </div>
+</div>

@@ -104,19 +104,21 @@ namespace InfertilityApp.Controllers
         }
 
         // GET: Treatments/Create
-        public async Task<IActionResult> Create(int? patientId)
+        public async Task<IActionResult> Create(int? patientId, int? appointmentId)
         {
             var patients = await _patientService.GetAllPatientsAsync();
             var doctors = await _doctorService.GetAllDoctorsAsync();
 
             ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName");
             ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", patientId);
+            ViewBag.AppointmentId = appointmentId;
 
             var treatment = new Treatment
             {
                 StartDate = DateTime.Today,
-                Status = "Đang điều trị",
-                PatientId = patientId.HasValue ? patientId.Value : 0
+                Status = Treatment.TreatmentStatus.InProgress,
+                PatientId = patientId.HasValue ? patientId.Value : 0,
+                AppointmentId = appointmentId
             };
 
             return View(treatment);
@@ -125,7 +127,7 @@ namespace InfertilityApp.Controllers
         // POST: Treatments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PatientId,DoctorId,TreatmentType,TreatmentName,Description,StartDate,Status,Notes")] Treatment treatment)
+        public async Task<IActionResult> Create([Bind("Id,PatientId,DoctorId,TreatmentType,TreatmentName,Description,StartDate,Status,Notes,AppointmentId")] Treatment treatment)
         {
             if (ModelState.IsValid)
             {
