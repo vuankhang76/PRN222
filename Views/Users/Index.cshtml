@@ -49,9 +49,9 @@
                                     class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200 border border-gray-300 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
                                     onchange="this.form.submit()">
                                 <option value="">Tất cả vai trò</option>
-                                <option value="Admin" @(ViewData["Role"]?.ToString() == "Admin" ? "selected" : "")>Quản trị viên</option>
-                                <option value="Doctor" @(ViewData["Role"]?.ToString() == "Doctor" ? "selected" : "")>Bác sĩ</option>
-                                <option value="Staff" @(ViewData["Role"]?.ToString() == "Staff" ? "selected" : "")>Nhân viên</option>
+                                <option value="Admin" selected="@(ViewData["Role"]?.ToString() == "Admin")">Quản trị viên</option>
+                                <option value="Doctor" selected="@(ViewData["Role"]?.ToString() == "Doctor")">Bác sĩ</option>
+                                <option value="Staff" selected="@(ViewData["Role"]?.ToString() == "Staff")">Nhân viên</option>
                             </select>
                         </div>
                         
@@ -61,8 +61,8 @@
                                     class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200 border border-gray-300 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
                                     onchange="this.form.submit()">
                                 <option value="">Tất cả trạng thái</option>
-                                <option value="true" @(ViewData["Status"]?.ToString() == "true" ? "selected" : "")>Hoạt động</option>
-                                <option value="false" @(ViewData["Status"]?.ToString() == "false" ? "selected" : "")>Vô hiệu</option>
+                                <option value="true" selected="@(ViewData["Status"]?.ToString() == "true")">Hoạt động</option>
+                                <option value="false" selected="@(ViewData["Status"]?.ToString() == "false")">Vô hiệu</option>
                             </select>
                         </div>
                     </div>

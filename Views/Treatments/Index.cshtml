@@ -43,15 +43,38 @@
                             <span>Thêm điều trị mới</span>
                         </a>
                         
-                        <!-- Status Filter -->
                         <div class="relative">
                             <select name="status" 
                                     class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200 border border-gray-300 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
                                     onchange="this.form.submit()">
                                 <option value="">Tất cả trạng thái</option>
-                                <option value="In Progress" @(ViewData["Status"]?.ToString() == "In Progress" ? "selected" : "")>Đang tiến hành</option>
-                                <option value="Completed" @(ViewData["Status"]?.ToString() == "Completed" ? "selected" : "")>Hoàn thành</option>
-                                <option value="Cancelled" @(ViewData["Status"]?.ToString() == "Cancelled" ? "selected" : "")>Đã hủy</option>
+                                @{
+                                    var currentStatus = ViewData["Status"]?.ToString();
+                                }
+                                @if (currentStatus == "In Progress")
+                                {
+                                    <option value="In Progress" selected>Đang tiến hành</option>
+                                }
+                                else
+                                {
+                                    <option value="In Progress">Đang tiến hành</option>
+                                }
+                                @if (currentStatus == "Completed")
+                                {
+                                    <option value="Completed" selected>Hoàn thành</option>
+                                }
+                                else
+                                {
+                                    <option value="Completed">Hoàn thành</option>
+                                }
+                                @if (currentStatus == "Cancelled")
+                                {
+                                    <option value="Cancelled" selected>Đã hủy</option>
+                                }
+                                else
+                                {
+                                    <option value="Cancelled">Đã hủy</option>
+                                }
                             </select>
                         </div>
                     </div>
