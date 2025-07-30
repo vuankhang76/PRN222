@@ -4106,23 +4106,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\LEGION\\.nuget\\packages\\": {},
+    "C:\\Users\\namtr\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\LEGION\\Desktop\\PRN222\\PRN222\\InfertilityApp.csproj",
+      "projectUniqueName": "C:\\Users\\namtr\\Downloads\\PRN222\\PRN222\\InfertilityApp.csproj",
       "projectName": "InfertilityApp",
-      "projectPath": "C:\\Users\\LEGION\\Desktop\\PRN222\\PRN222\\InfertilityApp.csproj",
-      "packagesPath": "C:\\Users\\LEGION\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\LEGION\\Desktop\\PRN222\\PRN222\\obj\\",
+      "projectPath": "C:\\Users\\namtr\\Downloads\\PRN222\\PRN222\\InfertilityApp.csproj",
+      "packagesPath": "C:\\Users\\namtr\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\namtr\\Downloads\\PRN222\\PRN222\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\LEGION\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\namtr\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -4131,7 +4131,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
