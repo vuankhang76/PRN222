@@ -10,6 +10,7 @@ namespace InfertilityApp.DataAccessLayer.Interfaces
         Task<T?> GetAsync(Expression<Func<T, bool>> predicate);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
         Task<IEnumerable<T>> GetWithIncludeAsync(params Expression<Func<T, object>>[] includes);
+        Task<IEnumerable<T>> FindWithIncludeAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes);
         Task<T?> GetByIdWithIncludeAsync(int id, params Expression<Func<T, object>>[] includes);
 
         // Ghi dữ liệu

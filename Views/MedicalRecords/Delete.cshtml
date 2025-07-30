@@ -19,10 +19,6 @@
         <div class="ml-3">
             <h3 class="text-lg font-medium text-red-800">Bạn có chắc chắn muốn xóa hồ sơ y tế này?</h3>
             <p class="mt-2 text-red-700">Hành động này không thể hoàn tác. Hồ sơ y tế sẽ bị xóa hoàn toàn khỏi hệ thống.</p>
-            @if (!string.IsNullOrEmpty(Model.AttachmentPath))
-            {
-                <p class="mt-1 text-red-600">Tệp đính kèm cũng sẽ bị xóa.</p>
-            }
         </div>
     </div>
 </div>
@@ -61,17 +57,6 @@
                         @Model.RecordType
                     </span>
                 </div>
-                
-                @if (!string.IsNullOrEmpty(Model.AttachmentPath))
-                {
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tệp đính kèm</label>
-                        <p class="text-gray-900">
-                            <i class="bi bi-file-earmark mr-1"></i>
-                            Có tệp đính kèm
-                        </p>
-                    </div>
-                }
             </div>
         </div>
         

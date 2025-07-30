@@ -4,326 +4,249 @@
     ViewData["Title"] = "Chi tiết điều trị";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Chi tiết điều trị</h2>
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
-            <i class="bi bi-pencil"></i> Chỉnh sửa
-        </a>
-        <a asp-action="Index" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Quay lại danh sách
-        </a>
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-3xl font-bold text-gray-900">Chi tiết điều trị</h2>
+            <p class="text-gray-600 mt-1">Thông tin chi tiết về điều trị</p>
+        </div>
+        <div class="flex space-x-3">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors duration-200 flex items-center">
+                <i class="bi bi-pencil mr-2"></i> Chỉnh sửa
+            </a>
+            <a asp-action="Index" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex items-center">
+                <i class="bi bi-arrow-left mr-2"></i> Quay lại danh sách
+            </a>
+        </div>
     </div>
-</div>
 
-<div class="row">
-    <div class="col-md-4 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Thông tin điều trị</h5>
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label class="fw-bold">Tên điều trị:</label>
-                    <p>@Model.TreatmentName</p>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Thông tin điều trị -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Thông tin điều trị</h3>
                 </div>
-                
-                <div class="mb-3">
-                    <label class="fw-bold">Bệnh nhân:</label>
-                    <p>
-                        <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.PatientId">
-                            @Model.Patient.FullName
-                        </a>
-                    </p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="fw-bold">Bác sĩ phụ trách:</label>
-                    <p>
-                        <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId">
-                            @Model.Doctor.FullName
-                        </a>
-                    </p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="fw-bold">Loại điều trị:</label>
-                    <p>@Model.TreatmentType</p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="fw-bold">Ngày bắt đầu:</label>
-                    <p>@Model.StartDate.ToString("dd/MM/yyyy")</p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="fw-bold">Ngày kết thúc:</label>
-                    <p>@(Model.EndDate.HasValue ? Model.EndDate.Value.ToString("dd/MM/yyyy") : "Chưa kết thúc")</p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="fw-bold">Trạng thái:</label>
-                    <p>
-                        @switch (Model.Status)
-                        {
-                            case "In Progress":
-                                <span class="badge bg-primary">Đang tiến hành</span>
-                                break;
-                            case "Completed":
-                                <span class="badge bg-success">Hoàn thành</span>
-                                break;
-                            case "Cancelled":
-                                <span class="badge bg-danger">Đã hủy</span>
-                                break;
-                            default:
-                                <span class="badge bg-secondary">@Model.Status</span>
-                                break;
-                        }
-                    </p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="fw-bold">Mô tả:</label>
-                    <p>@(string.IsNullOrEmpty(Model.Description) ? "Không có" : Model.Description)</p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="fw-bold">Ghi chú:</label>
-                    <p>@(string.IsNullOrEmpty(Model.Notes) ? "Không có" : Model.Notes)</p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="fw-bold">Kết quả:</label>
-                    <p>@(string.IsNullOrEmpty(Model.Notes) ? "Chưa có kết quả" : Model.Notes)</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-8">
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Các giai đoạn điều trị</h5>
-                <div>
-                    <a asp-controller="TreatmentStages" asp-action="TreatmentStages" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary me-2">
-                        <i class="bi bi-list-check"></i> Xem tất cả
-                    </a>
-                    <a asp-controller="TreatmentStages" asp-action="Create" asp-route-treatmentId="@Model.Id" class="btn btn-sm btn-primary">
-                        <i class="bi bi-plus-circle"></i> Thêm giai đoạn
-                    </a>
-                </div>
-            </div>
-            <div class="card-body">
-                @if (Model.TreatmentStages != null && Model.TreatmentStages.Any())
-                {
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Thứ tự</th>
-                                    <th>Tên giai đoạn</th>
-                                    <th>Ngày bắt đầu</th>
-                                    <th>Ngày kết thúc</th>
-                                    <th>Trạng thái</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var stage in Model.TreatmentStages.OrderBy(s => s.StageOrder))
-                                {
-                                    <tr>
-                                        <td>@stage.StageOrder</td>
-                                        <td>@stage.StageName</td>
-                                        <td>@stage.StartDate.ToString("dd/MM/yyyy")</td>
-                                        <td>@(stage.EndDate.HasValue ? stage.EndDate.Value.ToString("dd/MM/yyyy") : "-")</td>
-                                        <td>
-                                            @switch (stage.Status)
-                                            {
-                                                case "Chưa bắt đầu":
-                                                    <span class="badge bg-secondary">Chưa bắt đầu</span>
-                                                    break;
-                                                case "Đang tiến hành":
-                                                    <span class="badge bg-primary">Đang tiến hành</span>
-                                                    break;
-                                                case "Hoàn thành":
-                                                    <span class="badge bg-success">Hoàn thành</span>
-                                                    break;
-                                                case "Đã hủy":
-                                                    <span class="badge bg-danger">Đã hủy</span>
-                                                    break;
-                                                default:
-                                                    <span class="badge bg-secondary">@stage.Status</span>
-                                                    break;
-                                            }
-                                        </td>
-                                        <td>
-                                            <a asp-controller="TreatmentStages" asp-action="Details" asp-route-id="@stage.Id" class="btn btn-sm btn-outline-primary">
-                                                Chi tiết
-                                            </a>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tên điều trị:</label>
+                        <p class="text-gray-900 font-medium">@Model.TreatmentName</p>
                     </div>
-                }
-                else
-                {
-                    <div class="text-center py-4">
-                        <i class="bi bi-list-check display-4"></i>
-                        <p class="mt-3">Chưa có giai đoạn điều trị nào</p>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Bệnh nhân:</label>
+                        <p>
+                            <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.PatientId" class="text-blue-600 hover:text-blue-800 hover:underline font-medium">
+                                @Model.Patient.FullName
+                            </a>
+                        </p>
                     </div>
-                }
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Bác sĩ phụ trách:</label>
+                        <p>
+                            <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId" class="text-blue-600 hover:text-blue-800 hover:underline font-medium">
+                                @Model.Doctor.FullName
+                            </a>
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Loại điều trị:</label>
+                        <p class="text-gray-900">@Model.TreatmentType</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ngày bắt đầu:</label>
+                        <p class="text-gray-900">@Model.StartDate.ToString("dd/MM/yyyy")</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ngày kết thúc:</label>
+                        <p class="text-gray-900">@(Model.EndDate.HasValue ? Model.EndDate.Value.ToString("dd/MM/yyyy") : "Chưa kết thúc")</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Trạng thái:</label>
+                        <p>
+                            @switch (Model.Status)
+                            {
+                                case "In Progress":
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Đang điều trị</span>
+                                    break;
+                                case "Completed":
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Hoàn thành</span>
+                                    break;
+                                case "Paused":
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Tạm dừng</span>
+                                    break;
+                                case "Cancelled":
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Đã hủy</span>
+                                    break;
+                                default:
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">@Model.Status</span>
+                                    break;
+                            }
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Mô tả:</label>
+                        <p class="text-gray-600">@(string.IsNullOrEmpty(Model.Description) ? "Không có" : Model.Description)</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ghi chú:</label>
+                        <p class="text-gray-600">@(string.IsNullOrEmpty(Model.Notes) ? "Không có" : Model.Notes)</p>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Thuốc điều trị</h5>
-                <div>
-                    <a asp-controller="Medications" asp-action="TreatmentMedications" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary me-2">
-                        <i class="bi bi-capsule"></i> Xem tất cả
-                    </a>
-                    <a asp-controller="Medications" asp-action="Create" asp-route-treatmentId="@Model.Id" class="btn btn-sm btn-primary">
-                        <i class="bi bi-plus-circle"></i> Thêm thuốc
-                    </a>
+        <!-- Giai đoạn điều trị và các thông tin liên quan -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Giai đoạn điều trị -->
+            <div class="bg-white rounded-lg shadow-lg">
+                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-900">Các giai đoạn điều trị</h3>
+                    <div class="flex space-x-2">
+                        <a asp-controller="TreatmentStages" asp-action="ByTreatment" asp-route-id="@Model.Id" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg hover:bg-gray-200 transition-colors duration-200 text-sm flex items-center">
+                            <i class="bi bi-list-check mr-2"></i> Xem tất cả
+                        </a>
+                    </div>
+                </div>
+                <div class="p-6">
+                    @if (Model.TreatmentStages != null && Model.TreatmentStages.Any())
+                    {
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-gray-200">
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">STT</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Tên giai đoạn</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Ngày bắt đầu</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Ngày kết thúc</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Trạng thái</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var stage in Model.TreatmentStages.OrderBy(s => s.StageOrder))
+                                    {
+                                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150">
+                                            <td class="py-3 px-4 text-sm text-gray-900 font-medium">@stage.StageOrder</td>
+                                            <td class="py-3 px-4 text-sm text-gray-900 font-medium">@stage.StageName</td>
+                                            <td class="py-3 px-4 text-sm text-gray-900">@stage.StartDate.ToString("dd/MM/yyyy")</td>
+                                            <td class="py-3 px-4 text-sm text-gray-900">@(stage.EndDate.HasValue ? stage.EndDate.Value.ToString("dd/MM/yyyy") : "-")</td>
+                                            <td class="py-3 px-4 text-sm">
+                                                @switch (stage.Status)
+                                                {
+                                                    case "Planned":
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Đã lên kế hoạch</span>
+                                                        break;
+                                                    case "In Progress":
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Đang thực hiện</span>
+                                                        break;
+                                                    case "Completed":
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Hoàn thành</span>
+                                                        break;
+                                                    case "Cancelled":
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Đã hủy</span>
+                                                        break;
+                                                    default:
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">@stage.Status</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td class="py-3 px-4 text-sm">
+                                                <a asp-controller="TreatmentStages" asp-action="Details" asp-route-id="@stage.Id" class="text-blue-600 hover:text-blue-900 text-xs font-medium">
+                                                    Chi tiết
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-8">
+                            <i class="bi bi-list-check text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 text-lg">Chưa có giai đoạn điều trị nào</p>
+                            <p class="text-gray-400 text-sm mt-1">Hãy thêm giai đoạn điều trị đầu tiên</p>
+                        </div>
+                    }
                 </div>
             </div>
-            <div class="card-body">
-                @if (Model.Medications != null && Model.Medications.Any())
-                {
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Tên thuốc</th>
-                                    <th>Liều lượng</th>
-                                    <th>Ngày bắt đầu</th>
-                                    <th>Ngày kết thúc</th>
-                                    <th>Trạng thái</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var medication in Model.Medications.OrderBy(m => m.StartDate))
-                                {
-                                    <tr>
-                                        <td>@medication.MedicationName</td>
-                                        <td>@medication.Dosage</td>
-                                        <td>@medication.StartDate.ToString("dd/MM/yyyy")</td>
-                                        <td>@(medication.EndDate.HasValue ? medication.EndDate.Value.ToString("dd/MM/yyyy") : "-")</td>
-                                        <td>
-                                            @switch (medication.Status)
-                                            {
-                                                case "Active":
-                                                    <span class="badge bg-primary">Đang sử dụng</span>
-                                                    break;
-                                                case "Completed":
-                                                    <span class="badge bg-success">Hoàn thành</span>
-                                                    break;
-                                                case "Discontinued":
-                                                    <span class="badge bg-danger">Đã ngừng</span>
-                                                    break;
-                                                default:
-                                                    <span class="badge bg-secondary">@medication.Status</span>
-                                                    break;
-                                            }
-                                        </td>
-                                        <td>
-                                            <a asp-controller="Medications" asp-action="Details" asp-route-id="@medication.Id" class="btn btn-sm btn-outline-primary">
-                                                Chi tiết
-                                            </a>
-                                        </td>
+            <!-- Thuốc điều trị -->
+            <div class="bg-white rounded-lg shadow-lg">
+                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-900">Thuốc điều trị</h3>
+                </div>
+                <div class="p-6">
+                    @if (Model.Medications != null && Model.Medications.Any())
+                    {
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-gray-200">
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Tên thuốc</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Liều lượng</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Ngày bắt đầu</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Ngày kết thúc</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Trạng thái</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Thao tác</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-                else
-                {
-                    <div class="text-center py-4">
-                        <i class="bi bi-capsule display-4"></i>
-                        <p class="mt-3">Chưa có thuốc điều trị nào</p>
-                    </div>
-                }
-            </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Lịch hẹn</h5>
-                <div>
-                    <a asp-controller="Appointments" asp-action="Index" asp-route-treatmentId="@Model.Id" class="btn btn-sm btn-outline-primary me-2">
-                        <i class="bi bi-calendar-check"></i> Xem tất cả
-                    </a>
-                    <a asp-controller="Appointments" asp-action="Create" asp-route-treatmentId="@Model.Id" class="btn btn-sm btn-primary">
-                        <i class="bi bi-plus-circle"></i> Thêm lịch hẹn
-                    </a>
+                                </thead>
+                                <tbody>
+                                    @foreach (var medication in Model.Medications.OrderBy(m => m.StartDate))
+                                    {
+                                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150">
+                                            <td class="py-3 px-4 text-sm text-gray-900 font-medium">@medication.MedicationName</td>
+                                            <td class="py-3 px-4 text-sm text-gray-900">@medication.Dosage</td>
+                                            <td class="py-3 px-4 text-sm text-gray-900">@medication.StartDate.ToString("dd/MM/yyyy")</td>
+                                            <td class="py-3 px-4 text-sm text-gray-900">@(medication.EndDate.HasValue ? medication.EndDate.Value.ToString("dd/MM/yyyy") : "-")</td>
+                                            <td class="py-3 px-4 text-sm">
+                                                @switch (medication.Status)
+                                                {
+                                                    case "Active":
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Đang sử dụng</span>
+                                                        break;
+                                                    case "Completed":
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Hoàn thành</span>
+                                                        break;
+                                                    case "Discontinued":
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Đã ngừng</span>
+                                                        break;
+                                                    default:
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">@medication.Status</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td class="py-3 px-4 text-sm">
+                                                <a asp-controller="Medications" asp-action="Details" asp-route-id="@medication.Id" class="text-blue-600 hover:text-blue-900 text-xs font-medium">
+                                                    Chi tiết
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-8">
+                            <i class="bi bi-capsule text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 text-lg">Chưa có thuốc điều trị nào</p>
+                            <p class="text-gray-400 text-sm mt-1">Hãy thêm thuốc điều trị đầu tiên</p>
+                        </div>
+                    }
                 </div>
             </div>
-            <div class="card-body">
-                @if (Model.Appointments != null && Model.Appointments.Any())
-                {
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Ngày</th>
-                                    <th>Giờ</th>
-                                    <th>Bác sĩ</th>
-                                    <th>Loại</th>
-                                    <th>Trạng thái</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var appointment in Model.Appointments.OrderByDescending(a => a.AppointmentDate).ThenBy(a => a.AppointmentTime))
-                                {
-                                    <tr>
-                                        <td>@appointment.AppointmentDate.ToString("dd/MM/yyyy")</td>
-                                        <td>@appointment.AppointmentTime.ToString(@"hh\:mm")</td>
-                                        <td>@appointment.Doctor.FullName</td>
-                                        <td>@appointment.AppointmentType</td>
-                                        <td>
-                                            @switch (appointment.Status)
-                                            {
-                                                case "Scheduled":
-                                                    <span class="badge bg-primary">Đã lên lịch</span>
-                                                    break;
-                                                case "Completed":
-                                                    <span class="badge bg-success">Hoàn thành</span>
-                                                    break;
-                                                case "Cancelled":
-                                                    <span class="badge bg-danger">Đã hủy</span>
-                                                    break;
-                                                case "Rescheduled":
-                                                    <span class="badge bg-warning">Đổi lịch</span>
-                                                    break;
-                                                default:
-                                                    <span class="badge bg-secondary">@appointment.Status</span>
-                                                    break;
-                                            }
-                                        </td>
-                                        <td>
-                                            <a asp-controller="Appointments" asp-action="Details" asp-route-id="@appointment.Id" class="btn btn-sm btn-outline-primary">
-                                                Chi tiết
-                                            </a>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-                else
-                {
-                    <div class="text-center py-4">
-                        <i class="bi bi-calendar-x display-4"></i>
-                        <p class="mt-3">Chưa có lịch hẹn nào</p>
-                    </div>
-                }
-            </div>
+            <!-- Lịch hẹn -->
+            
         </div>
     </div>
 </div> 

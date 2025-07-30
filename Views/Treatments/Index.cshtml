@@ -130,7 +130,7 @@
                                         </button>
                                         <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50 hidden dropdown-menu" id="dropdown-@item.Id" style="transform-origin: top right;">
                                             <div class="py-1">
-                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="TreatmentStages" asp-action="TreatmentStages" asp-route-id="@item.Id">
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="TreatmentStages" asp-action="ByTreatment" asp-route-id="@item.Id">
                                                     <i class="bi bi-list-check mr-3 w-4"></i> Giai đoạn điều trị
                                                 </a>
                                                 <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Medications" asp-action="TreatmentMedications" asp-route-id="@item.Id">

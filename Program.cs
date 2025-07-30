@@ -17,6 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Đăng ký Data Access Layer
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<ITestResultRepository, TestResultRepository>();
 
 // Đăng ký Business Logic Layer
 builder.Services.AddScoped<IPatientService, PatientService>();
@@ -29,6 +30,7 @@ builder.Services.AddScoped<IPartnerService, PartnerService>();
 builder.Services.AddScoped<IProcedureService, ProcedureService>();
 builder.Services.AddScoped<ITreatmentStageService, TreatmentStageService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITestResultService, TestResultService>();
 
 // Add session services
 builder.Services.AddDistributedMemoryCache();

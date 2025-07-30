@@ -79,7 +79,11 @@ namespace InfertilityApp.BusinessLogicLayer.Services
         // Business logic đặc biệt
         public async Task<IEnumerable<MedicalRecord>> GetMedicalRecordsByPatientAsync(int patientId)
         {
-            return await _unitOfWork.MedicalRecords.FindAsync(mr => mr.PatientId == patientId);
+            return await _unitOfWork.MedicalRecords.FindWithIncludeAsync(
+                mr => mr.PatientId == patientId,
+                mr => mr.Doctor,
+                mr => mr.Patient
+            );
         }
 
         public async Task<IEnumerable<MedicalRecord>> GetMedicalRecordsByDoctorAsync(int doctorId)

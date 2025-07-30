@@ -1,0 +1,204 @@
+@model IEnumerable<InfertilityApp.Models.TreatmentStage>
+
+@{
+    ViewData["Title"] = "Giai đoạn điều trị";
+    var treatment = ViewBag.Treatment as InfertilityApp.Models.Treatment;
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-3xl font-bold text-gray-900">Giai đoạn điều trị</h2>
+            <p class="text-gray-600 mt-1">Điều trị: <span class="font-semibold">@treatment?.TreatmentName</span></p>
+            <p class="text-gray-500 text-sm">Bệnh nhân: @treatment?.Patient?.FullName</p>
+        </div>
+        <div class="flex space-x-3">
+            <a asp-controller="Treatments" asp-action="Details" asp-route-id="@treatment?.Id" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex items-center">
+                <i class="bi bi-clipboard2-pulse mr-2"></i> Xem chi tiết điều trị
+            </a>
+            <a asp-action="Create" asp-route-treatmentId="@treatment?.Id" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
+                <i class="bi bi-plus-circle mr-2"></i> Thêm giai đoạn mới
+            </a>
+        </div>
+    </div>
+
+    <!-- Progress Timeline -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="bg-white rounded-lg shadow-lg mb-6">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Tiến trình điều trị</h3>
+                <div class="relative">
+                    <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+                    @foreach (var stage in Model.OrderBy(s => s.StageOrder))
+                    {
+                        <div class="relative flex items-start mb-6 last:mb-0">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-medium
+                                @switch (stage.Status)
+                                {
+                                    case "Completed":
+                                        @: bg-green-100 border-green-500 text-green-700
+                                        break;
+                                    case "In Progress":
+                                        @: bg-blue-100 border-blue-500 text-blue-700
+                                        break;
+                                    case "Planned":
+                                        @: bg-gray-100 border-gray-400 text-gray-600
+                                        break;
+                                    default:
+                                        @: bg-red-100 border-red-500 text-red-700
+                                        break;
+                                }">
+                                @stage.StageOrder
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="text-lg font-medium text-gray-900">@stage.StageName</h4>
+                                    <div class="flex items-center space-x-2">
+                                        @switch (stage.Status)
+                                        {
+                                            case "Planned":
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Đã lên kế hoạch</span>
+                                                break;
+                                            case "In Progress":
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Đang thực hiện</span>
+                                                break;
+                                            case "Completed":
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Hoàn thành</span>
+                                                break;
+                                            case "Cancelled":
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Đã hủy</span>
+                                                break;
+                                            default:
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">@stage.Status</span>
+                                                break;
+                                        }
+                                    </div>
+                                </div>
+                                <div class="mt-1 text-sm text-gray-600">
+                                    <p><strong>Ngày bắt đầu:</strong> @stage.StartDate.ToString("dd/MM/yyyy")</p>
+                                    @if (stage.EndDate.HasValue)
+                                    {
+                                        <p><strong>Ngày kết thúc:</strong> @stage.EndDate.Value.ToString("dd/MM/yyyy")</p>
+                                    }
+                                    @if (!string.IsNullOrEmpty(stage.Description))
+                                    {
+                                        <p><strong>Mô tả:</strong> @stage.Description</p>
+                                    }
+                                    @if (!string.IsNullOrEmpty(stage.Results))
+                                    {
+                                        <p><strong>Kết quả:</strong> @stage.Results</p>
+                                    }
+                                    @if (!string.IsNullOrEmpty(stage.Notes))
+                                    {
+                                        <p><strong>Ghi chú:</strong> @stage.Notes</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Table View -->
+    <div class="bg-white rounded-lg shadow-lg">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">Danh sách chi tiết</h3>
+                <div class="relative">
+                    <input type="text" id="searchInput" class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Tìm kiếm...">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="bi bi-search text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full" id="treatmentStagesTable">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">STT</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Tên giai đoạn</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Ngày bắt đầu</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Ngày kết thúc</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var item in Model.OrderBy(s => s.StageOrder))
+                            {
+                                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150">
+                                    <td class="py-4 px-4 text-sm text-gray-900 font-medium">
+                                        @item.StageOrder
+                                    </td>
+                                    <td class="py-4 px-4 text-sm text-gray-900 font-medium">
+                                        @item.StageName
+                                    </td>
+                                    <td class="py-4 px-4 text-sm text-gray-900">
+                                        @item.StartDate.ToString("dd/MM/yyyy")
+                                    </td>
+                                    <td class="py-4 px-4 text-sm text-gray-900">
+                                        @(item.EndDate?.ToString("dd/MM/yyyy") ?? "-")
+                                    </td>
+                                    <td class="py-4 px-4 text-sm">
+                                        @switch (item.Status)
+                                        {
+                                            case "Planned":
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Đã lên kế hoạch</span>
+                                                break;
+                                            case "In Progress":
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Đang thực hiện</span>
+                                                break;
+                                            case "Completed":
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Hoàn thành</span>
+                                                break;
+                                            case "Cancelled":
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Đã hủy</span>
+                                                break;
+                                            default:
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">@item.Status</span>
+                                                break;
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="py-12 text-center">
+                                    <div class="flex flex-col items-center">
+                                        <i class="bi bi-list-check text-4xl text-gray-400 mb-4"></i>
+                                        <p class="text-gray-600 text-lg">Chưa có giai đoạn điều trị nào</p>
+                                        <p class="text-gray-400 text-sm mt-1">Hãy thêm giai đoạn điều trị đầu tiên</p>
+                                        <a asp-action="Create" asp-route-treatmentId="@treatment?.Id" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                                            <i class="bi bi-plus-circle mr-2"></i> Thêm giai đoạn mới
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize search functionality
+            $('#searchInput').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                $('#treatmentStagesTable tbody tr').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+}

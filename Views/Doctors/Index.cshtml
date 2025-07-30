@@ -91,12 +91,6 @@
                                         </button>
                                         <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50 hidden" id="dropdown-@item.Id">
                                             <div class="py-1">
-                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-action="Schedule" asp-route-id="@item.Id">
-                                                    <i class="bi bi-calendar-check mr-3 w-4"></i> Lịch làm việc
-                                                </a>
-                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-action="PatientStatistics" asp-route-id="@item.Id">
-                                                    <i class="bi bi-graph-up mr-3 w-4"></i> Thống kê
-                                                </a>
                                                 <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Appointments" asp-action="Index" asp-route-doctorId="@item.Id">
                                                     <i class="bi bi-calendar-event mr-3 w-4"></i> Lịch hẹn
                                                 </a>

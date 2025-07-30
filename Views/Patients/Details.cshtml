@@ -4,199 +4,209 @@
     ViewData["Title"] = "Chi tiết bệnh nhân";
 }
 
-<div class="flex justify-between items-center mb-4">
-    <h2>Chi tiết bệnh nhân</h2>
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
-            <i class="bi bi-pencil"></i> Chỉnh sửa
-        </a>
-        <a asp-action="Index" asp-route-id="@Model.Id" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Quay lại danh sách
-        </a>
-    </div>
-</div>
-
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    <div class="mb-4">
-        <div class="bg-white shadow-md rounded-lg">
-            <div class="bg-gray-200 p-4 rounded-t-lg">
-                <h5 class="mb-0">Thông tin cá nhân</h5>
-            </div>
-            <div class="p-4">
-                <div class="text-center mb-4">
-                    <div class="avatar-placeholder mb-3">
-                        <i class="bi bi-person-circle display-1"></i>
-                    </div>
-                    <h3>@Model.FullName</h3>
-                    <p class="text-muted mb-0">Mã bệnh nhân: #@Model.Id</p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="font-bold">Ngày sinh:</label>
-                    <p>@Model.DateOfBirth.ToString("dd/MM/yyyy") (@((int)((DateTime.Now - Model.DateOfBirth).TotalDays / 365.25)) tuổi)</p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="font-bold">Giới tính:</label>
-                    <p>@Model.Gender</p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="font-bold">Số điện thoại:</label>
-                    <p>@Model.PhoneNumber</p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="font-bold">Email:</label>
-                    <p>@Model.Email</p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="font-bold">Địa chỉ:</label>
-                    <p>@Model.Address</p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="font-bold">Nghề nghiệp:</label>
-                    <p>@Model.Occupation</p>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="font-bold">Ngày đăng ký:</label>
-                    <p>@Model.RegistrationDate.ToString("dd/MM/yyyy")</p>
-                </div>
-            </div>
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold text-gray-900">Chi tiết bệnh nhân</h2>
+        <div class="flex space-x-3">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors duration-200 flex items-center">
+                <i class="bi bi-pencil mr-2"></i> Chỉnh sửa
+            </a>
+            <a asp-action="Index" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex items-center">
+                <i class="bi bi-arrow-left mr-2"></i> Quay lại
+            </a>
         </div>
     </div>
-    
-    <div class="md:col-span-2">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="mb-4">
-                <div class="bg-white shadow-md rounded-lg">
-                    <div class="bg-gray-200 p-4 rounded-t-lg">
-                        <h5 class="mb-0">Người phối ngẫu</h5>
-                        <a asp-controller="Partners" asp-action="PatientPartner" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-people"></i> Chi tiết
-                        </a>
+
+    <div class="bg-white rounded-lg shadow-lg">
+        <div class="p-6">
+            <div class="flex items-center mb-6">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                    <i class="bi bi-person-circle text-3xl text-blue-600"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900">@Model.FullName</h3>
+                    <p class="text-gray-600">Mã bệnh nhân: #@Model.Id</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Thông tin cá nhân -->
+                <div class="lg:col-span-1">
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4">Thông tin cá nhân</h4>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Ngày sinh</label>
+                                <p class="text-gray-900">@Model.DateOfBirth.ToString("dd/MM/yyyy") (@((int)((DateTime.Now - Model.DateOfBirth).TotalDays / 365.25)) tuổi)</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Giới tính</label>
+                                <p class="text-gray-900">@Model.Gender</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+                                <p class="text-gray-900">@Model.PhoneNumber</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                <p class="text-gray-900">@Model.Email</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Địa chỉ</label>
+                                <p class="text-gray-900">@Model.Address</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Nghề nghiệp</label>
+                                <p class="text-gray-900">@Model.Occupation</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Ngày đăng ký</label>
+                                <p class="text-gray-900">@Model.RegistrationDate.ToString("dd/MM/yyyy")</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="p-4">
-                        @if (Model.Partner != null)
-                        {
-                            <div class="flex items-center mb-3">
-                                <div class="avatar-placeholder me-3">
-                                    <i class="bi bi-person-circle fs-1"></i>
+                </div>
+                
+                <!-- Cột bên phải -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Người phối ngẫu -->
+                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                            <h5 class="text-lg font-semibold text-gray-900">Người phối ngẫu</h5>
+                            <a asp-controller="Partners" asp-action="PatientPartner" asp-route-id="@Model.Id" class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition-colors text-sm">
+                                <i class="bi bi-people mr-1"></i> Chi tiết
+                            </a>
+                        </div>
+                        <div class="p-6">
+                            @if (Model.Partner != null)
+                            {
+                                <div class="flex items-center mb-4">
+                                    <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                                        <i class="bi bi-person-circle text-xl text-gray-600"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="font-semibold text-gray-900">@Model.Partner.FullName</h6>
+                                        <p class="text-gray-600 text-sm">@Model.Partner.DateOfBirth.ToString("dd/MM/yyyy") (@((int)((DateTime.Now - Model.Partner.DateOfBirth).TotalDays / 365.25)) tuổi)</p>
+                                    </div>
                                 </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Giới tính</label>
+                                        <p class="text-gray-900">@Model.Partner.Gender</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+                                        <p class="text-gray-900">@Model.Partner.PhoneNumber</p>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center py-8">
+                                    <i class="bi bi-person-plus text-4xl text-gray-400 mb-3"></i>
+                                    <p class="text-gray-600 mb-4">Chưa có thông tin người phối ngẫu</p>
+                                    <a asp-controller="Partners" asp-action="Create" asp-route-patientId="@Model.Id" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                                        Thêm người phối ngẫu
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    
+                    <!-- Thông tin y tế -->
+                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                            <h5 class="text-lg font-semibold text-gray-900">Thông tin y tế</h5>
+                            <a asp-controller="MedicalRecords" asp-action="Index" asp-route-patientId="@Model.Id" class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition-colors text-sm">
+                                <i class="bi bi-file-earmark-medical mr-1"></i> Xem hồ sơ
+                            </a>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <div>
-                                    <h5 class="mb-0">@Model.Partner.FullName</h5>
-                                    <p class="text-muted mb-0">@Model.Partner.DateOfBirth.ToString("dd/MM/yyyy") (@((int)((DateTime.Now - Model.Partner.DateOfBirth).TotalDays / 365.25)) tuổi)</p>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Tiền sử bệnh</label>
+                                    <p class="text-gray-900">@(string.IsNullOrEmpty(Model.MedicalHistory) ? "Không có" : Model.MedicalHistory)</p>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Thông tin dị ứng</label>
+                                    <p class="text-gray-900">@(string.IsNullOrEmpty(Model.AllergiesInfo) ? "Không có" : Model.AllergiesInfo)</p>
                                 </div>
                             </div>
-                            <div class="mb-2">
-                                <label class="font-bold">Giới tính:</label>
-                                <p>@Model.Partner.Gender</p>
-                            </div>
-                            <div class="mb-2">
-                                <label class="font-bold">Số điện thoại:</label>
-                                <p>@Model.Partner.PhoneNumber</p>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="text-center py-4">
-                                <i class="bi bi-person-plus display-4"></i>
-                                <p class="mt-3">Chưa có thông tin người phối ngẫu</p>
-                                <a asp-controller="Partners" asp-action="Create" asp-route-patientId="@Model.Id" class="btn btn-sm btn-primary">
-                                    Thêm người phối ngẫu
+                            
+                            <div class="text-center">
+                                <a asp-controller="MedicalRecords" asp-action="Create" asp-route-patientId="@Model.Id" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+                                    <i class="bi bi-plus-circle mr-2"></i> Thêm hồ sơ y tế
                                 </a>
                             </div>
-                        }
-                    </div>
-                </div>
-            </div>
-            
-            <div class="mb-4">
-                <div class="bg-white shadow-md rounded-lg">
-                    <div class="bg-gray-200 p-4 rounded-t-lg">
-                        <h5 class="mb-0">Thông tin y tế</h5>
-                        <a asp-controller="MedicalRecords" asp-action="Index" asp-route-patientId="@Model.Id" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-file-earmark-medical"></i> Xem hồ sơ
-                        </a>
-                    </div>
-                    <div class="p-4">
-                        <div class="mb-3">
-                            <label class="font-bold">Tiền sử bệnh:</label>
-                            <p>@(string.IsNullOrEmpty(Model.MedicalHistory) ? "Không có" : Model.MedicalHistory)</p>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="font-bold">Thông tin dị ứng:</label>
-                            <p>@(string.IsNullOrEmpty(Model.AllergiesInfo) ? "Không có" : Model.AllergiesInfo)</p>
-                        </div>
-                        
-                        <div class="text-center mt-4">
-                            <a asp-controller="MedicalRecords" asp-action="Create" asp-route-patientId="@Model.Id" class="btn btn-sm btn-primary">
-                                <i class="bi bi-plus-circle"></i> Thêm hồ sơ y tế
-                            </a>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="col-span-2 mb-4">
-                <div class="bg-white shadow-md rounded-lg">
-                    <div class="bg-gray-200 p-4 rounded-t-lg">
-                        <h5 class="mb-0">Quá trình điều trị</h5>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <a asp-controller="Treatments" asp-action="PatientTreatments" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary me-2">
-                                <i class="bi bi-clipboard2-pulse"></i> Xem tất cả
+            <!-- Quá trình điều trị -->
+            <div class="mt-6">
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                        <h5 class="text-lg font-semibold text-gray-900">Quá trình điều trị</h5>
+                        <div class="flex space-x-2">
+                            <a asp-controller="Treatments" asp-action="PatientTreatments" asp-route-id="@Model.Id" class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition-colors text-sm">
+                                <i class="bi bi-clipboard2-pulse mr-1"></i> Xem tất cả
                             </a>
-                            <a asp-controller="Treatments" asp-action="Create" asp-route-patientId="@Model.Id" class="btn btn-sm btn-primary">
-                                <i class="bi bi-plus-circle"></i> Thêm mới
+                            <a asp-controller="Treatments" asp-action="Create" asp-route-patientId="@Model.Id" class="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition-colors text-sm">
+                                <i class="bi bi-plus-circle mr-1"></i> Thêm mới
                             </a>
                         </div>
                     </div>
-                    <div class="p-4">
+                    <div class="p-6">
                         @if (Model.Treatments != null && Model.Treatments.Any())
                         {
                             <div class="overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
-                                    <thead>
+                                    <thead class="bg-gray-50">
                                         <tr>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên điều trị</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bác sĩ</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày bắt đầu</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody class="bg-white divide-y divide-gray-200">
                                         @foreach (var treatment in Model.Treatments.OrderByDescending(t => t.StartDate))
                                         {
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap">@treatment.TreatmentName</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">@treatment.TreatmentType</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">@(treatment.Doctor?.FullName ?? "Chưa chỉ định")</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">@treatment.StartDate.ToString("dd/MM/yyyy")</td>
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@treatment.TreatmentName</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@treatment.TreatmentType</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@(treatment.Doctor?.FullName ?? "Chưa chỉ định")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@treatment.StartDate.ToString("dd/MM/yyyy")</td>
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     @switch (treatment.Status)
                                                     {
                                                         case "In Progress":
-                                                            <span class="bg-blue-500 text-white px-2 py-1 rounded">Đang tiến hành</span>
+                                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Đang tiến hành</span>
                                                             break;
                                                         case "Completed":
-                                                            <span class="bg-green-500 text-white px-2 py-1 rounded">Hoàn thành</span>
+                                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Hoàn thành</span>
                                                             break;
                                                         case "Cancelled":
-                                                            <span class="bg-red-500 text-white px-2 py-1 rounded">Đã hủy</span>
+                                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Đã hủy</span>
                                                             break;
                                                         default:
-                                                            <span class="bg-gray-500 text-white px-2 py-1 rounded">@treatment.Status</span>
+                                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">@treatment.Status</span>
                                                             break;
                                                     }
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <a asp-controller="Treatments" asp-action="Details" asp-route-id="@treatment.Id" class="btn btn-sm btn-outline-primary">
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <a asp-controller="Treatments" asp-action="Details" asp-route-id="@treatment.Id" class="text-blue-600 hover:text-blue-900">
                                                         Chi tiết
                                                     </a>
                                                 </td>
@@ -208,73 +218,74 @@
                         }
                         else
                         {
-                            <div class="text-center py-4">
-                                <i class="bi bi-clipboard-x display-4"></i>
-                                <p class="mt-3">Chưa có quá trình điều trị nào</p>
+                            <div class="text-center py-8">
+                                <i class="bi bi-clipboard-x text-4xl text-gray-400 mb-3"></i>
+                                <p class="text-gray-600">Chưa có quá trình điều trị nào</p>
                             </div>
                         }
                     </div>
                 </div>
             </div>
             
-            <div class="col-span-2 mb-4">
-                <div class="bg-white shadow-md rounded-lg">
-                    <div class="bg-gray-200 p-4 rounded-t-lg">
-                        <h5 class="mb-0">Lịch hẹn</h5>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <a asp-controller="Appointments" asp-action="PatientAppointments" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary me-2">
-                                <i class="bi bi-calendar-check"></i> Xem tất cả
+            <!-- Lịch hẹn -->
+            <div class="mt-6">
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                        <h5 class="text-lg font-semibold text-gray-900">Lịch hẹn</h5>
+                        <div class="flex space-x-2">
+                            <a asp-controller="Appointments" asp-action="PatientAppointments" asp-route-id="@Model.Id" class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition-colors text-sm">
+                                <i class="bi bi-calendar-check mr-1"></i> Xem tất cả
                             </a>
-                            <a asp-controller="Appointments" asp-action="Create" asp-route-patientId="@Model.Id" class="btn btn-sm btn-primary">
-                                <i class="bi bi-plus-circle"></i> Thêm mới
+                            <a asp-controller="Appointments" asp-action="Create" asp-route-patientId="@Model.Id" class="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition-colors text-sm">
+                                <i class="bi bi-plus-circle mr-1"></i> Thêm mới
                             </a>
                         </div>
                     </div>
-                    <div class="p-4">
+                    <div class="p-6">
                         @if (Model.Appointments != null && Model.Appointments.Any())
                         {
                             <div class="overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
-                                    <thead>
+                                    <thead class="bg-gray-50">
                                         <tr>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bác sĩ</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Giờ</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody class="bg-white divide-y divide-gray-200">
                                         @foreach (var appointment in Model.Appointments.OrderByDescending(a => a.AppointmentDate).ThenBy(a => a.AppointmentTime).Take(5))
                                         {
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap">@(appointment.Doctor?.FullName ?? "Chưa chỉ định")</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">@appointment.AppointmentDate.ToString("dd/MM/yyyy")</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">@appointment.AppointmentTime.ToString(@"hh\:mm")</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">@appointment.AppointmentType</td>
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@(appointment.Doctor?.FullName ?? "Chưa chỉ định")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@appointment.AppointmentDate.ToString("dd/MM/yyyy")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@appointment.AppointmentTime.ToString(@"hh\:mm")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@appointment.AppointmentType</td>
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     @switch (appointment.Status)
                                                     {
                                                         case "Scheduled":
-                                                            <span class="bg-blue-500 text-white px-2 py-1 rounded">Đã lên lịch</span>
+                                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Đã lên lịch</span>
                                                             break;
                                                         case "Completed":
-                                                            <span class="bg-green-500 text-white px-2 py-1 rounded">Hoàn thành</span>
+                                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Hoàn thành</span>
                                                             break;
                                                         case "Cancelled":
-                                                            <span class="bg-red-500 text-white px-2 py-1 rounded">Đã hủy</span>
+                                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Đã hủy</span>
                                                             break;
                                                         case "Rescheduled":
-                                                            <span class="bg-yellow-500 text-white px-2 py-1 rounded">Đổi lịch</span>
+                                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Đổi lịch</span>
                                                             break;
                                                         default:
-                                                            <span class="bg-gray-500 text-white px-2 py-1 rounded">@appointment.Status</span>
+                                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">@appointment.Status</span>
                                                             break;
                                                     }
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <a asp-controller="Appointments" asp-action="Details" asp-route-id="@appointment.Id" class="btn btn-sm btn-outline-primary">
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <a asp-controller="Appointments" asp-action="Details" asp-route-id="@appointment.Id" class="text-blue-600 hover:text-blue-900">
                                                         Chi tiết
                                                     </a>
                                                 </td>
@@ -286,9 +297,9 @@
                         }
                         else
                         {
-                            <div class="text-center py-4">
-                                <i class="bi bi-calendar-x display-4"></i>
-                                <p class="mt-3">Chưa có lịch hẹn nào</p>
+                            <div class="text-center py-8">
+                                <i class="bi bi-calendar-x text-4xl text-gray-400 mb-3"></i>
+                                <p class="text-gray-600">Chưa có lịch hẹn nào</p>
                             </div>
                         }
                     </div>
@@ -297,16 +308,3 @@
         </div>
     </div>
 </div>
-
-<style>
-    .avatar-placeholder {
-        width: 100px;
-        height: 100px;
-        background-color: #f8f9fa;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto;
-    }
-</style>

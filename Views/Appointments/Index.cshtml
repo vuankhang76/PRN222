@@ -137,21 +137,12 @@
                                                    asp-route-patientId="@item.PatientId">
                                                     <i class="bi bi-clipboard2-pulse mr-3 w-4"></i> Tạo điều trị
                                                 </a>
-                                                @if (item.TreatmentId.HasValue)
-                                                {
-                                                    <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Medications" asp-action="Create" asp-route-treatmentId="@item.TreatmentId">
-                                                        <i class="bi bi-capsule mr-3 w-4"></i> Kê đơn thuốc
-                                                    </a>
-                                                    <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Medications" asp-action="Index" asp-route-treatmentId="@item.TreatmentId">
-                                                        <i class="bi bi-list-ul mr-3 w-4"></i> Xem danh sách thuốc
-                                                    </a>
-                                                }
-                                                else
-                                                {
-                                                    <span class="flex items-center px-4 py-2 text-sm text-gray-500 cursor-not-allowed" onclick="alert('Vui lòng tạo điều trị cho cuộc hẹn này trước khi kê đơn thuốc')">
-                                                        <i class="bi bi-capsule mr-3 w-4"></i> Kê đơn thuốc
-                                                    </span>
-                                                }
+                                                <a class="flex items-center px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 font-medium" asp-controller="Medications" asp-action="Create" asp-route-appointmentId="@item.Id">
+                                                    <i class="bi bi-prescription2 mr-3 w-4"></i> Kê đơn thuốc
+                                                </a>
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Medications" asp-action="Index" asp-route-appointmentId="@item.Id">
+                                                    <i class="bi bi-journal-medical mr-3 w-4"></i> Xem đơn thuốc
+                                                </a>
                                                 <hr class="border-gray-200 my-1">
                                                 <a class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50" asp-action="Delete" asp-route-id="@item.Id">
                                                     <i class="bi bi-trash mr-3 w-4"></i> Xóa

@@ -6,58 +6,72 @@
     int patientId = ViewData["PatientId"] as int? ?? 0;
 }
 
-<div class="container-fluid">
-    <h1 class="mt-4">Lịch sử hồ sơ y tế - @patientName</h1>
-    
-    <div class="mb-3">
-        <a asp-controller="Patients" asp-action="Details" asp-route-id="@patientId" class="btn btn-info">
-            <i class="fas fa-user"></i> Xem hồ sơ bệnh nhân
-        </a>
-        <a asp-action="Create" asp-route-patientId="@patientId" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Thêm hồ sơ mới
-        </a>
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-3xl font-bold text-gray-900">Lịch sử hồ sơ y tế</h2>
+            <p class="text-gray-600 mt-1">Bệnh nhân: <span class="font-semibold">@patientName</span></p>
+        </div>
+        <div class="flex space-x-3">
+            <a asp-controller="Patients" asp-action="Details" asp-route-id="@patientId" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex items-center">
+                <i class="bi bi-person mr-2"></i> Xem hồ sơ bệnh nhân
+            </a>
+            <a asp-action="Create" asp-route-patientId="@patientId" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
+                <i class="bi bi-plus-circle mr-2"></i> Thêm hồ sơ mới
+            </a>
+        </div>
     </div>
-    
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+
+    <div class="bg-white rounded-lg shadow-lg">
+        <div class="p-6">
+            <div class="mb-6">
+                <div class="relative">
+                    <input type="text" id="searchInput" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Tìm kiếm hồ sơ y tế...">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="bi bi-search text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full" id="medicalRecordsTable">
                     <thead>
-                        <tr>
-                            <th>Ngày</th>
-                            <th>Loại hồ sơ</th>
-                            <th>Tiêu đề</th>
-                            <th>Bác sĩ</th>
-                            <th>Tệp đính kèm</th>
-                            <th>Thao tác</th>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Ngày</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Loại hồ sơ</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Tiêu đề</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Bác sĩ</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700 w-32">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @if (Model != null)
+                        @if (Model != null && Model.Any())
                         {
                             @foreach (var item in Model)
                             {
-                                <tr>
-                                    <td>@item.RecordDate.ToString("dd/MM/yyyy")</td>
-                                    <td>@item.RecordType</td>
-                                    <td>@item.RecordTitle</td>
-                                    <td>@(item.Doctor?.FullName ?? "Không có")</td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(item.AttachmentPath))
-                                        {
-                                            <a asp-action="DownloadAttachment" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
-                                                <i class="fas fa-download"></i> Tải xuống
-                                            </a>
-                                        }
-                                        else
-                                        {
-                                            <span>Không có</span>
-                                        }
+                                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150">
+                                    <td class="py-4 px-4 text-sm text-gray-900">
+                                        @item.RecordDate.ToString("dd/MM/yyyy")
                                     </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Chi tiết</a>
-                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
+                                    <td class="py-4 px-4 text-sm">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            @item.RecordType
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-4 text-sm text-gray-900 font-medium">
+                                        @item.RecordTitle
+                                    </td>
+                                    <td class="py-4 px-4 text-sm text-gray-600">
+                                        @(item.Doctor?.FullName ?? "Không có")
+                                    </td>
+                                    <td class="py-4 px-4 text-sm">
+                                        <div class="flex space-x-2">
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="text-blue-600 hover:text-blue-900 text-xs font-medium">
+                                                Chi tiết
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="text-yellow-600 hover:text-yellow-900 text-xs font-medium">
+                                                Sửa
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
@@ -66,7 +80,13 @@
                         else
                         {
                             <tr>
-                                <td colspan="6" class="text-center">Chưa có hồ sơ y tế nào</td>
+                                <td colspan="5" class="py-12 text-center">
+                                    <div class="flex flex-col items-center">
+                                        <i class="bi bi-file-earmark-medical text-4xl text-gray-400 mb-4"></i>
+                                        <p class="text-gray-600 text-lg">Chưa có hồ sơ y tế nào</p>
+                                        <p class="text-gray-400 text-sm mt-1">Hãy thêm hồ sơ y tế đầu tiên cho bệnh nhân</p>
+                                    </div>
+                                </td>
                             </tr>
                         }
                     </tbody>
@@ -79,9 +99,27 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            $('#dataTable').DataTable({
-                "order": [[0, "desc"]]
+            // Initialize search functionality
+            $('#searchInput').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                $('#medicalRecordsTable tbody tr').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
             });
+            
+            // Initialize DataTable if available
+            if ($.fn.DataTable) {
+                $('#medicalRecordsTable').DataTable({
+                    "order": [[0, "desc"]],
+                    "pageLength": 25,
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Vietnamese.json"
+                    },
+                    "columnDefs": [
+                        { "orderable": false, "targets": [4] }
+                    ]
+                });
+            }
         });
     </script>
 } 
