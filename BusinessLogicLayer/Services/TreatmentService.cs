@@ -16,7 +16,9 @@ namespace InfertilityApp.BusinessLogicLayer.Services
         // CRUD cơ bản
         public async Task<IEnumerable<Treatment>> GetAllTreatmentsAsync()
         {
-            return await _unitOfWork.Treatments.GetAllAsync();
+            return await _unitOfWork.Treatments.GetWithIncludeAsync(
+                t => t.Patient!,
+                t => t.Doctor!);
         }
 
         public async Task<Treatment?> GetTreatmentByIdAsync(int id)
@@ -97,17 +99,26 @@ namespace InfertilityApp.BusinessLogicLayer.Services
         // Business logic đặc biệt
         public async Task<IEnumerable<Treatment>> GetTreatmentsByPatientAsync(int patientId)
         {
-            return await _unitOfWork.Treatments.FindAsync(t => t.PatientId == patientId);
+            return await _unitOfWork.Treatments.FindWithIncludeAsync(
+                t => t.PatientId == patientId,
+                t => t.Patient!,
+                t => t.Doctor!);
         }
 
         public async Task<IEnumerable<Treatment>> GetTreatmentsByDoctorAsync(int doctorId)
         {
-            return await _unitOfWork.Treatments.FindAsync(t => t.DoctorId == doctorId);
+            return await _unitOfWork.Treatments.FindWithIncludeAsync(
+                t => t.DoctorId == doctorId,
+                t => t.Patient!,
+                t => t.Doctor!);
         }
 
         public async Task<IEnumerable<Treatment>> GetActiveTreatmentsAsync()
         {
-            return await _unitOfWork.Treatments.FindAsync(t => t.Status == "Đang điều trị");
+            return await _unitOfWork.Treatments.FindWithIncludeAsync(
+                t => t.Status == "Đang điều trị",
+                t => t.Patient!,
+                t => t.Doctor!);
         }
 
         public async Task<IEnumerable<Treatment>> GetCompletedTreatmentsAsync()

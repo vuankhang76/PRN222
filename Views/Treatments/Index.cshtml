@@ -136,7 +136,7 @@
                                                 <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Medications" asp-action="TreatmentMedications" asp-route-id="@item.Id">
                                                     <i class="bi bi-capsule mr-3 w-4"></i> Thuốc điều trị
                                                 </a>
-                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="MedicalRecords" asp-action="Index" asp-route-treatmentId="@item.Id">
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="MedicalRecords" asp-action="Index" asp-route-patientId="@item.PatientId">
                                                     <i class="bi bi-file-earmark-medical mr-3 w-4"></i> Hồ sơ y tế
                                                 </a>
                                                 <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="TestResults" asp-action="Index" asp-route-treatmentId="@item.Id">
