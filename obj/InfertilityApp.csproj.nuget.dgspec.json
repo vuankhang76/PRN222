@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\PRN222\\PRN222\\InfertilityApp.csproj": {}
+    "E:\\PRN222\\DU_AN\\PRN222\\InfertilityApp.csproj": {}
   },
   "projects": {
-    "D:\\PRN222\\PRN222\\InfertilityApp.csproj": {
+    "E:\\PRN222\\DU_AN\\PRN222\\InfertilityApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\PRN222\\PRN222\\InfertilityApp.csproj",
+        "projectUniqueName": "E:\\PRN222\\DU_AN\\PRN222\\InfertilityApp.csproj",
         "projectName": "InfertilityApp",
-        "projectPath": "D:\\PRN222\\PRN222\\InfertilityApp.csproj",
-        "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-        "outputPath": "D:\\PRN222\\PRN222\\obj\\",
+        "projectPath": "E:\\PRN222\\DU_AN\\PRN222\\InfertilityApp.csproj",
+        "packagesPath": "C:\\Users\\ACER\\.nuget\\packages\\",
+        "outputPath": "E:\\PRN222\\DU_AN\\PRN222\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ACER\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -43,8 +44,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.200"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -88,7 +88,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.401/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

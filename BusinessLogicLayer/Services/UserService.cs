@@ -109,10 +109,18 @@ namespace InfertilityApp.BusinessLogicLayer.Services
             var user = await GetUserByUsernameAsync(username);
             if (user == null || !user.IsActive) return null;
 
-            if (VerifyPassword(password, user.PasswordHash))
+            try 
             {
-                await UpdateLastLoginAsync(user.Id);
-                return user;
+                if (VerifyPassword(password, user.PasswordHash))
+                {
+                    await UpdateLastLoginAsync(user.Id);
+                    return user;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine($"Authentication error: {ex.Message}");
             }
 
             return null;

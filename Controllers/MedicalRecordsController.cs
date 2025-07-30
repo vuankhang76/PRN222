@@ -85,7 +85,7 @@ namespace InfertilityApp.Controllers
                 return NotFound();
             }
 
-            var medicalRecord = await _medicalRecordService.GetMedicalRecordByIdAsync(id.Value);
+            var medicalRecord = await _medicalRecordService.GetMedicalRecordWithDetailsAsync(id.Value);
             if (medicalRecord == null)
             {
                 return NotFound();

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("InfertilityApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+82b74aa3f90cc8beb3f1373cbf1f64bfba7f963c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7c38a7008471e2588f041f69c1c6f1e13be566a7")]
 [assembly: System.Reflection.AssemblyProductAttribute("InfertilityApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("InfertilityApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -65,7 +65,7 @@ using (var scope = app.Services.CreateScope())
         var admin = new User
         {
             Username = "admin",
-            PasswordHash = "123456", // Will be hashed by service
+            PasswordHash = "12345", // Will be hashed by UserService
             FullName = "Quản trị viên hệ thống",
             Email = "admin@infertility.com",
             PhoneNumber = "0123456789",
