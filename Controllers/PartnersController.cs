@@ -96,7 +96,7 @@ namespace InfertilityApp.Controllers
                 try
                 {
                     await _partnerService.CreatePartnerAsync(partner);
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Details", "Patients", new { id = partner.PatientId });
                 }
                 catch (Exception ex)
                 {
@@ -225,6 +225,28 @@ namespace InfertilityApp.Controllers
             if (partner == null)
             {
                 return View("NoPartner", patient);
+            }
+
+            return View(partner);
+        }
+
+        // GET: Partners/PatientPartner/5
+        public async Task<IActionResult> PatientPartner(int id)
+        {
+            var patient = await _patientService.GetPatientByIdAsync(id);
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            var partner = await _partnerService.GetPartnerByPatientIdAsync(id);
+            ViewBag.Patient = patient;
+            ViewBag.PatientId = id;
+
+            if (partner == null)
+            {
+                // Redirect to create partner page if no partner exists
+                return RedirectToAction("Create", new { patientId = id });
             }
 
             return View(partner);

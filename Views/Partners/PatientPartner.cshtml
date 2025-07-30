@@ -1,0 +1,72 @@
+@model InfertilityApp.Models.Partner
+
+@{
+    ViewData["Title"] = "Thông tin người phối ngẫu";
+    var patient = ViewBag.Patient as InfertilityApp.Models.Patient;
+}
+
+<div class="container mx-auto px-4 py-6">
+    <div class="mb-6">
+        <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-bold">Thông tin người phối ngẫu</h2>
+            <div>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="bi bi-pencil"></i> Chỉnh sửa
+                </a>
+                <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.PatientId" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </div>
+        <p class="text-gray-600">Bệnh nhân: @patient.FullName</p>
+    </div>
+
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="font-bold">Họ và tên:</label>
+                        <p class="mt-1">@Model.FullName</p>
+                    </div>
+
+                    <div>
+                        <label class="font-bold">Ngày sinh:</label>
+                        <p class="mt-1">@Model.DateOfBirth.ToString("dd/MM/yyyy") (@((int)((DateTime.Now - Model.DateOfBirth).TotalDays / 365.25)) tuổi)</p>
+                    </div>
+
+                    <div>
+                        <label class="font-bold">Giới tính:</label>
+                        <p class="mt-1">@Model.Gender</p>
+                    </div>
+
+                    <div>
+                        <label class="font-bold">Số điện thoại:</label>
+                        <p class="mt-1">@Model.PhoneNumber</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="font-bold">Email:</label>
+                        <p class="mt-1">@Model.Email</p>
+                    </div>
+
+                    
+
+                    <div>
+                        <label class="font-bold">Nghề nghiệp:</label>
+                        <p class="mt-1">@Model.Occupation</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <div>
+                    <label class="font-bold">Tiền sử bệnh:</label>
+                    <p class="mt-1 whitespace-pre-line">@(string.IsNullOrEmpty(Model.MedicalHistory) ? "Không có" : Model.MedicalHistory)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

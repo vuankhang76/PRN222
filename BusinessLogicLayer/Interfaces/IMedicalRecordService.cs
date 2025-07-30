@@ -18,6 +18,7 @@ namespace InfertilityApp.BusinessLogicLayer.Interfaces
         Task<IEnumerable<MedicalRecord>> GetMedicalRecordsByDoctorAsync(int doctorId);
         Task<IEnumerable<MedicalRecord>> GetMedicalRecordsByDateRangeAsync(DateTime startDate, DateTime endDate);
         Task<IEnumerable<MedicalRecord>> GetMedicalRecordsByRecordTypeAsync(string recordType);
+        Task<IEnumerable<MedicalRecord>> GetMedicalRecordsByPatientIdAsync(string patientId);
         Task<MedicalRecord?> GetLatestMedicalRecordByPatientAsync(int patientId);
         
         // Tìm kiếm và lọc

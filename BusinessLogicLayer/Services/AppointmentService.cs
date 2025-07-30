@@ -65,7 +65,10 @@ namespace InfertilityApp.BusinessLogicLayer.Services
 
         public async Task<IEnumerable<Appointment>> GetAppointmentsByPatientAsync(int patientId)
         {
-            return await _unitOfWork.Appointments.FindAsync(a => a.PatientId == patientId);
+            return await _unitOfWork.Appointments.GetWithIncludeAsync(
+                a => a.Patient!,
+                a => a.Doctor!)
+                .ContinueWith(t => t.Result.Where(a => a.PatientId == patientId));
         }
 
         public async Task<IEnumerable<Appointment>> GetAppointmentsByDoctorAsync(int doctorId)

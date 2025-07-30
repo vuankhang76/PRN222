@@ -23,6 +23,25 @@ namespace InfertilityApp.Controllers
             _doctorService = doctorService;
         }
 
+        // GET: Appointments/PatientAppointments/5
+        public async Task<IActionResult> PatientAppointments(int id)
+        {
+            // Get the patient first to ensure they exist
+            var patient = await _patientService.GetPatientByIdAsync(id);
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            // Get all appointments for this patient
+            var appointments = await _appointmentService.GetAppointmentsByPatientAsync(id);
+
+            ViewData["PatientName"] = patient.FullName;
+            ViewData["PatientId"] = id;
+
+            return View(appointments);
+        }
+
         // GET: Appointments
         public async Task<IActionResult> Index(DateTime? date, int? doctorId, int? patientId, string status)
         {
@@ -52,13 +71,13 @@ namespace InfertilityApp.Controllers
                 appointments = appointments.Where(a => a.Status == status);
             }
 
-            var patients = await _patientService.GetAllPatientsAsync();
             var doctors = await _doctorService.GetAllDoctorsAsync();
+            var patients = await _patientService.GetAllPatientsAsync();
 
-            ViewData["Patients"] = new SelectList(patients, "Id", "FullName", patientId);
-            ViewData["Doctors"] = new SelectList(doctors, "Id", "FullName", doctorId);
-            ViewData["Statuses"] = new SelectList(new[] { "Đã đặt", "Đã xác nhận", "Hoàn thành", "Đã hủy", "Không đến" }, status);
-            ViewData["SelectedDate"] = date?.ToString("yyyy-MM-dd");
+            ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName", doctorId);
+            ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", patientId);
+            ViewData["Date"] = date?.ToString("yyyy-MM-dd");
+            ViewData["Status"] = new SelectList(new[] { "Scheduled", "Completed", "Cancelled", "Rescheduled" }, status);
 
             return View(appointments.OrderBy(a => a.AppointmentDate).ThenBy(a => a.AppointmentTime));
         }

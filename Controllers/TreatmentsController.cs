@@ -67,6 +67,25 @@ namespace InfertilityApp.Controllers
             return View(treatments);
         }
 
+        // GET: Treatments/PatientTreatments/5
+        public async Task<IActionResult> PatientTreatments(int id)
+        {
+            // Get the patient first to ensure they exist
+            var patient = await _patientService.GetPatientByIdAsync(id);
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            // Get all treatments for this patient
+            var treatments = await _treatmentService.GetTreatmentsByPatientAsync(id);
+
+            ViewData["PatientName"] = patient.FullName;
+            ViewData["PatientId"] = id;
+
+            return View(treatments);
+        }
+
         // GET: Treatments/Details/5
         public async Task<IActionResult> Details(int? id)
         {

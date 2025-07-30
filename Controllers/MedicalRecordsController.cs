@@ -24,14 +24,18 @@ namespace InfertilityApp.Controllers
         }
 
         // GET: MedicalRecords
-        public async Task<IActionResult> Index(int? patientId, string searchString, DateTime? fromDate, DateTime? toDate, string recordType)
+        public async Task<IActionResult> Index(string? patientId = null, int? patientIntId = null, string? searchString = null, DateTime? fromDate = null, DateTime? toDate = null, string? recordType = null)
         {
             var medicalRecords = await _medicalRecordService.GetAllMedicalRecordsWithDetailsAsync();
 
-            // Lọc theo bệnh nhân
-            if (patientId.HasValue)
+            // Handle both string and int patientId
+            if (!string.IsNullOrEmpty(patientId))
             {
-                medicalRecords = await _medicalRecordService.GetMedicalRecordsByPatientAsync(patientId.Value);
+                medicalRecords = await _medicalRecordService.GetMedicalRecordsByPatientIdAsync(patientId);
+            }
+            else if (patientIntId.HasValue)
+            {
+                medicalRecords = await _medicalRecordService.GetMedicalRecordsByPatientAsync(patientIntId.Value);
             }
 
             // Tìm kiếm theo chẩn đoán

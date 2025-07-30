@@ -120,6 +120,17 @@ namespace InfertilityApp.BusinessLogicLayer.Services
                 ));
         }
 
+        public async Task<IEnumerable<MedicalRecord>> GetMedicalRecordsByPatientIdAsync(string patientId)
+        {
+            // First get all records with includes
+            var records = await _unitOfWork.MedicalRecords.GetWithIncludeAsync(
+                mr => mr.Patient!,
+                mr => mr.Doctor!);
+            
+            // Then filter in memory
+            return records.Where(mr => mr.PatientId.ToString() == patientId);
+        }
+
         // Thống kê và báo cáo
         public async Task<int> GetTotalMedicalRecordsCountAsync()
         {

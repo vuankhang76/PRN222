@@ -1,0 +1,92 @@
+@model InfertilityApp.Models.Partner
+
+@{
+    ViewData["Title"] = "Thêm người phối ngẫu";
+}
+
+<div class="container mx-auto px-4 py-6">
+    <div class="mb-6">
+        <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-bold">Thêm người phối ngẫu mới</h2>
+            <div>
+                <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.PatientId"
+                   class="inline-flex items-center px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 text-sm font-medium rounded">
+                    <i class="bi bi-arrow-left mr-2"></i> Quay lại
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="p-6">
+            <form asp-action="Create" method="post" class="space-y-6">
+                <div asp-validation-summary="ModelOnly" class="text-red-500 mb-4 text-sm"></div>
+                <input type="hidden" asp-for="PatientId" />
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label asp-for="FullName" class="block font-semibold">Họ và tên</label>
+                            <input asp-for="FullName" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                            <span asp-validation-for="FullName" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="DateOfBirth" class="block font-semibold">Ngày sinh</label>
+                            <input asp-for="DateOfBirth" type="date" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                            <span asp-validation-for="DateOfBirth" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="Gender" class="block font-semibold">Giới tính</label>
+                            <select asp-for="Gender" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                <option value="">-- Chọn giới tính --</option>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                            </select>
+                            <span asp-validation-for="Gender" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="PhoneNumber" class="block font-semibold">Số điện thoại</label>
+                            <input asp-for="PhoneNumber" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            <span asp-validation-for="PhoneNumber" class="text-red-500 text-sm"></span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label asp-for="Email" class="block font-semibold">Email</label>
+                            <input asp-for="Email" type="email" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="Occupation" class="block font-semibold">Nghề nghiệp</label>
+                            <input asp-for="Occupation" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            <span asp-validation-for="Occupation" class="text-red-500 text-sm"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label asp-for="MedicalHistory" class="block font-semibold">Tiền sử bệnh</label>
+                    <textarea asp-for="MedicalHistory" rows="4"
+                              class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    <span asp-validation-for="MedicalHistory" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div>
+                    <button type="submit"
+                            class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded shadow">
+                        <i class="bi bi-save mr-2"></i> Lưu thông tin
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
