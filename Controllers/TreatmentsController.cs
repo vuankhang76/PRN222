@@ -23,6 +23,16 @@ namespace InfertilityApp.Controllers
             _doctorService = doctorService;
         }
 
+        // GET: Treatments/GetByMedicalRecord/5
+        public async Task<IActionResult> GetByMedicalRecord(int id)
+        {
+            var treatments = await _treatmentService.GetAllTreatmentsAsync();
+            treatments = treatments.Where(t => t.MedicalRecordId == id);
+
+            ViewBag.MedicalRecordId = id;
+            return View("Index", treatments);
+        }
+
         // GET: Treatments
         public async Task<IActionResult> Index(string searchString, string status, int? patientId, int? doctorId)
         {

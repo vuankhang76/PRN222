@@ -31,6 +31,11 @@ namespace InfertilityApp.Models
 
         public DateTime? EndDate { get; set; }
 
+        public int? MedicalRecordId { get; set; }
+
+        [ForeignKey("MedicalRecordId")]
+        public virtual MedicalRecord? MedicalRecord { get; set; }
+
         [Required]
         [StringLength(50)]
         public string TreatmentType { get; set; } = null!; // IVF, IUI, etc.
