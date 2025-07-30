@@ -5,7 +5,7 @@ namespace InfertilityApp.DataAccessLayer.Interfaces
     public interface IUnitOfWork : IDisposable
     {
         // Repositories cho từng entity
-        IRepository<Patient> Patients { get; }
+        IPatientRepository? Patients { get; }
         IRepository<Partner> Partners { get; }
         IRepository<Doctor> Doctors { get; }
         IRepository<Treatment> Treatments { get; }

@@ -27,6 +27,7 @@ namespace InfertilityApp.BusinessLogicLayer.Services
 
         public async Task<Patient?> GetPatientWithDetailsAsync(int id)
         {
+<<<<<<< HEAD
             var context = _unitOfWork.GetContext();
             return await context.Patients
                 .Include(p => p.Partner)
@@ -36,6 +37,9 @@ namespace InfertilityApp.BusinessLogicLayer.Services
                 .Include(p => p.Appointments!)
                     .ThenInclude(a => a.Doctor)
                 .FirstOrDefaultAsync(p => p.Id == id);
+=======
+            return await _unitOfWork.Patients.GetPatientFullDetailsAsync(id);
+>>>>>>> aec2cdb95d2cd2a5cfdfaef4dde0fb69a4c4d8d2
         }
 
         public async Task<Patient> CreatePatientAsync(Patient patient)

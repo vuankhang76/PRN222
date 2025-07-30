@@ -224,7 +224,7 @@ namespace InfertilityApp.Controllers
 
             if (partner == null)
             {
-                return View("NoPartner");
+                return View("NoPartner", patient);
             }
 
             // Redirect đến Details với ID của partner
