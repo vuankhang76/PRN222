@@ -1,6 +1,7 @@
 using InfertilityApp.BusinessLogicLayer.Interfaces;
 using InfertilityApp.DataAccessLayer.Interfaces;
 using InfertilityApp.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace InfertilityApp.BusinessLogicLayer.Services
 {
@@ -26,11 +27,15 @@ namespace InfertilityApp.BusinessLogicLayer.Services
 
         public async Task<Patient?> GetPatientWithDetailsAsync(int id)
         {
-            return await _unitOfWork.Patients.GetByIdWithIncludeAsync(id,
-                p => p.Partner!,
-                p => p.Treatments!,
-                p => p.MedicalRecords!,
-                p => p.Appointments!);
+            var context = _unitOfWork.GetContext();
+            return await context.Patients
+                .Include(p => p.Partner)
+                .Include(p => p.Treatments!)
+                    .ThenInclude(t => t.Doctor)  
+                .Include(p => p.MedicalRecords)
+                .Include(p => p.Appointments!)
+                    .ThenInclude(a => a.Doctor)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<Patient> CreatePatientAsync(Patient patient)

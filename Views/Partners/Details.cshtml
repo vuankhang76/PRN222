@@ -1,0 +1,152 @@
+@model InfertilityApp.Models.Partner
+
+@{
+    ViewData["Title"] = "Chi tiết thông tin người phối mẫu";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Chi tiết thông tin người phối mẫu</h2>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+            <i class="bi bi-pencil"></i> Chỉnh sửa
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Quay lại danh sách
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">Thông tin cá nhân</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="avatar-placeholder mb-3">
+                        <i class="bi bi-person-heart display-1"></i>
+                    </div>
+                    <h3>@Model.FullName</h3>
+                    <p class="text-muted mb-0">Mã người phối mẫu: #@Model.Id</p>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold">Ngày sinh:</label>
+                        <p>@Model.DateOfBirth.ToString("dd/MM/yyyy") (@((int)((DateTime.Now - Model.DateOfBirth).TotalDays / 365.25)) tuổi)</p>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold">Giới tính:</label>
+                        <p>
+                            <span class="badge @(Model.Gender == "Nam" ? "bg-primary" : "bg-info")">
+                                @Model.Gender
+                            </span>
+                        </p>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold">Số điện thoại:</label>
+                        <p>@(Model.PhoneNumber ?? "Chưa cập nhật")</p>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold">Email:</label>
+                        <p>@(Model.Email ?? "Chưa cập nhật")</p>
+                    </div>
+                    
+                    <div class="col-12 mb-3">
+                        <label class="fw-bold">Nghề nghiệp:</label>
+                        <p>@(Model.Occupation ?? "Chưa cập nhật")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">Thông tin liên kết</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="fw-bold">Bệnh nhân liên kết:</label>
+                    <p>
+                        <span class="badge bg-success">ID: @Model.PatientId</span>
+                        @if (Model.Patient != null)
+                        {
+                            <br><small class="text-muted">@Model.Patient.FullName</small>
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        @if (!string.IsNullOrEmpty(Model.MedicalHistory))
+        {
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Tiền sử bệnh lý</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">@Model.MedicalHistory</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="d-flex justify-content-end mt-4">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">
+        <i class="bi bi-pencil"></i> Chỉnh sửa thông tin
+    </a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger me-2" 
+       onclick="return confirm('Bạn có chắc chắn muốn xóa thông tin người phối mẫu này?')">
+        <i class="bi bi-trash"></i> Xóa
+    </a>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-list"></i> Quay lại danh sách
+    </a>
+</div>
+
+<style>
+.avatar-placeholder {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: white;
+    font-size: 3rem;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.btn {
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+</style>

@@ -12,7 +12,7 @@ namespace InfertilityApp.BusinessLogicLayer.Interfaces
         Task<Partner> UpdatePartnerAsync(Partner partner);
         Task<bool> DeletePartnerAsync(int id);
 
-        // Business logic đặc biệt cho người bạn đời
+        // Business logic đặc biệt cho người phối mẫu
         Task<Partner?> GetPartnerByPatientIdAsync(int patientId);
         Task<IEnumerable<Partner>> GetPartnersByAgeRangeAsync(int minAge, int maxAge);
         Task<IEnumerable<Partner>> GetPartnersByGenderAsync(string gender);

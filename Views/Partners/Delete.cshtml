@@ -1,0 +1,140 @@
+@model InfertilityApp.Models.Partner
+
+@{
+    ViewData["Title"] = "Xóa thông tin người phối mẫu";
+}
+
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-red-600">Xóa thông tin người phối mẫu</h2>
+    <a asp-action="Index" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors duration-200 flex items-center">
+        <i class="bi bi-arrow-left mr-2"></i> Quay lại danh sách
+    </a>
+</div>
+
+<div class="bg-white rounded-lg shadow-lg border-2 border-red-200">
+    <div class="p-6">
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <div class="flex items-center">
+                <i class="bi bi-exclamation-triangle text-red-500 text-2xl mr-3"></i>
+                <div>
+                    <h3 class="text-lg font-semibold text-red-800">Xác nhận xóa</h3>
+                    <p class="text-red-700">Bạn có chắc chắn muốn xóa thông tin người phối mẫu này? Hành động này không thể hoàn tác.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thông tin bạn đời sẽ bị xóa -->
+        <div class="border rounded-lg p-4 bg-gray-50 mb-6">
+            <h4 class="text-lg font-semibold text-gray-800 mb-4">Thông tin sẽ bị xóa:</h4>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600">Họ và tên:</label>
+                    <p class="text-gray-900 font-medium">@Model.FullName</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600">Ngày sinh:</label>
+                    <p class="text-gray-900">@Model.DateOfBirth.ToString("dd/MM/yyyy") (@((int)((DateTime.Now - Model.DateOfBirth).TotalDays / 365.25)) tuổi)</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600">Giới tính:</label>
+                    <p class="text-gray-900">@Model.Gender</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-600">Bệnh nhân liên kết:</label>
+                    <p class="text-gray-900">ID: @Model.PatientId</p>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                {
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600">Số điện thoại:</label>
+                        <p class="text-gray-900">@Model.PhoneNumber</p>
+                    </div>
+                }
+                
+                @if (!string.IsNullOrEmpty(Model.Email))
+                {
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600">Email:</label>
+                        <p class="text-gray-900">@Model.Email</p>
+                    </div>
+                }
+                
+                @if (!string.IsNullOrEmpty(Model.Occupation))
+                {
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600">Nghề nghiệp:</label>
+                        <p class="text-gray-900">@Model.Occupation</p>
+                    </div>
+                }
+            </div>
+            
+            @if (!string.IsNullOrEmpty(Model.MedicalHistory))
+            {
+                <div class="mt-4">
+                    <label class="block text-sm font-semibold text-gray-600">Tiền sử bệnh lý:</label>
+                    <p class="text-gray-900 bg-white p-3 rounded border">@Model.MedicalHistory</p>
+                </div>
+            }
+        </div>
+
+        <!-- Form xác nhận xóa -->
+        <form asp-action="Delete">
+            <input asp-for="Id" type="hidden" />
+            
+            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <a asp-action="Index" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors duration-200 flex items-center">
+                    <i class="bi bi-x-circle mr-2"></i>Hủy bỏ
+                </a>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 flex items-center">
+                    <i class="bi bi-eye mr-2"></i>Xem lại
+                </a>
+                <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 flex items-center">
+                    <i class="bi bi-trash mr-2"></i>Xác nhận xóa
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.border-red-200 {
+    border-color: #fecaca !important;
+}
+
+.bg-red-50 {
+    background-color: #fef2f2 !important;
+}
+
+.text-red-500 {
+    color: #ef4444 !important;
+}
+
+.text-red-600 {
+    color: #dc2626 !important;
+}
+
+.text-red-700 {
+    color: #b91c1c !important;
+}
+
+.text-red-800 {
+    color: #991b1b !important;
+}
+
+.bg-red-600 {
+    background-color: #dc2626 !important;
+}
+
+.bg-red-700 {
+    background-color: #b91c1c !important;
+}
+
+.hover\:bg-red-700:hover {
+    background-color: #b91c1c !important;
+}
+</style>

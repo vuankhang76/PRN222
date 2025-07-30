@@ -89,7 +89,7 @@ namespace InfertilityApp.Controllers
         // POST: Partners/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PatientId,FullName,DateOfBirth,Gender,PhoneNumber,Email,Address,Occupation,MedicalHistory")] Partner partner)
+        public async Task<IActionResult> Create([Bind("Id,PatientId,FullName,DateOfBirth,Gender,PhoneNumber,Email,Occupation,MedicalHistory")] Partner partner)
         {
             if (ModelState.IsValid)
             {
@@ -131,7 +131,7 @@ namespace InfertilityApp.Controllers
         // POST: Partners/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,FullName,DateOfBirth,Gender,PhoneNumber,Email,Address,Occupation,MedicalHistory")] Partner partner)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,FullName,DateOfBirth,Gender,PhoneNumber,Email,Occupation,MedicalHistory")] Partner partner)
         {
             if (id != partner.Id)
             {

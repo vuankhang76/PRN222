@@ -47,6 +47,11 @@
                         <i class="bi bi-hospital mr-3"></i> Bác sĩ
                     </a>
                 </li>
+                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Partners" ? "bg-blue-600" : "")">
+                    <a asp-controller="Partners" asp-action="Index" class="flex items-center p-4 text-white no-underline hover:bg-gray-700 transition-all duration-300">
+                        <i class="bi bi-person-hearts mr-3"></i> Người phối mẫu
+                    </a>
+                </li>
                 <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Appointments" ? "bg-blue-600" : "")">
                     <a asp-controller="Appointments" asp-action="Index" class="flex items-center p-4 text-white no-underline hover:bg-gray-700 transition-all duration-300">
                         <i class="bi bi-calendar-check mr-3"></i> Lịch hẹn

@@ -34,12 +34,12 @@ namespace InfertilityApp.BusinessLogicLayer.Services
         {
             if (!await ValidatePartnerDataAsync(partner))
             {
-                throw new ArgumentException("Dữ liệu bạn đời không hợp lệ");
+                throw new ArgumentException("Dữ liệu người phối mẫu không hợp lệ");
             }
 
             if (!await CanPatientHavePartnerAsync(partner.PatientId))
             {
-                throw new InvalidOperationException("Bệnh nhân đã có thông tin bạn đời");
+                throw new InvalidOperationException("Bệnh nhân đã có thông tin người phối mẫu");
             }
 
             var result = await _unitOfWork.Partners.AddAsync(partner);
@@ -51,7 +51,7 @@ namespace InfertilityApp.BusinessLogicLayer.Services
         {
             if (!await ValidatePartnerDataAsync(partner))
             {
-                throw new ArgumentException("Dữ liệu bạn đời không hợp lệ");
+                throw new ArgumentException("Dữ liệu người phối mẫu không hợp lệ");
             }
 
             await _unitOfWork.Partners.UpdateAsync(partner);

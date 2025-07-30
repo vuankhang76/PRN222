@@ -24,5 +24,8 @@ namespace InfertilityApp.DataAccessLayer.Interfaces
         Task BeginTransactionAsync();
         Task CommitTransactionAsync();
         Task RollbackTransactionAsync();
+        
+        // Truy cập DbContext để thực hiện complex queries
+        ApplicationDbContext GetContext();
     }
 } 
