@@ -41,7 +41,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="overflow-x-auto">
             <table class="w-full" id="appointmentsTable">
                 <thead>
@@ -64,7 +64,7 @@
                         <th class="text-left py-3 px-4 font-semibold text-gray-700">
                             Trạng thái
                         </th>
-                        <th class="text-left py-3 px-4 font-semibold text-gray-700 w-32">Thao tác</th>
+<th class="text-left py-3 px-4 font-semibold text-gray-700 w-32">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -93,19 +93,23 @@
                             <td class="py-3 px-4">
                                 @switch (item.Status)
                                 {
+                                    
                                     case "Đã lên lịch":
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Đã lên lịch</span>
                                         break;
+                                    
                                     case "Hoàn thành":
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Hoàn thành</span>
                                         break;
+                                    
                                     case "Đã hủy":
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Đã hủy</span>
                                         break;
+                                    
                                     case "Đổi lịch":
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Đổi lịch</span>
                                         break;
-                                    case "Không đến":
+case "Không đến":
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">Không đến</span>
                                         break;
                                     default:
@@ -130,19 +134,29 @@
                                                 <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="MedicalRecords" asp-action="Create" asp-route-appointmentId="@item.Id">
                                                     <i class="bi bi-file-earmark-medical mr-3 w-4"></i> Tạo hồ sơ y tế
                                                 </a>
-                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" 
+                                                                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" 
                                                    asp-controller="Treatments" 
                                                    asp-action="Create" 
                                                    asp-route-appointmentId="@item.Id"
                                                    asp-route-patientId="@item.PatientId">
                                                     <i class="bi bi-clipboard2-pulse mr-3 w-4"></i> Tạo điều trị
-                                                </a>
-                                                <a class="flex items-center px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 font-medium" asp-controller="Medications" asp-action="Create" asp-route-appointmentId="@item.Id">
-                                                    <i class="bi bi-prescription2 mr-3 w-4"></i> Kê đơn thuốc
-                                                </a>
-                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Medications" asp-action="Index" asp-route-appointmentId="@item.Id">
-                                                    <i class="bi bi-journal-medical mr-3 w-4"></i> Xem đơn thuốc
-                                                </a>
+</a>
+                                                
+                                                @if (item.TreatmentId.HasValue)
+                                                {
+                                                    <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Medications" asp-action="Create" asp-route-treatmentId="@item.TreatmentId">
+                                                        <i class="bi bi-capsule mr-3 w-4"></i> Kê đơn thuốc
+                                                    </a>
+                                                    <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Medications" asp-action="Index" asp-route-treatmentId="@item.TreatmentId">
+                                                        <i class="bi bi-list-ul mr-3 w-4"></i> Xem danh sách thuốc
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="flex items-center px-4 py-2 text-sm text-gray-500 cursor-not-allowed" onclick="alert('Vui lòng tạo điều trị cho cuộc hẹn này trước khi kê đơn thuốc')">
+                                                        <i class="bi bi-capsule mr-3 w-4"></i> Kê đơn thuốc
+                                                    </span>
+                                                }
                                                 <hr class="border-gray-200 my-1">
                                                 <a class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50" asp-action="Delete" asp-route-id="@item.Id">
                                                     <i class="bi bi-trash mr-3 w-4"></i> Xóa
@@ -176,7 +190,7 @@
             const dropdown = document.getElementById('dropdown-' + appointmentId);
             
             // Hide all other dropdowns
-            document.querySelectorAll('[id^="dropdown-"]').forEach(function(menu) {
+document.querySelectorAll('[id^="dropdown-"]').forEach(function(menu) {
                 if (menu.id !== 'dropdown-' + appointmentId) {
                     menu.classList.add('hidden');
                 }
@@ -195,4 +209,4 @@
             }
         });
     </script>
-} 
+}

@@ -22,8 +22,8 @@ bld/
 [Oo]bj/
 
 # MSTest test Results
-[Tt]est[Rr]esult*/
-[Bb]uild[Ll]og.*
+TestResult*/
+BuildLog.*
 
 # NuGet Packages
 *.nupkg

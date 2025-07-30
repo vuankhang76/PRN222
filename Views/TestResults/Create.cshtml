@@ -1,0 +1,170 @@
+@model InfertilityApp.Models.TestResult
+
+@{
+    ViewData["Title"] = "Thêm kết quả xét nghiệm";
+}
+
+<div class="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <!-- Header Section -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Thêm kết quả xét nghiệm</h1>
+        <a asp-action="Index" 
+           class="inline-flex items-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+            <i class="bi bi-arrow-left mr-2"></i>
+            Quay lại danh sách
+        </a>
+    </div>
+
+    <!-- Main Form Container -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <form asp-action="Create" method="post" enctype="multipart/form-data" class="p-6 space-y-6">
+            <div asp-validation-summary="ModelOnly" class="text-red-600"></div>
+            
+            <!-- Thông tin xét nghiệm -->
+            <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h3 class="text-lg font-semibold text-blue-800 mb-4">
+                    <i class="bi bi-clipboard-data mr-2"></i>Thông tin xét nghiệm
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="TestName" class="block text-sm font-semibold text-gray-700 mb-2">Tên xét nghiệm</label>
+                        <input asp-for="TestName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nhập tên xét nghiệm" />
+                        <span asp-validation-for="TestName" class="text-red-500 text-sm"></span>
+                    </div>
+                    <div>
+                        <label asp-for="TestType" class="block text-sm font-semibold text-gray-700 mb-2">Loại xét nghiệm</label>
+                        <select asp-for="TestType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">-- Chọn loại xét nghiệm --</option>
+                            <option value="Hormone">Xét nghiệm hormone</option>
+                            <option value="Blood Test">Xét nghiệm máu</option>
+                            <option value="Semen Analysis">Phân tích tinh dịch</option>
+                            <option value="HSG">Chụp tử cung vòi trứng</option>
+                            <option value="Ultrasound">Siêu âm</option>
+                            <option value="Genetic">Xét nghiệm gen</option>
+                            <option value="Other">Khác</option>
+                        </select>
+                        <span asp-validation-for="TestType" class="text-red-500 text-sm"></span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                        <label asp-for="TestDate" class="block text-sm font-semibold text-gray-700 mb-2">Ngày xét nghiệm</label>
+                        <input asp-for="TestDate" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                        <span asp-validation-for="TestDate" class="text-red-500 text-sm"></span>
+                    </div>
+                    <div>
+                        <label asp-for="TestingLab" class="block text-sm font-semibold text-gray-700 mb-2">Phòng xét nghiệm</label>
+                        <input asp-for="TestingLab" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Tên phòng xét nghiệm" />
+                        <span asp-validation-for="TestingLab" class="text-red-500 text-sm"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thông tin bệnh nhân -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                    <i class="bi bi-person-circle mr-2"></i>Thông tin bệnh nhân
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="PatientId" class="block text-sm font-semibold text-gray-700 mb-2">Bệnh nhân</label>
+                        <select asp-for="PatientId" asp-items="ViewBag.PatientId" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">-- Chọn bệnh nhân --</option>
+                        </select>
+                        <span asp-validation-for="PatientId" class="text-red-500 text-sm"></span>
+                    </div>
+                    <div>
+                        <label asp-for="PartnerId" class="block text-sm font-semibold text-gray-700 mb-2">Người phối ngẫu (nếu có)</label>
+                        <select asp-for="PartnerId" asp-items="ViewBag.PartnerId" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">-- Chọn người phối ngẫu --</option>
+                        </select>
+                        <span asp-validation-for="PartnerId" class="text-red-500 text-sm"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kết quả xét nghiệm -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                    <i class="bi bi-file-earmark-text mr-2"></i>Kết quả xét nghiệm
+                </h3>
+                <div class="grid grid-cols-1 gap-4">
+                    <div>
+                        <label asp-for="Results" class="block text-sm font-semibold text-gray-700 mb-2">Kết quả chi tiết</label>
+                        <textarea asp-for="Results" rows="6" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nhập kết quả xét nghiệm chi tiết..."></textarea>
+                        <span asp-validation-for="Results" class="text-red-500 text-sm"></span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label asp-for="ReferenceRange" class="block text-sm font-semibold text-gray-700 mb-2">Chỉ số tham chiếu</label>
+                            <input asp-for="ReferenceRange" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ví dụ: 0.5 - 2.5 ng/mL" />
+                            <span asp-validation-for="ReferenceRange" class="text-red-500 text-sm"></span>
+                        </div>
+                        <div>
+                            <label asp-for="Status" class="block text-sm font-semibold text-gray-700 mb-2">Trạng thái</label>
+                            <select asp-for="Status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">-- Chọn trạng thái --</option>
+                                <option value="Normal">Bình thường</option>
+                                <option value="Abnormal">Bất thường</option>
+                                <option value="Borderline">Biên giới</option>
+                                <option value="Critical">Nghiêm trọng</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-red-500 text-sm"></span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label asp-for="Notes" class="block text-sm font-semibold text-gray-700 mb-2">Ghi chú</label>
+                        <textarea asp-for="Notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ghi chú thêm về kết quả xét nghiệm..."></textarea>
+                        <span asp-validation-for="Notes" class="text-red-500 text-sm"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thông tin bác sĩ -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                    <i class="bi bi-person-badge mr-2"></i>Thông tin bác sĩ
+                </h3>
+                <div>
+                    <label asp-for="DoctorId" class="block text-sm font-semibold text-gray-700 mb-2">Bác sĩ phụ trách</label>
+                    <select asp-for="DoctorId" asp-items="ViewBag.DoctorId" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">-- Chọn bác sĩ --</option>
+                    </select>
+                    <span asp-validation-for="DoctorId" class="text-red-500 text-sm"></span>
+                </div>
+            </div>
+
+            <!-- File đính kèm -->
+            <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <h3 class="text-lg font-semibold text-green-800 mb-3">
+                    <i class="bi bi-paperclip mr-2"></i>File đính kèm
+                </h3>
+                <div>
+                    <label for="attachment" class="block text-sm font-semibold text-gray-700 mb-2">Tải lên file kết quả (PDF, DOCX, hình ảnh)</label>
+                    <input type="file" id="attachment" name="attachment" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                    <p class="text-sm text-gray-500 mt-1">Định dạng được hỗ trợ: PDF, DOCX, JPG, PNG (tối đa 10MB)</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <a asp-action="Index" 
+                   class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors duration-200 flex items-center">
+                    <i class="bi bi-x-circle mr-2"></i>Hủy
+                </a>
+                <button type="submit" 
+                        class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
+                    <i class="bi bi-check-circle mr-2"></i>Lưu kết quả
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
