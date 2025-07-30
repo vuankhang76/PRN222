@@ -1,0 +1,129 @@
+@model InfertilityApp.Models.TestResult
+
+@{
+    ViewData["Title"] = "Thêm kết quả xét nghiệm";
+}
+
+<div class="max-w-4xl mx-auto">
+    <div class="mb-6">
+        <h2 class="text-3xl font-bold text-gray-900">@ViewData["Title"]</h2>
+        @if (ViewData["PatientName"] != null)
+        {
+            <p class="text-gray-600">Bệnh nhân: @ViewData["PatientName"]</p>
+        }
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-red-600 mb-4"></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label asp-for="PatientId" class="block text-sm font-medium text-gray-700 mb-1">Bệnh nhân *</label>
+                    <select asp-for="PatientId" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" asp-items="ViewBag.PatientList">
+                        <option value="">-- Chọn bệnh nhân --</option>
+                    </select>
+                    <span asp-validation-for="PatientId" class="text-red-600 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="PartnerId" class="block text-sm font-medium text-gray-700 mb-1">Người đồng hành</label>
+                    <select asp-for="PartnerId" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" asp-items="ViewBag.PartnerList">
+                        <option value="">-- Chọn người đồng hành --</option>
+                    </select>
+                    <span asp-validation-for="PartnerId" class="text-red-600 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="TestType" class="block text-sm font-medium text-gray-700 mb-1">Loại xét nghiệm *</label>
+                    <select asp-for="TestType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">-- Chọn loại xét nghiệm --</option>
+                        <option value="Hormone">Hormone</option>
+                        <option value="Semen Analysis">Phân tích tinh dịch</option>
+                        <option value="HSG">Chụp tử cung vòi trứng</option>
+                        <option value="Blood Test">Xét nghiệm máu</option>
+                        <option value="Ultrasound">Siêu âm</option>
+                        <option value="Genetic">Di truyền</option>
+                        <option value="Other">Khác</option>
+                    </select>
+                    <span asp-validation-for="TestType" class="text-red-600 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="TestName" class="block text-sm font-medium text-gray-700 mb-1">Tên xét nghiệm *</label>
+                    <input asp-for="TestName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nhập tên xét nghiệm" />
+                    <span asp-validation-for="TestName" class="text-red-600 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="TestDate" class="block text-sm font-medium text-gray-700 mb-1">Ngày xét nghiệm *</label>
+                    <input asp-for="TestDate" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    <span asp-validation-for="TestDate" class="text-red-600 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Status" class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+                    <select asp-for="Status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">-- Chọn trạng thái --</option>
+                        <option value="Normal">Bình thường</option>
+                        <option value="Abnormal">Bất thường</option>
+                        <option value="Borderline">Biên giới</option>
+                        <option value="Critical">Nghiêm trọng</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-red-600 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="TestingLab" class="block text-sm font-medium text-gray-700 mb-1">Phòng xét nghiệm</label>
+                    <input asp-for="TestingLab" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nhập tên phòng xét nghiệm" />
+                    <span asp-validation-for="TestingLab" class="text-red-600 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="DoctorId" class="block text-sm font-medium text-gray-700 mb-1">Bác sĩ chỉ định</label>
+                    <select asp-for="DoctorId" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" asp-items="ViewBag.DoctorList">
+                        <option value="">-- Chọn bác sĩ --</option>
+                    </select>
+                    <span asp-validation-for="DoctorId" class="text-red-600 text-sm"></span>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <label asp-for="Results" class="block text-sm font-medium text-gray-700 mb-1">Kết quả *</label>
+                <textarea asp-for="Results" rows="6" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nhập kết quả xét nghiệm chi tiết"></textarea>
+                <span asp-validation-for="Results" class="text-red-600 text-sm"></span>
+            </div>
+
+            <div class="mt-4">
+                <label asp-for="ReferenceRange" class="block text-sm font-medium text-gray-700 mb-1">Giá trị tham chiếu</label>
+                <input asp-for="ReferenceRange" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nhập giá trị tham chiếu" />
+                <span asp-validation-for="ReferenceRange" class="text-red-600 text-sm"></span>
+            </div>
+
+            <div class="mt-4">
+                <label asp-for="Notes" class="block text-sm font-medium text-gray-700 mb-1">Ghi chú</label>
+                <textarea asp-for="Notes" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nhập ghi chú thêm"></textarea>
+                <span asp-validation-for="Notes" class="text-red-600 text-sm"></span>
+            </div>
+
+            <div class="flex justify-between items-center mt-8">
+                <a asp-action="Index" class="text-gray-600 hover:text-gray-900 inline-flex items-center">
+                    <i class="bi bi-arrow-left mr-2"></i> Quay lại danh sách
+                </a>
+                
+                <div class="space-x-3">
+                    <button type="reset" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200">
+                        Làm mới
+                    </button>
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                        <i class="bi bi-check-lg mr-2"></i> Lưu kết quả
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

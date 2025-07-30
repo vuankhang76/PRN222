@@ -1,0 +1,199 @@
+@model InfertilityApp.Models.TestResult
+
+@{
+    ViewData["Title"] = "Chi tiết kết quả xét nghiệm";
+}
+
+<div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-3xl font-bold text-gray-900">@ViewData["Title"]</h2>
+            <p class="text-gray-600">Ngày tạo: @Model.TestDate.ToString("dd/MM/yyyy")</p>
+        </div>
+        <div class="flex space-x-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors duration-200 flex items-center">
+                <i class="bi bi-pencil mr-2"></i> Chỉnh sửa
+            </a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-200 flex items-center">
+                <i class="bi bi-trash mr-2"></i> Xóa
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Information -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Thông tin xét nghiệm</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Loại xét nghiệm</label>
+                        <p class="mt-1 text-gray-900 font-medium">@Model.TestType</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Tên xét nghiệm</label>
+                        <p class="mt-1 text-gray-900 font-medium">@Model.TestName</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Ngày xét nghiệm</label>
+                        <p class="mt-1 text-gray-900">@Model.TestDate.ToString("dd/MM/yyyy")</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Trạng thái</label>
+                        <div class="mt-1">
+                            @switch (Model.Status)
+                            {
+                                case "Normal":
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">Bình thường</span>
+                                    break;
+                                case "Abnormal":
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">Bất thường</span>
+                                    break;
+                                case "Borderline":
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">Biên giới</span>
+                                    break;
+                                case "Critical":
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">Nghiêm trọng</span>
+                                    break;
+                                default:
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">@(Model.Status ?? "Chưa xác định")</span>
+                                    break;
+                            }
+                        </div>
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(Model.TestingLab))
+                    {
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Phòng xét nghiệm</label>
+                            <p class="mt-1 text-gray-900">@Model.TestingLab</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Kết quả xét nghiệm</h3>
+                <div class="prose max-w-none">
+                    <p class="text-gray-900 whitespace-pre-line">@Model.Results</p>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.ReferenceRange))
+                {
+                    <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                        <h4 class="font-medium text-blue-900 mb-2">Giá trị tham chiếu</h4>
+                        <p class="text-blue-800">@Model.ReferenceRange</p>
+                    </div>
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Ghi chú</h3>
+                    <p class="text-gray-900 whitespace-pre-line">@Model.Notes</p>
+                </div>
+            }
+        </div>
+
+        <!-- Side Information -->
+        <div>
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Thông tin bệnh nhân</h3>
+                
+                @if (Model.Patient != null)
+                {
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Tên bệnh nhân</label>
+                            <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.PatientId" class="mt-1 text-blue-600 hover:text-blue-800 hover:underline font-medium">
+                                @Model.Patient.FullName
+                            </a>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Ngày sinh</label>
+                            <p class="mt-1 text-gray-900">@Model.Patient.DateOfBirth.ToString("dd/MM/yyyy")</p>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Giới tính</label>
+                            <p class="mt-1 text-gray-900">@Model.Patient.Gender</p>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(Model.Patient.PhoneNumber))
+                        {
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600">Số điện thoại</label>
+                                <p class="mt-1 text-gray-900">@Model.Patient.PhoneNumber</p>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-gray-500">Không có thông tin bệnh nhân</p>
+                }
+            </div>
+
+            @if (Model.Partner != null)
+            {
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Người đồng hành</h3>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Tên</label>
+                            <p class="mt-1 text-gray-900 font-medium">@Model.Partner.FullName</p>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Ngày sinh</label>
+                            <p class="mt-1 text-gray-900">@Model.Partner.DateOfBirth.ToString("dd/MM/yyyy")</p>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Giới tính</label>
+                            <p class="mt-1 text-gray-900">@Model.Partner.Gender</p>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Model.Doctor != null)
+            {
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Bác sĩ chỉ định</h3>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Tên bác sĩ</label>
+                            <a asp-controller="Doctors" asp-action="Details" asp-route-id="@Model.DoctorId" class="mt-1 text-blue-600 hover:text-blue-800 hover:underline font-medium">
+                                @Model.Doctor.FullName
+                            </a>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(Model.Doctor.Specialization))
+                        {
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600">Chuyên khoa</label>
+                                <p class="mt-1 text-gray-900">@Model.Doctor.Specialization</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="mt-6">
+        <a asp-action="Index" class="text-gray-600 hover:text-gray-900 inline-flex items-center">
+            <i class="bi bi-arrow-left mr-2"></i> Quay lại danh sách
+        </a>
+    </div>
+</div>

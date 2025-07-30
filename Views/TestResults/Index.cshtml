@@ -1,0 +1,191 @@
+@model IEnumerable<InfertilityApp.Models.TestResult>
+
+@{
+    ViewData["Title"] = "Kết quả xét nghiệm";
+    if (ViewData["PatientName"] != null)
+    {
+        ViewData["Title"] = $"Kết quả xét nghiệm - {ViewData["PatientName"]}";
+    }
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 flex items-center justify-between" role="alert">
+        <span>@TempData["Success"]</span>
+        <button type="button" class="text-green-700 hover:text-green-900" onclick="this.parentElement.remove()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 flex items-center justify-between" role="alert">
+        <span>@TempData["Error"]</span>
+        <button type="button" class="text-red-700 hover:text-red-900" onclick="this.parentElement.remove()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+}
+
+<div class="flex justify-between items-center mb-6">
+    <div>
+        <h2 class="text-3xl font-bold text-gray-900">@ViewData["Title"]</h2>
+        @if (ViewData["PatientId"] != null)
+        {
+            <p class="text-gray-600">Mã bệnh nhân: #@ViewData["PatientId"]</p>
+        }
+    </div>
+    <div class="flex space-x-2">
+        @if (ViewData["PatientId"] != null)
+        {
+            <a asp-action="Create" asp-route-patientId="@ViewData["PatientId"]" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
+                <i class="bi bi-plus-circle mr-2"></i> Thêm kết quả mới
+            </a>
+        }
+        else
+        {
+            <a asp-action="Create" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
+                <i class="bi bi-plus-circle mr-2"></i> Thêm kết quả mới
+            </a>
+        }
+    </div>
+</div>
+
+<div class="bg-white rounded-lg shadow-lg">
+    <div class="p-6">
+        <div class="mb-6">
+            <div class="relative">
+                <input type="text" id="searchInput" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Tìm kiếm kết quả xét nghiệm...">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="bi bi-search text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.Any())
+        {
+            <div class="overflow-x-auto">
+                <table class="w-full" id="testResultsTable">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Loại xét nghiệm</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Tên xét nghiệm</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Bệnh nhân</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Ngày xét nghiệm</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Trạng thái</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Phòng XN</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700 w-32">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
+                                <td class="py-3 px-4 text-gray-900 font-medium">
+                                    @item.TestType
+                                </td>
+                                <td class="py-3 px-4 text-gray-900">
+                                    @item.TestName
+                                </td>
+                                <td class="py-3 px-4 text-gray-900">
+                                    @if (item.Patient != null)
+                                    {
+                                        <a asp-controller="Patients" asp-action="Details" asp-route-id="@item.PatientId" class="text-blue-600 hover:text-blue-800 hover:underline">
+                                            @item.Patient.FullName
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-gray-500">-</span>
+                                    }
+                                </td>
+                                <td class="py-3 px-4 text-gray-700">
+                                    @item.TestDate.ToString("dd/MM/yyyy")
+                                </td>
+                                <td class="py-3 px-4">
+                                    @switch (item.Status)
+                                    {
+                                        case "Normal":
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Bình thường</span>
+                                            break;
+                                        case "Abnormal":
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Bất thường</span>
+                                            break;
+                                        case "Borderline":
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Biên giới</span>
+                                            break;
+                                        case "Critical":
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Nghiêm trọng</span>
+                                            break;
+                                        default:
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">@(item.Status ?? "Chưa xác định")</span>
+                                            break;
+                                    }
+                                </td>
+                                <td class="py-3 px-4 text-gray-700">
+                                    @(item.TestingLab ?? "-")
+                                </td>
+                                <td class="py-3 px-4">
+                                    <div class="flex items-center space-x-1">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="bg-blue-100 text-blue-600 p-2 rounded hover:bg-blue-200 transition-colors duration-200" title="Chi tiết">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="bg-yellow-100 text-yellow-600 p-2 rounded hover:bg-yellow-200 transition-colors duration-200" title="Chỉnh sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="bg-red-100 text-red-600 p-2 rounded hover:bg-red-200 transition-colors duration-200" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-8">
+                <i class="bi bi-clipboard-data text-gray-400 text-5xl mb-4"></i>
+                <p class="text-gray-600 mb-4">Chưa có kết quả xét nghiệm nào</p>
+                @if (ViewData["PatientId"] != null)
+                {
+                    <a asp-action="Create" asp-route-patientId="@ViewData["PatientId"]" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 inline-flex items-center">
+                        <i class="bi bi-plus-circle mr-2"></i> Tạo kết quả xét nghiệm mới
+                    </a>
+                }
+                else
+                {
+                    <a asp-action="Create" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 inline-flex items-center">
+                        <i class="bi bi-plus-circle mr-2"></i> Tạo kết quả xét nghiệm mới
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@if (ViewData["PatientId"] != null)
+{
+    <div class="mt-6">
+        <a asp-controller="Patients" asp-action="Details" asp-route-id="@ViewData["PatientId"]" class="text-gray-600 hover:text-gray-900 inline-flex items-center">
+            <i class="bi bi-arrow-left mr-2"></i> Quay lại thông tin bệnh nhân
+        </a>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Search functionality
+            $("#searchInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#testResultsTable tbody tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+}

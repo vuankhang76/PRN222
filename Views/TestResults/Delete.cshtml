@@ -1,0 +1,109 @@
+@model InfertilityApp.Models.TestResult
+
+@{
+    ViewData["Title"] = "Xóa kết quả xét nghiệm";
+}
+
+<div class="max-w-2xl mx-auto">
+    <div class="mb-6">
+        <h2 class="text-3xl font-bold text-gray-900">@ViewData["Title"]</h2>
+        <p class="text-red-600 mt-2">Bạn có chắc chắn muốn xóa kết quả xét nghiệm này không?</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="border-l-4 border-red-500 bg-red-50 p-4 mb-6">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="bi bi-exclamation-triangle text-red-400 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-red-700">
+                        <strong>Cảnh báo:</strong> Hành động này không thể hoàn tác. Tất cả dữ liệu liên quan đến kết quả xét nghiệm này sẽ bị xóa vĩnh viễn.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Loại xét nghiệm</label>
+                    <p class="mt-1 text-gray-900 font-medium">@Model.TestType</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Tên xét nghiệm</label>
+                    <p class="mt-1 text-gray-900 font-medium">@Model.TestName</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Bệnh nhân</label>
+                    <p class="mt-1 text-gray-900">@(Model.Patient?.FullName ?? "Không xác định")</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Ngày xét nghiệm</label>
+                    <p class="mt-1 text-gray-900">@Model.TestDate.ToString("dd/MM/yyyy")</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Trạng thái</label>
+                    <div class="mt-1">
+                        @switch (Model.Status)
+                        {
+                            case "Normal":
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">Bình thường</span>
+                                break;
+                            case "Abnormal":
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">Bất thường</span>
+                                break;
+                            case "Borderline":
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">Biên giới</span>
+                                break;
+                            case "Critical":
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">Nghiêm trọng</span>
+                                break;
+                            default:
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">@(Model.Status ?? "Chưa xác định")</span>
+                                break;
+                        }
+                    </div>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.TestingLab))
+                {
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Phòng xét nghiệm</label>
+                        <p class="mt-1 text-gray-900">@Model.TestingLab</p>
+                    </div>
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Results))
+            {
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Kết quả xét nghiệm</label>
+                    <p class="text-gray-900 whitespace-pre-line">@Model.Results</p>
+                </div>
+            }
+        </div>
+
+        <form asp-action="Delete" method="post" class="mt-8">
+            <input type="hidden" asp-for="Id" />
+            <div class="flex justify-between items-center">
+                <a asp-action="Details" asp-route-id="@Model.Id" class="text-gray-600 hover:text-gray-900 inline-flex items-center">
+                    <i class="bi bi-arrow-left mr-2"></i> Quay lại chi tiết
+                </a>
+                
+                <div class="space-x-3">
+                    <a asp-action="Index" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400 transition-colors duration-200 inline-block">
+                        Hủy
+                    </a>
+                    <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200">
+                        <i class="bi bi-trash mr-2"></i> Xác nhận xóa
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
