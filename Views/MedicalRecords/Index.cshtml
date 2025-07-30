@@ -120,7 +120,13 @@
                                         </button>
                                         <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50 hidden" id="dropdown-@item.Id">
                                             <div class="py-1">
-                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Treatments" asp-action="GetByMedicalRecord" asp-route-id="@item.Id">
+                                                @if (!string.IsNullOrEmpty(item.AttachmentPath))
+                                                {
+                                                    <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-action="DownloadAttachment" asp-route-id="@item.Id">
+                                                        <i class="bi bi-download mr-3 w-4"></i> Tải tệp đính kèm
+                                                    </a>
+                                                }
+                                                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Treatments" asp-action="Index" asp-route-patientId="@item.PatientId">
                                                     <i class="bi bi-clipboard2-pulse mr-3 w-4"></i> Điều trị liên quan
                                                 </a>
                                                 <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="TestResults" asp-action="Index" asp-route-medicalRecordId="@item.Id">
